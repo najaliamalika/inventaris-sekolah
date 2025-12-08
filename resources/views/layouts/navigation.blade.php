@@ -38,22 +38,40 @@
                         @endif
                     </a>
 
-                    <a href="{{ route('item.index') }}"
+                    <a href="{{ route('items.index') }}"
                         class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 group
-                              {{ request()->routeIs('item.*')
+                              {{ request()->routeIs('items.*')
                                   ? 'text-green-600 dark:text-green-400'
                                   : 'text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400' }}">
                         <span class="relative z-10">{{ __('Data Barang') }}</span>
                         <div
                             class="absolute inset-0 bg-gradient-to-r from-green-600/10 to-green-400/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300
-                                    {{ request()->routeIs('item.*') ? '!opacity-100' : '' }}">
+                                    {{ request()->routeIs('items.*') ? '!opacity-100' : '' }}">
                         </div>
-                        @if (request()->routeIs('item.*'))
+                        @if (request()->routeIs('items.*'))
                             <div
                                 class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-0.5 bg-gradient-to-r from-green-600 to-green-400 rounded-full">
                             </div>
                         @endif
                     </a>
+
+                    <a href="{{ route('kategori-item.index') }}"
+                        class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 group
+                              {{ request()->routeIs('kategori-item.*')
+                                  ? 'text-green-600 dark:text-green-400'
+                                  : 'text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400' }}">
+                        <span class="relative z-10">{{ __('Data Kategori') }}</span>
+                        <div
+                            class="absolute inset-0 bg-gradient-to-r from-green-600/10 to-green-400/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300
+                                    {{ request()->routeIs('kategori-item.*') ? '!opacity-100' : '' }}">
+                        </div>
+                        @if (request()->routeIs('kategori-item.*'))
+                            <div
+                                class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-0.5 bg-gradient-to-r from-green-600 to-green-400 rounded-full">
+                            </div>
+                        @endif
+                    </a>
+
 
                     <a href="{{ route('peminjaman.index') }}"
                         class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 group
@@ -72,7 +90,7 @@
                         @endif
                     </a>
 
-                     <a href="{{ route('barang-masuk.index') }}"
+                    <a href="{{ route('barang-masuk.index') }}"
                         class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 group
                               {{ request()->routeIs('barang-masuk.*')
                                   ? 'text-green-600 dark:text-green-400'
@@ -205,9 +223,9 @@
                 {{ __('Dashboard') }}
             </a>
 
-            <a href="{{ route('item.index') }}"
+            <a href="{{ route('items.index') }}"
                 class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300
-                      {{ request()->routeIs('item.*')
+                      {{ request()->routeIs('items.*')
                           ? 'bg-gradient-to-r from-green-600/10 to-green-400/10 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-800 shadow-lg shadow-green-500/10'
                           : 'text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20' }}">
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -217,7 +235,19 @@
                 {{ __('Data Barang') }}
             </a>
 
-            <a href="{{ route('item.index') }}"
+            <a href="{{ route('items.index') }}"
+                class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300
+                      {{ request()->routeIs('peminjaman*')
+                          ? 'bg-gradient-to-r from-green-600/10 to-green-400/10 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-800 shadow-lg shadow-green-500/10'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20' }}">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                {{ __('Peminjaman') }}
+            </a>
+
+            <a href="{{ route('kategori-item.index') }}"
                 class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300
                       {{ request()->routeIs('peminjaman*')
                           ? 'bg-gradient-to-r from-green-600/10 to-green-400/10 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-800 shadow-lg shadow-green-500/10'
@@ -263,7 +293,8 @@
                     {{ strtoupper(substr(Auth::user()->username, 0, 1)) }}
                 </div>
                 <div class="ml-3">
-                    <div class="text-sm font-semibold text-gray-800 dark:text-gray-200">{{ Auth::user()->username }}</div>
+                    <div class="text-sm font-semibold text-gray-800 dark:text-gray-200">{{ Auth::user()->username }}
+                    </div>
                     <div class="text-xs text-gray-500 dark:text-gray-400">{{ Auth::user()->email }}</div>
                 </div>
             </div>

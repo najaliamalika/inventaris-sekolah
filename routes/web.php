@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\ItemTemplateController;
 use App\Http\Controllers\KeluarController;
 use App\Http\Controllers\MasukController;
 use App\Http\Controllers\PeminjamanController;
@@ -20,15 +21,24 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth', 'verified')->group(function () {
-    Route::get('/item', [ItemController::class, 'index'])->name('item.index');
-    Route::get('/item/create', [ItemController::class, 'create'])->name('item.create');
-    Route::post('/item', [ItemController::class, 'store'])->name('item.store');
-    Route::get('/item/{item_id}', [ItemController::class, 'edit'])->name('item.edit');
-    Route::put('/item/{item_id}', [ItemController::class, 'update'])->name('item.update');
-    Route::delete('/item/{item_id}', [ItemController::class, 'destroy'])->name('item.destroy');
+    Route::get('/item', [ItemController::class, 'index'])->name('items.index');
+    Route::get('/item/create', [ItemController::class, 'create'])->name('items.create');
+    Route::post('/item', [ItemController::class, 'store'])->name('items.store');
+    Route::get('/item/{item_id}/edit', [ItemController::class, 'edit'])->name('items.edit');
+    Route::get('/item/{item_id}', [ItemController::class, 'show'])->name('items.show');
+    Route::put('/item/{item_id}', [ItemController::class, 'update'])->name('items.update');
+    Route::delete('/item/{item_id}', [ItemController::class, 'destroy'])->name('items.destroy');
+
+    Route::get('/kategori-item', [ItemTemplateController::class, 'index'])->name('kategori-item.index');
+    Route::get('/kategori-item/create', [ItemTemplateController::class, 'create'])->name('kategori-item.create');
+    Route::post('/kategori-item', [ItemTemplateController::class, 'store'])->name('kategori-item.store');
+    Route::get('/kategori-item/{item_template_id}/edit', [ItemTemplateController::class, 'edit'])->name('kategori-item.edit');
+    Route::get('/kategori-item/{item_template_id}', [ItemTemplateController::class, 'show'])->name('kategori-item.show');
+    Route::put('/kategori-item/{item_template_id}', [ItemTemplateController::class, 'update'])->name('kategori-item.update');
+    Route::delete('/kategori-item/{item_template_id}', [ItemTemplateController::class, 'destroy'])->name('kategori-item.destroy');
 
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
-    Route::get('/peminjaman/create', [ PeminjamanController::class, 'create'])->name('peminjaman.create');
+    Route::get('/peminjaman/create', [PeminjamanController::class, 'create'])->name('peminjaman.create');
     Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
     Route::get('/peminjaman/{peminjaman_id}', [PeminjamanController::class, 'edit'])->name('peminjaman.edit');
     Route::put('/peminjaman/{peminjaman_id}', [PeminjamanController::class, 'update'])->name('peminjaman.update');
