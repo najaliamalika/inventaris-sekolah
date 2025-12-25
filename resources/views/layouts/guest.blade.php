@@ -17,16 +17,22 @@
 </head>
 
 <body class="font-sans text-gray-900 antialiased">
-    <div style="background-image: url('{{ asset('images/MAN1.jpg') }}')"
-        class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900 bg-cover bg-center">
+    <!-- Background Container with proper centering -->
+    <div class="min-h-screen relative flex items-center justify-center p-4 sm:p-6 lg:p-8">
 
-        <!-- Overlay untuk membuat teks lebih readable -->
-        <div class="absolute inset-0 bg-black/40 dark:bg-black/60"></div>
+        <!-- Background Image -->
+        <div style="background-image: url('{{ asset('images/MAN1.jpg') }}')"
+            class="absolute inset-0 bg-cover bg-center bg-no-repeat"></div>
 
-        <!-- Content -->
-        <div
-            class="relative w-full my-8 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg max-w-md">
-            {{ $slot }}
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm"></div>
+
+        <!-- Content - Properly Centered -->
+        <div class="relative z-10 w-full max-w-md">
+            <div
+                class="bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-2xl rounded-2xl overflow-hidden border border-white/20">
+                {{ $slot }}
+            </div>
         </div>
     </div>
 </body>

@@ -2,32 +2,71 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Support\Facades\Storage;
 
 class Peminjaman extends Model
 {
-    use HasFactory;
-    protected $primaryKey = "peminjaman_id";
+    use HasUuids;
+
+    protected $table = 'peminjaman';
+    protected $primaryKey = 'peminjaman_id';
     public $incrementing = false;
-    protected $keyType = "string";
-    protected $table = "peminjaman";
+    protected $keyType = 'string';
+
     protected $fillable = [
-        'peminjaman_id',
         'tanggal_peminjaman',
         'nama_peminjam',
         'foto_peminjaman',
-        'jumlah',
         'keterangan',
-        'foto_pengembalian',
-        'tanggal_pengembalian',
-        'item_id',
-        'status',
     ];
 
-    public function item()
+    protected $casts = [
+        'tanggal_peminjaman' => 'datetime',
+    ];
+
+    public function barang()
     {
-        return $this->belongsTo(Item::class,'item_id','item_id');
+        return $this->belongsToMany(
+            Barang::class,
+            'peminjaman_barang',
+            'peminjaman_id',
+            'barang_id'
+        )
+            ->withPivot([
+                'peminjaman_barang_id',
+                'status',
+                'tanggal_pengembalian',
+                'foto_pengembalian',
+                'catatan'
+            ])
+            ->withTimestamps();
+    }
+
+    public function detailBarang()
+    {
+        return $this->hasMany(PeminjamanBarang::class, 'peminjaman_id', 'peminjaman_id');
+    }
+
+    public function peminjamanBarang()
+    {
+        return $this->hasMany(PeminjamanBarang::class, 'peminjaman_id', 'peminjaman_id');
+    }
+
+    public function getFotoPeminjamanUrlAttribute(): string
+    {
+        if (!$this->foto_peminjaman) {
+            return 'https://via.placeholder.com/150';
+        }
+
+        return asset(Storage::url($this->foto_peminjaman));
+    }
+
+    public function scopeWithStatus($query, $status)
+    {
+        return $query->whereHas('barang', function ($q) use ($status) {
+            $q->wherePivot('status', $status);
+        });
     }
 }

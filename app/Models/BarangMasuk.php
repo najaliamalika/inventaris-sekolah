@@ -8,24 +8,60 @@ use Illuminate\Database\Eloquent\Model;
 class BarangMasuk extends Model
 {
     use HasFactory;
-    protected $table = "barang_masuk";
-    protected $primaryKey = "masuk_id";
+
+    protected $primaryKey = 'masuk_id';
     public $incrementing = false;
-    protected $keyType = "string";
+    protected $keyType = 'string';
+
+    protected $table = 'barang_masuk';
+
     protected $fillable = [
         'masuk_id',
-        'item_id',
         'tanggal',
-        'kode_barang',
-        'jumlah',
-        'keterangan',
         'kategori',
-        'harga_satuan',
         'nama_supplier',
+        'total_jumlah',
+        'total_harga',
+        'keterangan',
     ];
 
-      public function item()
+    protected $casts = [
+        'tanggal' => 'datetime',
+        'total_jumlah' => 'integer',
+        'total_harga' => 'integer',
+    ];
+
+    public function details()
     {
-        return $this->belongsTo(Item::class,'item_id','item_id');
+        return $this->hasMany(BarangMasukDetail::class, 'masuk_id', 'masuk_id');
+    }
+
+    public function hitungTotal()
+    {
+        $this->total_jumlah = $this->details()->sum('jumlah');
+        $this->total_harga = $this->details()->sum('subtotal');
+        $this->save();
+    }
+
+    public function getTanggalFormatAttribute()
+    {
+        return $this->tanggal->format('d/m/Y H:i');
+    }
+
+    public function scopeByKategori($query, $kategori)
+    {
+        return $query->where('kategori', $kategori);
+    }
+    public function scopeBySupplier($query, $supplier)
+    {
+        return $query->where('nama_supplier', 'like', "%{$supplier}%");
+    }
+
+    public function scopeByTanggal($query, $tanggalMulai, $tanggalAkhir = null)
+    {
+        if ($tanggalAkhir) {
+            return $query->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir]);
+        }
+        return $query->whereDate('tanggal', $tanggalMulai);
     }
 }

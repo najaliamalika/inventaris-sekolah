@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Barang;
 use App\Models\BarangKeluar;
 use App\Models\Item;
 use App\Services\FileStorageService;
@@ -10,7 +11,7 @@ use Illuminate\Support\Carbon;
 
 class KeluarController extends Controller
 {
-  protected $fileService;
+    protected $fileService;
 
     public function __construct(FileStorageService $fileService)
     {
@@ -64,8 +65,8 @@ class KeluarController extends Controller
      */
     public function create()
     {
-        $items = Item::where('stok', '>', 0)->orderBy('nama_barang')->get();
-        return view('barang-keluar.create', compact('items'));
+        $barang = Barang::where('stok', '>', 0)->orderBy('nama_barang')->get();
+        return view('barang-keluar.create', compact('barang'));
     }
 
     /**
@@ -78,7 +79,7 @@ class KeluarController extends Controller
                 'tanggal' => 'required|date',
                 'jumlah' => 'required|integer|min:1',
                 'keterangan' => 'required|string|max:255',
-                'item_id' => 'required|exists:items,item_id',
+                'barang_id' => 'required|exists:barang,barang_id',
                 'kategori' => 'required|in:habis_pakai,rusak,tidak_layak,sedang_diperbaiki,dihibahkan',
             ],
             [
@@ -93,8 +94,8 @@ class KeluarController extends Controller
                 'keterangan.string' => 'Keterangan harus berupa teks',
                 'keterangan.max' => 'Keterangan tidak boleh lebih dari 255 karakter',
 
-                'item_id.required' => 'Item wajib dipilih',
-                'item_id.exists' => 'Item tidak ditemukan',
+                'barang_id.required' => 'Item wajib dipilih',
+                'barang_id.exists' => 'Item tidak ditemukan',
 
                 'kategori.required' => 'Kategori wajib dipilih',
                 'kategori.in' => 'Kategori tidak valid',
@@ -102,7 +103,7 @@ class KeluarController extends Controller
         );
 
         // Check if item has enough stock
-        $item = Item::findOrFail($validated['item_id']);
+        $item = Barang::findOrFail($validated['barang_id']);
         if ($item->stok < $validated['jumlah']) {
             return back()
                 ->withErrors(['jumlah' => 'Stok tidak mencukupi. Stok tersedia: ' . $item->stok])
@@ -114,7 +115,7 @@ class KeluarController extends Controller
             'tanggal' => $validated['tanggal'],
             'jumlah' => $validated['jumlah'],
             'keterangan' => $validated['keterangan'],
-            'item_id' => $validated['item_id'],
+            'barang_id' => $validated['barang_id'],
             'kategori' => $validated['kategori'],
         ];
 
@@ -133,7 +134,7 @@ class KeluarController extends Controller
     public function show(string $id)
     {
         $barangKeluar = BarangKeluar::with('item')->findOrFail($id);
-        
+
         if ($barangKeluar->item->gambar) {
             $barangKeluar->item->gambar = $this->fileService->url($barangKeluar->item->gambar);
         }
@@ -147,9 +148,9 @@ class KeluarController extends Controller
     public function edit(string $id)
     {
         $barangKeluar = BarangKeluar::findOrFail($id);
-        $items = Item::orderBy('nama_barang')->get();
+        $barang = Barang::orderBy('nama_barang')->get();
 
-        return view('barang-keluar.update', compact('barangKeluar', 'items'));
+        return view('barang-keluar.update', compact('barangKeluar', 'barang'));
     }
 
     /**
@@ -158,7 +159,7 @@ class KeluarController extends Controller
     public function update(Request $request, string $keluar_id)
     {
         $barangKeluar = BarangKeluar::findOrFail($keluar_id);
-        
+
         $validated = $request->validate([
             'tanggal' => 'required|date',
             'jumlah' => 'required|integer|min:1',
@@ -173,7 +174,7 @@ class KeluarController extends Controller
 
         // Check if item has enough stock for increase
         if ($difference > 0) {
-            $item = Item::find($barangKeluar->item_id);
+            $item = Barang::find($barangKeluar->barang_id);
             if ($item->stok < $difference) {
                 return back()
                     ->withErrors(['jumlah' => 'Stok tidak mencukupi untuk perubahan ini. Stok tersedia: ' . $item->stok])
@@ -192,12 +193,12 @@ class KeluarController extends Controller
 
         // Update item stock based on difference
         if ($difference != 0) {
-            $item = Item::find($barangKeluar->item_id);
+            $item = Barang::find($barangKeluar->barang_id);
             if ($difference > 0) {
-                // More items going out, decrease stock
+                // More barang going out, decrease stock
                 $item->decrement('stok', $difference);
             } else {
-                // Less items going out, increase stock
+                // Less barang going out, increase stock
                 $item->increment('stok', abs($difference));
             }
         }
@@ -213,13 +214,13 @@ class KeluarController extends Controller
     public function destroy(string $keluar_id)
     {
         $barangKeluar = BarangKeluar::findOrFail($keluar_id);
-        
+
         // Restore item stock
-        $item = Item::find($barangKeluar->item_id);
+        $item = Barang::find($barangKeluar->barang_id);
         $item->increment('stok', $barangKeluar->jumlah);
 
         $barangKeluar->delete();
-        
+
         flash('Barang keluar berhasil dihapus')->success();
 
         return redirect()->route('barang-keluar.index');

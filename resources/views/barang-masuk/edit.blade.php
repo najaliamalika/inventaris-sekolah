@@ -2,12 +2,13 @@
     <x-slot name="header">
         <div>
             <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-100 leading-tight">
-                {{ __('Tambah Barang Masuk') }}
+                {{ __('Edit Barang Masuk') }}
             </h2>
-            <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">Catat barang masuk baru (pembelian atau bantuan)</p>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">Perbarui data barang masuk</p>
         </div>
     </x-slot>
 
+    <!-- Back Button -->
     <div class="mb-6">
         <a href="{{ route('barang-masuk.index') }}"
             class="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200 group">
@@ -19,16 +20,21 @@
         </a>
     </div>
 
+    <!-- Main Card -->
     <div
         class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div class="p-8">
-            <form id="create_barang_masuk" method="POST" action="{{ route('barang-masuk.store') }}" class="space-y-6">
+            <form id="update_barang_masuk" method="POST"
+                action="{{ route('barang-masuk.update', $barangMasuk->masuk_id) }}" class="space-y-6">
                 @csrf
+                @method('PUT')
 
+                <!-- Informasi Umum -->
                 <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informasi Umum</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Tanggal -->
                         <div class="group">
                             <x-input-label for="tanggal" :value="__('Tanggal')"
                                 class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
@@ -36,10 +42,11 @@
                             </x-input-label>
                             <x-text-input id="tanggal"
                                 class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
-                                type="date" name="tanggal" :value="old('tanggal', date('Y-m-d'))" required />
+                                type="date" name="tanggal" :value="old('tanggal', $barangMasuk->tanggal->format('Y-m-d'))" required />
                             <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
                         </div>
 
+                        <!-- Kategori -->
                         <div class="group">
                             <x-input-label for="kategori" :value="__('Kategori')"
                                 class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
@@ -47,10 +54,12 @@
                             </x-input-label>
                             <select id="kategori" name="kategori" required
                                 class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                                <option value="pembelian" {{ old('kategori') == 'pembelian' ? 'selected' : '' }}>💰
+                                <option value="pembelian"
+                                    {{ old('kategori', $barangMasuk->kategori) == 'pembelian' ? 'selected' : '' }}>💰
                                     Pembelian</option>
-                                <option value="bantuan" {{ old('kategori') == 'bantuan' ? 'selected' : '' }}>🎁 Bantuan
-                                </option>
+                                <option value="bantuan"
+                                    {{ old('kategori', $barangMasuk->kategori) == 'bantuan' ? 'selected' : '' }}>🎁
+                                    Bantuan</option>
                             </select>
                             <x-input-error :messages="$errors->get('kategori')" class="mt-2" />
                         </div>
@@ -62,7 +71,7 @@
                             </x-input-label>
                             <x-text-input id="nama_supplier"
                                 class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
-                                type="text" name="nama_supplier" :value="old('nama_supplier')"
+                                type="text" name="nama_supplier" :value="old('nama_supplier', $barangMasuk->nama_supplier)"
                                 placeholder="Contoh: PT. Maju Jaya, CV. Sukses Bersama" required />
                             <x-input-error :messages="$errors->get('nama_supplier')" class="mt-2" />
                         </div>
@@ -72,12 +81,13 @@
                                 class="text-gray-700 dark:text-gray-300 font-semibold mb-2" />
                             <textarea id="keterangan" name="keterangan" rows="3"
                                 class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
-                                placeholder="Catatan tambahan...">{{ old('keterangan') }}</textarea>
+                                placeholder="Catatan tambahan...">{{ old('keterangan', $barangMasuk->keterangan) }}</textarea>
                             <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
                         </div>
                     </div>
                 </div>
 
+                <!-- Detail Barang -->
                 <div>
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Detail Barang</h3>
@@ -105,40 +115,49 @@
                         {{ __('Batal') }}
                     </a>
 
-                    <button type="button" x-data @click="$dispatch('open-modal', 'save_confirmation')"
+                    <button type="button" x-data @click="$dispatch('open-modal', 'update_confirmation')"
                         class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
-                        {{ __('Simpan') }}
+                        {{ __('Perbarui') }}
                     </button>
                 </div>
 
-                <x-confirm-modal id="save_confirmation"
-                    message="Apakah Anda yakin ingin menyimpan data barang masuk ini?" okLabel="Simpan"
-                    cancelLabel="Batal" :url="route('barang-masuk.store')" formId="create_barang_masuk" />
+                <x-confirm-modal id="update_confirmation"
+                    message="Apakah Anda yakin ingin memperbarui data barang masuk ini?" okLabel="Perbarui"
+                    cancelLabel="Batal" :url="route('barang-masuk.update', $barangMasuk->masuk_id)" formId="update_barang_masuk" />
             </form>
         </div>
     </div>
 
     @push('scripts')
         <script>
-            let detailIndex = 0;
+            let detailIndex = {{ $barangMasuk->details->count() }};
             const jenisBarangList = @json($jenisBarang);
-            const listKodeUtama = [];
+            const existingDetails = @json($barangMasuk->details->load('barangItems'));
 
-            function createDetailItem(index) {
-                const jenisOptions = jenisBarangList.map(jenis =>
-                    `<option value="${jenis.jenis_barang_id}">${jenis.jenis} - Kode Prefix: ${jenis.kode_utama}</option>`
-                ).join('');
+            // Template untuk detail item
+            function createDetailItem(index, detail = null) {
+                const jenisOptions = jenisBarangList.map(jenis => {
+                    const selected = detail && jenis.jenis_barang_id === detail.jenis_barang_id ? 'selected' : '';
+                    return `<option value="${jenis.jenis_barang_id}" ${selected}>${jenis.kategori} - ${jenis.jenis}</option>`;
+                }).join('');
 
+                const detailId = detail ? detail.detail_id : '';
+                const jumlah = detail ? detail.jumlah : 1;
+                const harga = detail ? detail.harga_satuan : 0;
+                const keterangan = detail ? (detail.keterangan || '') : '';
 
                 return `
             <div class="detail-item bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700/50 dark:to-gray-800/50 p-6 rounded-xl border-2 border-gray-200 dark:border-gray-600" data-index="${index}">
+                ${detailId ? `<input type="hidden" name="detail_ids[]" value="${detailId}">` : ''}
+                
                 <div class="flex items-center justify-between mb-4">
                     <h4 class="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                         <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">${index + 1}</span>
-                        Jenis Barang ${index + 1}
+                        Jenis Barang #${index + 1}
                     </h4>
                     <button type="button" class="remove-detail-btn text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-lg transition-all" data-index="${index}">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,10 +170,10 @@
                     <!-- Jenis Barang -->
                     <div class="bg-white dark:bg-gray-700 p-4 rounded-lg">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Jenis Barang (Jika tidak ada silahkan tambahkan dulu <a class="text-green-600 font-bold hover:underline" href="{{ route('jenis-barang.create') }}">DISINI</a>)<span class="text-red-500">*</span>
+                            Jenis Barang <span class="text-red-500">*</span>
                         </label>
-                        <select name="jenis_barang_ids[]" required onchange="updateJenisInfo(${index}); setKodeUtama(${index}, this.value)"
-                            class="jenis-select block w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-white dark:bg-gray-700 dark:text-white" id="jenis-select-${index}">
+                        <select name="jenis_barang_ids[]" required onchange="updateJenisInfo(${index})"
+                            class="jenis-select block w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-white dark:bg-gray-700 dark:text-white">
                             <option value="">-- Pilih Jenis Barang --</option>
                             ${jenisOptions}
                         </select>
@@ -166,7 +185,7 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Jumlah Barang <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" name="jumlah[]" min="1" value="1" required onchange="updateBarangItems(${index})"
+                            <input type="number" name="jumlah[]" min="1" value="${jumlah}" required onchange="updateBarangItems(${index})"
                                 class="jumlah-input block w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-white dark:bg-gray-700 dark:text-white">
                         </div>
 
@@ -175,9 +194,8 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Harga Satuan
                             </label>
-                            <input type="number" name="harga_satuan[]" min="0" value="0"
-                                class="block w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-white dark:bg-gray-700 dark:text-white"
-                                placeholder="0">
+                            <input type="number" name="harga_satuan[]" min="0" value="${harga}"
+                                class="block w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-white dark:bg-gray-700 dark:text-white">
                         </div>
 
                         <!-- Lokasi Default -->
@@ -195,7 +213,7 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Keterangan Item
                         </label>
-                        <input type="text" name="keterangan_detail[]"
+                        <input type="text" name="keterangan_detail[]" value="${keterangan}"
                             class="block w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-white dark:bg-gray-700 dark:text-white"
                             placeholder="Catatan khusus untuk jenis barang ini...">
                     </div>
@@ -215,9 +233,17 @@
             `;
             }
 
-            function createBarangItem(detailIndex, barangIndex) {
+            // Template untuk barang individual item
+            function createBarangItem(detailIndex, barangIndex, barang = null) {
+                const barangId = barang ? barang.barang_id : '';
+                const namaBarang = barang ? barang.nama_barang : '';
+                const kodeBarang = barang ? (barang.kode_barang || '') : '';
+                const merk = barang ? barang.merk : '';
+                const lokasi = barang ? (barang.lokasi || '') : '';
+
                 return `
             <div class="barang-item bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                ${barangId ? `<input type="hidden" name="barang_ids[${detailIndex}][]" value="${barangId}">` : ''}
                 <div class="flex items-center gap-2 mb-3">
                     <span class="bg-green-600 text-white px-2 py-1 rounded text-xs font-semibold">Barang ${barangIndex + 1}</span>
                 </div>
@@ -226,7 +252,7 @@
                         <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Nama Barang <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="list_barang[${detailIndex}][${barangIndex}][nama_barang]" required
+                        <input type="text" name="list_barang[${detailIndex}][${barangIndex}][nama_barang]" value="${namaBarang}" required
                             class="block w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-1 focus:ring-green-500/20 bg-white dark:bg-gray-800 dark:text-white"
                             placeholder="Contoh: Laptop HP ProBook 450 G8">
                     </div>
@@ -234,15 +260,15 @@
                         <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Kode Barang
                         </label>
-                        <input type="text" name="list_barang[${detailIndex}][${barangIndex}][kode_barang]"
-                            class="block w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-1 focus:ring-green-500/20 bg-white dark:bg-gray-800 dark:text-white input-kode-barang-${detailIndex}"
-                            placeholder="">
+                        <input type="text" name="list_barang[${detailIndex}][${barangIndex}][kode_barang]" value="${kodeBarang}"
+                            class="block w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-1 focus:ring-green-500/20 bg-white dark:bg-gray-800 dark:text-white"
+                            placeholder="LT001">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Merk <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="list_barang[${detailIndex}][${barangIndex}][merk]" required
+                        <input type="text" name="list_barang[${detailIndex}][${barangIndex}][merk]" value="${merk}" required
                             class="block w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-1 focus:ring-green-500/20 bg-white dark:bg-gray-800 dark:text-white"
                             placeholder="HP">
                     </div>
@@ -250,7 +276,7 @@
                         <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Lokasi
                         </label>
-                        <input type="text" name="list_barang[${detailIndex}][${barangIndex}][lokasi]"
+                        <input type="text" name="list_barang[${detailIndex}][${barangIndex}][lokasi]" value="${lokasi}"
                             class="lokasi-input block w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-1 focus:ring-green-500/20 bg-white dark:bg-gray-800 dark:text-white"
                             placeholder="Gudang A">
                     </div>
@@ -259,24 +285,32 @@
             `;
             }
 
+            // Update barang items based on jumlah
             function updateBarangItems(detailIndex) {
                 const detailItem = document.querySelector(`.detail-item[data-index="${detailIndex}"]`);
                 const jumlah = parseInt(detailItem.querySelector('.jumlah-input').value) || 0;
                 const container = detailItem.querySelector('.barang-items');
 
-                container.innerHTML = '';
+                const currentItems = container.querySelectorAll('.barang-item').length;
 
-                for (let i = 0; i < jumlah; i++) {
-                    container.insertAdjacentHTML('beforeend', createBarangItem(detailIndex, i));
+                if (jumlah > currentItems) {
+                    // Add new items
+                    for (let i = currentItems; i < jumlah; i++) {
+                        container.insertAdjacentHTML('beforeend', createBarangItem(detailIndex, i));
+                    }
+                } else if (jumlah < currentItems) {
+                    // Remove excess items
+                    const items = container.querySelectorAll('.barang-item');
+                    for (let i = currentItems - 1; i >= jumlah; i--) {
+                        items[i].remove();
+                    }
                 }
 
+                // Apply lokasi default if exists
                 applyLokasiToAll(detailIndex);
-
-                if (jumlah > 1) {
-                    setKodeUtama(detailIndex, listKodeUtama[detailIndex][0]);
-                }
             }
 
+            // Apply lokasi default to all barang items
             function applyLokasiToAll(detailIndex) {
                 const detailItem = document.querySelector(`.detail-item[data-index="${detailIndex}"]`);
                 const lokasiDefault = detailItem.querySelector('.lokasi-default').value;
@@ -290,24 +324,27 @@
                 }
             }
 
-            function setKodeUtama(index, jenis_barang_id) {
-                console.log(index, jenis_barang_id);
-                const jenis = jenisBarangList.find(
-                    j => j.jenis_barang_id === jenis_barang_id
-                );
-
-                listKodeUtama[index] = [jenis_barang_id, jenis.kode_utama];
-
-                const inputKodeBarangs = document.querySelectorAll(`.input-kode-barang-${index}`);
-                inputKodeBarangs.forEach(input => {
-                    input.placeholder = `Sudah berawal ${jenis.kode_utama}`;
-                });
-            }
-
+            // Update jenis info
             function updateJenisInfo(detailIndex) {
-                updateBarangItems(detailIndex);
+                // Can add additional logic here if needed
             }
 
+            // Load existing details
+            existingDetails.forEach((detail, index) => {
+                const container = document.getElementById('detailContainer');
+                container.insertAdjacentHTML('beforeend', createDetailItem(index, detail));
+
+                // Load barang items for this detail
+                const detailElement = container.querySelector(`.detail-item[data-index="${index}"]`);
+                const barangContainer = detailElement.querySelector('.barang-items');
+
+                detail.barang_items.forEach((barang, barangIndex) => {
+                    barangContainer.insertAdjacentHTML('beforeend', createBarangItem(index, barangIndex,
+                        barang));
+                });
+            });
+
+            // Add detail item
             document.getElementById('addDetailBtn').addEventListener('click', function() {
                 const container = document.getElementById('detailContainer');
                 container.insertAdjacentHTML('beforeend', createDetailItem(detailIndex));
@@ -315,20 +352,24 @@
                 updateRemoveButtons();
             });
 
+            // Remove detail item
             document.addEventListener('click', function(e) {
                 if (e.target.closest('.remove-detail-btn')) {
                     const btn = e.target.closest('.remove-detail-btn');
                     const item = btn.closest('.detail-item');
 
                     if (document.querySelectorAll('.detail-item').length > 1) {
-                        item.remove();
-                        updateItemNumbers();
+                        if (confirm('Yakin ingin menghapus jenis barang ini dan semua barang di dalamnya?')) {
+                            item.remove();
+                            updateItemNumbers();
+                        }
                     } else {
                         alert('Minimal harus ada 1 jenis barang');
                     }
                 }
             });
 
+            // Update item numbers
             function updateItemNumbers() {
                 document.querySelectorAll('.detail-item').forEach((item, index) => {
                     const numberBadge = item.querySelector('.bg-blue-600');
@@ -339,6 +380,7 @@
                 });
             }
 
+            // Update remove button visibility
             function updateRemoveButtons() {
                 const items = document.querySelectorAll('.detail-item');
                 items.forEach(item => {
@@ -347,7 +389,8 @@
                 });
             }
 
-            document.getElementById('addDetailBtn').click();
+            // Initialize button states
+            updateRemoveButtons();
         </script>
     @endpush
 </x-app-layout>

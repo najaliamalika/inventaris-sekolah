@@ -2,7 +2,7 @@
     <div class="min-h-screen bg-gradient-to-br from-green-50 via-white to-indigo-50 py-12">
         <div class="max-w-2xl mx-auto px-6">
             <!-- Back Button -->
-            <a href="{{ route('kategori-item.index') }}"
+            <a href="{{ route('jenis-barang.index') }}"
                 class="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors duration-200 mb-8 group">
                 <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform duration-200" fill="none"
                     stroke="currentColor" viewBox="0 0 24 24">
@@ -19,36 +19,23 @@
                         <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                         </div>
-                        {{ __('Tambah Kategori Baru') }}
+                        {{ __('Edit Jenis Barang') }}
                     </h1>
-                    <p class="text-green-100 mt-2">{{ __('Buat template kategori untuk barang inventaris') }}</p>
+                    <p class="text-green-100 mt-2">{{ __('Perbarui informasi jenis barang') }}</p>
                 </div>
 
                 <!-- Form Content -->
                 <div class="p-8">
-                    <form id="create_template" method="POST" action="{{ route('kategori-item.store') }}"
-                        class="space-y-6">
+                    <form id="update_template" method="POST"
+                        action="{{ route('jenis-barang.update', $jenisBarang->jenis_barang_id) }}" class="space-y-6">
                         @csrf
+                        @method('PUT')
 
                         <!-- Row 1: Kategori & Jenis -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="group">
-                                <x-input-label for="kategori" :value="__('Kategori')"
-                                    class="text-gray-700 font-semibold mb-2 flex items-center gap-2">
-                                    <span class="text-red-500">*</span>
-                                </x-input-label>
-                                <div class="relative">
-                                    <x-text-input id="kategori"
-                                        class="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-green-500 transition-all duration-200 hover:border-gray-300 bg-gray-50 focus:bg-white"
-                                        type="text" name="kategori" :value="old('kategori')"
-                                        placeholder="Contoh: Elektronik" required autocomplete="kategori" />
-                                </div>
-                                <x-input-error :messages="$errors->get('kategori')" class="mt-2" />
-                            </div>
-
                             <div class="group">
                                 <x-input-label for="jenis" :value="__('Jenis')"
                                     class="text-gray-700 font-semibold mb-2 flex items-center gap-2">
@@ -57,9 +44,24 @@
                                 <x-text-input id="jenis"
                                     class="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-green-500 transition-all duration-200 hover:border-gray-300 bg-gray-50 focus:bg-white"
                                     type="text" name="jenis" placeholder="Contoh: Laptop" required
-                                    :value="old('jenis')" autocomplete="jenis" />
+                                    :value="old('jenis', $jenisBarang->jenis)" autocomplete="jenis" />
                                 <x-input-error :messages="$errors->get('jenis')" class="mt-2" />
                             </div>
+                            <div class="group">
+                                <x-input-label for="kategori" :value="__('Kategori')"
+                                    class="text-gray-700 font-semibold mb-2 flex items-center gap-2">
+                                    <span class="text-red-500">*</span>
+                                </x-input-label>
+                                <div class="relative">
+                                    <x-text-input id="kategori"
+                                        class="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-green-500 transition-all duration-200 hover:border-gray-300 bg-gray-50 focus:bg-white"
+                                        type="text" name="kategori" :value="old('kategori', $jenisBarang->kategori)"
+                                        placeholder="Contoh: Elektronik" required autocomplete="kategori" />
+                                </div>
+                                <x-input-error :messages="$errors->get('kategori')" class="mt-2" />
+                            </div>
+
+
                         </div>
 
                         <!-- Row 2: Kode Utama & Satuan -->
@@ -70,7 +72,7 @@
                                 <div class="relative">
                                     <x-text-input id="kode_utama"
                                         class="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-green-500 transition-all duration-200 hover:border-gray-300 bg-gray-50 focus:bg-white"
-                                        type="text" name="kode_utama" placeholder="Contoh: ELK-001" :value="old('kode_utama')"
+                                        type="text" name="kode_utama" placeholder="Contoh: ELK-001" :value="old('kode_utama', $jenisBarang->kode_utama)"
                                         autocomplete="kode_utama" />
                                     <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                         <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
@@ -91,14 +93,14 @@
                                 <x-text-input id="satuan"
                                     class="block w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-green-500 transition-all duration-200 hover:border-gray-300 bg-gray-50 focus:bg-white"
                                     type="text" name="satuan" placeholder="Contoh: Unit, Pcs, Box" required
-                                    :value="old('satuan')" autocomplete="satuan" />
+                                    :value="old('satuan', $jenisBarang->satuan)" autocomplete="satuan" />
                                 <x-input-error :messages="$errors->get('satuan')" class="mt-2" />
                             </div>
                         </div>
 
                         <!-- Action Buttons -->
                         <div class="flex items-center justify-end pt-6 border-t border-gray-200 space-x-4">
-                            <a href="{{ route('kategori-item.index') }}"
+                            <a href="{{ route('jenis-barang.index') }}"
                                 class="px-6 py-3 border-2 border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -107,19 +109,20 @@
                                 {{ __('Batal') }}
                             </a>
 
-                            <x-primary-button x-data @click="$dispatch('open-modal', 'save_confirmation')"
-                                class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-400 hover:from-green-700 hover:to-green-500 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2">
+                            <x-primary-button x-data type="button"
+                                @click="$dispatch('open-modal', 'update_confirmation')"
+                                class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-400 hover:from-green-700 hover:to-green-500 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 text-white">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7" />
                                 </svg>
-                                {{ __('Simpan Kategori') }}
+                                {{ __('Simpan Perubahan') }}
                             </x-primary-button>
-                        </div>
 
-                        <x-confirm-modal id="save_confirmation"
-                            message="Apakah kamu yakin ingin membuat kategori baru?" okLabel="Simpan"
-                            cancelLabel="Batal" :url="route('kategori-item.store')" formId="create_template" />
+                            <x-confirm-modal id="update_confirmation"
+                                message="Apakah kamu yakin ingin memperbarui informasi jenis barang ini?"
+                                okLabel="Simpan" cancelLabel="Batal" :url="route('jenis-barang.update', $jenisBarang->jenis_barang_id)" formId="update_template" />
+                        </div>
                     </form>
                 </div>
             </div>

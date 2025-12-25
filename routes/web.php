@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ItemController;
-use App\Http\Controllers\ItemTemplateController;
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\BarangKeluarController;
+use App\Http\Controllers\BarangMasukController;
+use App\Http\Controllers\JenisBarangController;
 use App\Http\Controllers\KeluarController;
 use App\Http\Controllers\MasukController;
 use App\Http\Controllers\PeminjamanController;
@@ -21,44 +23,43 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth', 'verified')->group(function () {
-    Route::get('/item', [ItemController::class, 'index'])->name('items.index');
-    Route::get('/item/create', [ItemController::class, 'create'])->name('items.create');
-    Route::post('/item', [ItemController::class, 'store'])->name('items.store');
-    Route::get('/item/{item_id}/edit', [ItemController::class, 'edit'])->name('items.edit');
-    Route::get('/item/{item_id}', [ItemController::class, 'show'])->name('items.show');
-    Route::put('/item/{item_id}', [ItemController::class, 'update'])->name('items.update');
-    Route::delete('/item/{item_id}', [ItemController::class, 'destroy'])->name('items.destroy');
+    Route::get('/barang', [BarangController::class, 'index'])->name('barang.index');
+    Route::get('/barang/{jenis_barang_id}/create', [BarangController::class, 'create'])->name('barang.create');
+    Route::post('/barang', [BarangController::class, 'store'])->name('barang.store');
+    Route::get('/barang/{jenis_barang_id}/{barang_id}/edit', [BarangController::class, 'edit'])->name('barang.edit');
+    Route::get('/barang/{barang_id}', [BarangController::class, 'show'])->name('barang.show');
+    Route::put('/barang/{barang_id}', [BarangController::class, 'update'])->name('barang.update');
+    Route::delete('/barang/{barang_id}', [BarangController::class, 'destroy'])->name('barang.destroy');
 
-    Route::get('/kategori-item', [ItemTemplateController::class, 'index'])->name('kategori-item.index');
-    Route::get('/kategori-item/create', [ItemTemplateController::class, 'create'])->name('kategori-item.create');
-    Route::post('/kategori-item', [ItemTemplateController::class, 'store'])->name('kategori-item.store');
-    Route::get('/kategori-item/{item_template_id}/edit', [ItemTemplateController::class, 'edit'])->name('kategori-item.edit');
-    Route::get('/kategori-item/{item_template_id}', [ItemTemplateController::class, 'show'])->name('kategori-item.show');
-    Route::put('/kategori-item/{item_template_id}', [ItemTemplateController::class, 'update'])->name('kategori-item.update');
-    Route::delete('/kategori-item/{item_template_id}', [ItemTemplateController::class, 'destroy'])->name('kategori-item.destroy');
+    Route::get('/jenis-barang', [JenisBarangController::class, 'index'])->name('jenis-barang.index');
+    Route::get('/jenis-barang/create', [JenisBarangController::class, 'create'])->name('jenis-barang.create');
+    Route::post('/jenis-barang', [JenisBarangController::class, 'store'])->name('jenis-barang.store');
+    Route::get('/jenis-barang/{jenis_barang_id}/edit', [JenisBarangController::class, 'edit'])->name('jenis-barang.edit');
+    Route::get('/jenis-barang/{jenis_barang_id}', [JenisBarangController::class, 'show'])->name('jenis-barang.show');
+    Route::put('/jenis-barang/{jenis_barang_id}', [JenisBarangController::class, 'update'])->name('jenis-barang.update');
+    Route::delete('/jenis-barang/{jenis_barang_id}', [JenisBarangController::class, 'destroy'])->name('jenis-barang.destroy');
 
-    Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
-    Route::get('/peminjaman/create', [PeminjamanController::class, 'create'])->name('peminjaman.create');
-    Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
-    Route::get('/peminjaman/{peminjaman_id}', [PeminjamanController::class, 'edit'])->name('peminjaman.edit');
-    Route::put('/peminjaman/{peminjaman_id}', [PeminjamanController::class, 'update'])->name('peminjaman.update');
-    Route::delete('/peminjaman/{peminjaman_id}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
+    Route::resource('peminjaman', PeminjamanController::class);
+    Route::post('/peminjaman/barang/{peminjaman_barang_id}/kembalikan', [PeminjamanController::class, 'kembalikanBarang'])->name('peminjaman.kembalikan-barang');
 
     // Barang Masuk Routes
-    Route::get('/barang-masuk', [MasukController::class, 'index'])->name('barang-masuk.index');
-    Route::get('/barang-masuk/create', [MasukController::class, 'create'])->name('barang-masuk.create');
-    Route::post('/barang-masuk', [MasukController::class, 'store'])->name('barang-masuk.store');
-    Route::get('/barang-masuk/{masuk_id}', [MasukController::class, 'edit'])->name('barang-masuk.edit');
-    Route::put('/barang-masuk/{masuk_id}', [MasukController::class, 'update'])->name('barang-masuk.update');
-    Route::delete('/barang-masuk/{masuk_id}', [MasukController::class, 'destroy'])->name('barang-masuk.destroy');
+    Route::get('/barang-masuk', [BarangMasukController::class, 'index'])->name('barang-masuk.index');
+    Route::get('/barang-masuk/create', [BarangMasukController::class, 'create'])->name('barang-masuk.create');
+    Route::post('/barang-masuk', [BarangMasukController::class, 'store'])->name('barang-masuk.store');
+    Route::get('/barang-masuk/{masuk_id}', [BarangMasukController::class, 'show'])->name('barang-masuk.show');
+    Route::get('/barang-masuk/{masuk_id}/edit', [BarangMasukController::class, 'edit'])->name('barang-masuk.edit');
+    Route::put('/barang-masuk/{masuk_id}', [BarangMasukController::class, 'update'])->name('barang-masuk.update');
+    Route::delete('/barang-masuk/{masuk_id}', [BarangMasukController::class, 'destroy'])->name('barang-masuk.destroy');
 
     // Barang Keluar Routes
-    Route::get('/barang-keluar', [KeluarController::class, 'index'])->name('barang-keluar.index');
-    Route::get('/barang-keluar/create', [KeluarController::class, 'create'])->name('barang-keluar.create');
-    Route::post('/barang-keluar', [KeluarController::class, 'store'])->name('barang-keluar.store');
-    Route::get('/barang-keluar/{keluar_id}', [KeluarController::class, 'edit'])->name('barang-keluar.edit');
-    Route::put('/barang-keluar/{keluar_id}', [KeluarController::class, 'update'])->name('barang-keluar.update');
-    Route::delete('/barang-keluar/{keluar_id}', [KeluarController::class, 'destroy'])->name('barang-keluar.destroy');
+    Route::get('/barang-keluar', [BarangKeluarController::class, 'index'])->name('barang-keluar.index');
+    Route::get('/barang-keluar/create', [BarangKeluarController::class, 'create'])->name('barang-keluar.create');
+    Route::post('/barang-keluar', [BarangKeluarController::class, 'store'])->name('barang-keluar.store');
+    Route::get('/barang-keluar/{keluar_id}', [BarangKeluarController::class, 'show'])->name('barang-keluar.show');
+    Route::get('/barang-keluar/{keluar_id}/edit', [BarangKeluarController::class, 'edit'])->name('barang-keluar.edit');
+    Route::put('/barang-keluar/{keluar_id}', [BarangKeluarController::class, 'update'])->name('barang-keluar.update');
+    Route::delete('/barang-keluar/{keluar_id}', [BarangKeluarController::class, 'destroy'])->name('barang-keluar.destroy');
+    Route::get('/barang-keluar/get-available-barang/{jenis_barang_id}', [BarangKeluarController::class, 'getAvailableBarang'])->name('barang-keluar.get-available-barang');
 });
 
 Route::get('/', function () {

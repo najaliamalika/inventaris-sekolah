@@ -41,7 +41,7 @@
                     return `
                 <div id="${id}" 
                     class="transform translate-x-full opacity-0 transition-all duration-300 ease-out pointer-events-auto">
-                    <div class="flex items-start gap-3 p-4 rounded-lg shadow-lg ${styles.bg} border ${styles.border}">
+                    <div class="flex barang-start gap-3 p-4 rounded-lg shadow-lg ${styles.bg} border ${styles.border}">
                         <!-- Icon -->
                         <div class="flex-shrink-0">
                             ${styles.icon}

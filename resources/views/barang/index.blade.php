@@ -10,7 +10,7 @@
         <div class="max-w-7xl mx-auto px-6">
             <!-- Search and Filter Section -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                <form action="{{ route('items.index') }}" method="GET" class="md:col-span-2 space-y-3">
+                <form action="{{ route('barang.index') }}" method="GET" class="md:col-span-2 space-y-3">
                     <div class="flex gap-3">
                         <div class="relative flex-1">
                             <input type="text" name="search"
@@ -38,10 +38,10 @@
                         <select name="kategori"
                             class="px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-green-500 focus:ring-green-500 text-sm bg-white">
                             <option value="">Semua Kategori</option>
-                            @foreach ($itemTemplates as $template)
-                                <option value="{{ $template->kategori }}"
-                                    {{ request('kategori') == $template->kategori ? 'selected' : '' }}>
-                                    {{ $template->kategori }}
+                            @foreach ($jenisBarang as $jenis)
+                                <option value="{{ $jenis->kategori }}"
+                                    {{ request('kategori') == $jenis->kategori ? 'selected' : '' }}>
+                                    {{ $jenis->kategori }}
                                 </option>
                             @endforeach
                         </select>
@@ -57,7 +57,7 @@
                         </select>
 
                         @if (request('search') || request('kategori') || request('kondisi'))
-                            <a href="{{ route('items.index') }}"
+                            <a href="{{ route('barang.index') }}"
                                 class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors text-sm font-medium flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -71,7 +71,7 @@
 
                 @hasrole('admin')
                     <div class="flex justify-end">
-                        <a href="{{ route('items.create') }}"
+                        <a href="{{ route('barang.create') }}"
                             class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold rounded-xl transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2 w-full md:w-auto justify-center">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -83,7 +83,6 @@
                 @endhasrole
             </div>
 
-            <!-- Table Card -->
             <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full">
@@ -100,10 +99,10 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            @forelse ($items as $index => $item)
+                            @forelse ($barang as $index => $item)
                                 <tr class="hover:bg-gray-50 transition-colors duration-150 group">
                                     <td class="px-6 py-4 text-sm font-medium text-gray-900">
-                                        {{ $items->firstItem() + $index }}
+                                        {{ $barang->firstItem() + $index }}
                                     </td>
 
                                     <td class="px-6 py-4">
@@ -130,10 +129,10 @@
                                     </td>
 
                                     <td class="px-6 py-4">
-                                        @if ($item->itemTemplate)
+                                        @if ($item->jenisBarang)
                                             <span
                                                 class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium bg-indigo-100 text-indigo-700">
-                                                {{ $item->itemTemplate->kategori }}
+                                                {{ $item->jenisBarang->kategori }}
                                             </span>
                                         @else
                                             <span class="text-sm text-gray-400">-</span>
@@ -170,7 +169,7 @@
 
                                     <td class="px-6 py-4">
                                         <div class="flex items-center justify-center gap-2">
-                                            <a href="{{ route('items.edit', $item->item_id) }}"
+                                            <a href="{{ route('barang.edit', $item->barang_id) }}"
                                                 class="p-2.5 text-blue-600 hover:bg-blue-100 rounded-lg transition-all duration-200 hover:scale-110"
                                                 title="Edit">
                                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -181,7 +180,7 @@
                                             </a>
 
                                             <button x-data
-                                                @click="$dispatch('open-modal', 'delete_item_{{ $item->item_id }}')"
+                                                @click="$dispatch('open-modal', 'delete_item_{{ $item->barang_id }}')"
                                                 class="p-2.5 text-red-600 hover:bg-red-100 rounded-lg transition-all duration-200 hover:scale-110"
                                                 title="Hapus">
                                                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -190,9 +189,9 @@
                                                 </svg>
                                             </button>
 
-                                            <x-confirm-modal id="delete_item_{{ $item->item_id }}"
+                                            <x-confirm-modal id="delete_item_{{ $item->barang_id }}"
                                                 message="Apakah Anda yakin ingin menghapus {{ $item->nama_barang }}? Tindakan ini tidak dapat dibatalkan."
-                                                okLabel="Hapus" cancelLabel="Batal" :url="route('items.destroy', $item->item_id)"
+                                                okLabel="Hapus" cancelLabel="Batal" :url="route('barang.destroy', $item->barang_id)"
                                                 method="DELETE" />
                                         </div>
                                     </td>
@@ -211,7 +210,7 @@
                                             <p class="text-sm text-gray-400 mb-6">Barang yang Anda cari tidak ditemukan
                                             </p>
                                             @hasrole('admin')
-                                                <a href="{{ route('items.create') }}"
+                                                <a href="{{ route('barang.create') }}"
                                                     class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 text-sm font-medium">
                                                     Tambah Barang Pertama
                                                 </a>
@@ -226,7 +225,7 @@
 
                 <!-- Pagination -->
                 <div class="px-6 py-6 border-t border-gray-200 bg-gray-50">
-                    {{ $items->withQueryString()->links() }}
+                    {{ $barang->withQueryString()->links() }}
                 </div>
             </div>
         </div>

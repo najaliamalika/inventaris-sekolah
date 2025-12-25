@@ -2,15 +2,15 @@
     <x-slot name="header">
         <div>
             <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-100 leading-tight">
-                {{ __('Tambah Peminjaman Baru') }}
+                {{ __('Edit Peminjaman') }}
             </h2>
-            <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">Catat peminjaman barang baru</p>
+            <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">Perbarui data peminjaman barang</p>
         </div>
     </x-slot>
 
     <!-- Back Button -->
     <div class="mb-6 max-w-5xl mx-auto px-6">
-        <a href="{{ route('peminjaman.index') }}"
+        <a href="{{ route('peminjaman.show', $peminjaman->peminjaman_id) }}"
             class="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200 group">
             <svg class="w-5 h-5 transform group-hover:-translate-x-1 transition-transform duration-200" fill="none"
                 stroke="currentColor" viewBox="0 0 24 24">
@@ -27,9 +27,11 @@
 
             <!-- Form Content -->
             <div class="p-8">
-                <form id="create_peminjaman" method="POST" action="{{ route('peminjaman.store') }}"
-                    enctype="multipart/form-data" class="space-y-6" x-data="peminjamanForm()">
+                <form id="update_peminjaman" method="POST"
+                    action="{{ route('peminjaman.update', $peminjaman->peminjaman_id) }}" enctype="multipart/form-data"
+                    class="space-y-6" x-data="peminjamanForm()">
                     @csrf
+                    @method('PUT')
 
                     <!-- Row 1: Tanggal & Nama Peminjam -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -40,7 +42,10 @@
                             </x-input-label>
                             <x-text-input id="tanggal_peminjaman"
                                 class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
-                                type="datetime-local" name="tanggal_peminjaman" :value="old('tanggal_peminjaman')" required />
+                                type="datetime-local" name="tanggal_peminjaman" :value="old(
+                                    'tanggal_peminjaman',
+                                    $peminjaman->tanggal_peminjaman->format('Y-m-d\TH:i'),
+                                )" required />
                             <x-input-error :messages="$errors->get('tanggal_peminjaman')" class="mt-2" />
                         </div>
 
@@ -51,8 +56,7 @@
                             </x-input-label>
                             <x-text-input id="nama_peminjam"
                                 class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
-                                type="text" name="nama_peminjam" placeholder="Contoh: John Doe" required
-                                :value="old('nama_peminjam')" />
+                                type="text" name="nama_peminjam" required :value="old('nama_peminjam', $peminjaman->nama_peminjam)" />
                             <x-input-error :messages="$errors->get('nama_peminjam')" class="mt-2" />
                         </div>
                     </div>
@@ -64,23 +68,43 @@
                         </x-input-label>
                         <textarea id="keterangan" name="keterangan" rows="3"
                             class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
-                            placeholder="Contoh: Untuk keperluan proyek X (opsional)">{{ old('keterangan') }}</textarea>
+                            placeholder="Contoh: Untuk keperluan proyek X (opsional)">{{ old('keterangan', $peminjaman->keterangan) }}</textarea>
                         <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
                     </div>
+
+                    <!-- Existing Image Display -->
+                    @if ($peminjaman->foto_peminjaman && isset($peminjaman->foto_peminjaman_url))
+                        <div class="mb-4" id="existing_image_container">
+                            <div
+                                class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 border-2 border-gray-200 dark:border-gray-600">
+                                <p
+                                    class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Foto Peminjaman Saat Ini:
+                                </p>
+                                <img src="{{ $peminjaman->foto_peminjaman_url }}" alt="Foto Peminjaman"
+                                    class="max-w-xs max-h-48 rounded-lg shadow-md border-2 border-white dark:border-gray-600" />
+                            </div>
+                        </div>
+                    @endif
 
                     <!-- Image Upload Section -->
                     <div class="group">
                         <x-input-label for="foto_peminjaman" :value="__('Foto Peminjaman')"
-                            class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
-                            <span class="text-red-500">*</span>
-                        </x-input-label>
+                            class="text-gray-700 dark:text-gray-300 font-semibold mb-2" />
 
                         <div class="relative">
                             <label
                                 class="flex items-center justify-between w-full px-4 py-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl hover:border-green-400 dark:hover:border-green-500 focus-within:border-green-500 transition-all duration-200 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                                 for="foto_peminjaman">
                                 <span id="fileName" class="text-gray-500 dark:text-gray-400 text-sm font-medium">
-                                    📷 Pilih foto peminjaman (jpg, jpeg, png - Max 5MB)
+                                    📷
+                                    {{ $peminjaman->foto_peminjaman ? 'Pilih foto baru untuk mengganti' : 'Pilih file gambar' }}
+                                    (jpg, jpeg, png - Max 5MB)
                                 </span>
                                 <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
@@ -90,10 +114,10 @@
                             </label>
 
                             <input id="foto_peminjaman" class="hidden" type="file" name="foto_peminjaman"
-                                accept="image/*" required />
+                                accept="image/*" />
                         </div>
 
-                        <!-- Image Preview -->
+                        <!-- New Image Preview -->
                         <div id="preview_wrapper" class="mt-4 hidden">
                             <div
                                 class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 border-2 border-gray-200 dark:border-gray-600">
@@ -104,14 +128,15 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 13l4 4L19 7" />
                                     </svg>
-                                    Preview Foto:
+                                    Preview Foto Baru:
                                 </p>
                                 <div class="relative inline-block">
                                     <img id="image_preview" src="" alt="Preview"
                                         class="max-w-xs max-h-48 rounded-lg shadow-md border-2 border-white dark:border-gray-600" />
                                     <button type="button" id="removeImage"
                                         class="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M6 18L18 6M6 6l12 12" />
                                         </svg>
@@ -121,6 +146,12 @@
                         </div>
 
                         <x-input-error :messages="$errors->get('foto_peminjaman')" class="mt-2" />
+
+                        @if ($peminjaman->foto_peminjaman)
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                💡 Kosongkan jika tidak ingin mengubah foto
+                            </p>
+                        @endif
                     </div>
 
                     <!-- Divider -->
@@ -137,6 +168,21 @@
                             <span
                                 class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm font-semibold"
                                 x-text="`${items.length} Barang`"></span>
+                        </div>
+
+                        <div
+                            class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-4">
+                            <p class="text-sm text-yellow-800 dark:text-yellow-200 flex items-start gap-2">
+                                <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                <span>
+                                    <strong>Perhatian:</strong> Hanya barang yang masih dipinjam yang dapat diedit.
+                                    Barang yang sudah dikembalikan tidak bisa diubah.
+                                </span>
+                            </p>
                         </div>
                     </div>
 
@@ -180,6 +226,12 @@
                                                         {{ $item->nama_barang }} - {{ $item->jenisBarang->jenis ?? '' }}
                                                     </option>
                                                 @endforeach
+                                                @foreach ($peminjaman->peminjamanBarang->where('status', 'dipinjam') as $pb)
+                                                    <option value="{{ $pb->barang_id }}">
+                                                        {{ $pb->barang->nama_barang }} -
+                                                        {{ $pb->barang->jenisBarang->jenis ?? '' }} (Sedang Dipinjam)
+                                                    </option>
+                                                @endforeach
                                             </select>
                                             <div
                                                 class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
@@ -221,7 +273,7 @@
                     <!-- Action Buttons -->
                     <div
                         class="flex items-center justify-end pt-6 border-t border-gray-200 dark:border-gray-700 space-x-4">
-                        <a href="{{ route('peminjaman.index') }}"
+                        <a href="{{ route('peminjaman.show', $peminjaman->peminjaman_id) }}"
                             class="px-6 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-400 transition-all duration-200 flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -230,32 +282,48 @@
                             {{ __('Batal') }}
                         </a>
 
-                        <button type="button" x-data @click="$dispatch('open-modal', 'save_confirmation')"
+                        <button type="button" x-data @click="$dispatch('open-modal', 'update_confirmation')"
                             class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
-                            {{ __('Simpan Peminjaman') }}
+                            {{ __('Perbarui Peminjaman') }}
                         </button>
                     </div>
-
-                    <x-confirm-modal id="save_confirmation"
-                        message="Apakah Anda yakin ingin menyimpan data peminjaman ini?" okLabel="Simpan"
-                        cancelLabel="Batal" :url="route('peminjaman.store')" formId="create_peminjaman" />
+                    <x-confirm-modal id="update_confirmation"
+                        message="Apakah Anda yakin ingin memperbarui data peminjaman ini?" okLabel="Perbarui"
+                        cancelLabel="Batal" :url="route('peminjaman.update', $peminjaman->peminjaman_id)" formId="update_peminjaman" />
                 </form>
             </div>
         </div>
     </div>
 
+    @php
+        $items = $peminjaman->peminjamanBarang
+            ->where('status', 'dipinjam')
+            ->map(function ($pb) {
+                return [
+                    'barang_id' => $pb->barang_id,
+                    'catatan' => $pb->catatan,
+                ];
+            })
+            ->values()
+            ->toArray();
+    @endphp
+
     @push('scripts')
         <script>
             function peminjamanForm() {
                 return {
-                    items: [{
-                        barang_id: '',
-                        catatan: ''
-                    }],
+                    items: {!! json_encode(
+                        $peminjaman->peminjamanBarang->where('status', 'dipinjam')->map(function ($pb) {
+                                return [
+                                    'barang_id' => $pb->barang_id,
+                                    'catatan' => $pb->catatan ?? '',
+                                ];
+                            })->values()->toArray(),
+                    ) !!},
                     addItem() {
                         this.items.push({
                             barang_id: '',
@@ -276,42 +344,58 @@
             const previewWrapper = document.getElementById('preview_wrapper');
             const previewImage = document.getElementById('image_preview');
             const removeImageBtn = document.getElementById('removeImage');
+            const existingImageContainer = document.getElementById('existing_image_container');
 
-            fileInput.addEventListener('change', function(e) {
-                const file = this.files[0];
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    const file = this.files[0];
 
-                if (file) {
-                    // Validate file size (5MB)
-                    if (file.size > 5 * 1024 * 1024) {
-                        alert('Ukuran file terlalu besar! Maksimal 5MB');
-                        this.value = '';
-                        return;
+                    if (file) {
+                        // Validate file size (5MB)
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('Ukuran file terlalu besar! Maksimal 5MB');
+                            this.value = '';
+                            return;
+                        }
+
+                        fileNameDisplay.textContent = '✓ ' + file.name;
+                        fileNameDisplay.classList.remove('text-gray-500', 'dark:text-gray-400');
+                        fileNameDisplay.classList.add('text-green-600', 'dark:text-green-400', 'font-semibold');
+
+                        if (file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                previewImage.src = e.target.result;
+                                previewWrapper.classList.remove('hidden');
+                                previewWrapper.classList.add('animate-fade-in');
+
+                                // Hide existing image when new image is selected
+                                if (existingImageContainer) {
+                                    existingImageContainer.style.opacity = '0.5';
+                                }
+                            };
+                            reader.readAsDataURL(file);
+                        }
                     }
+                });
 
-                    fileNameDisplay.textContent = '✓ ' + file.name;
-                    fileNameDisplay.classList.remove('text-gray-500', 'dark:text-gray-400');
-                    fileNameDisplay.classList.add('text-green-600', 'dark:text-green-400', 'font-semibold');
+                // Remove image
+                removeImageBtn.addEventListener('click', function() {
+                    fileInput.value = '';
+                    const hasExistingImage = {{ $peminjaman->foto_peminjaman ? 'true' : 'false' }};
+                    fileNameDisplay.textContent = hasExistingImage ?
+                        '📷 Pilih foto baru untuk mengganti (jpg, jpeg, png - Max 5MB)' :
+                        '📷 Pilih file gambar (jpg, jpeg, png - Max 5MB)';
+                    fileNameDisplay.classList.remove('text-green-600', 'dark:text-green-400', 'font-semibold');
+                    fileNameDisplay.classList.add('text-gray-500', 'dark:text-gray-400');
+                    previewWrapper.classList.add('hidden');
 
-                    if (file.type.startsWith('image/')) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            previewImage.src = e.target.result;
-                            previewWrapper.classList.remove('hidden');
-                            previewWrapper.classList.add('animate-fade-in');
-                        };
-                        reader.readAsDataURL(file);
+                    // Show existing image again
+                    if (existingImageContainer) {
+                        existingImageContainer.style.opacity = '1';
                     }
-                }
-            });
-
-            // Remove image
-            removeImageBtn.addEventListener('click', function() {
-                fileInput.value = '';
-                fileNameDisplay.textContent = '📷 Pilih foto peminjaman (jpg, jpeg, png - Max 5MB)';
-                fileNameDisplay.classList.remove('text-green-600', 'dark:text-green-400', 'font-semibold');
-                fileNameDisplay.classList.add('text-gray-500', 'dark:text-gray-400');
-                previewWrapper.classList.add('hidden');
-            });
+                });
+            }
 
             // Form group focus animations
             document.addEventListener('DOMContentLoaded', function() {

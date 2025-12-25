@@ -12,14 +12,42 @@ return new class extends Migration {
     {
         Schema::create('barang_keluar', function (Blueprint $table) {
             $table->uuid('keluar_id')->primary();
+            $table->uuid('jenis_barang_id');
             $table->dateTime('tanggal');
+            $table->enum('kategori', [
+                'habis_pakai',
+                'rusak',
+                'tidak_layak',
+                'sedang_diperbaiki',
+                'dihibahkan'
+            ])->default('habis_pakai');
+            $table->string('penerima')->nullable();
             $table->integer('jumlah');
-            $table->string('keterangan');
-            $table->uuid('item_id');
-            $table->uuid('masuk_id');
-            $table->enum('kategori', ['habis_pakai', 'rusak', 'tidak_layak', 'sedang_diperbaiki', 'dihibahkan'])->default('habis_pakai');
-            $table->foreign('item_id')->references('item_id')->on('items')->cascadeOnDelete();
-            $table->foreign('masuk_id')->references('masuk_id')->on('barang_masuk')->cascadeOnDelete();
+            $table->text('keterangan')->nullable();
+
+            $table->foreign('jenis_barang_id')
+                ->references('jenis_barang_id')
+                ->on('jenis_barang')
+                ->cascadeOnDelete();
+
+            $table->timestamps();
+        });
+
+        Schema::create('barang_keluar_items', function (Blueprint $table) {
+            $table->uuid('keluar_item_id')->primary();
+            $table->uuid('keluar_id');
+            $table->uuid('barang_id');
+
+            $table->foreign('keluar_id')
+                ->references('keluar_id')
+                ->on('barang_keluar')
+                ->cascadeOnDelete();
+
+            $table->foreign('barang_id')
+                ->references('barang_id')
+                ->on('barang')
+                ->cascadeOnDelete();
+
             $table->timestamps();
         });
     }
@@ -29,6 +57,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
+        Schema::dropIfExists('barang_keluar_items');
         Schema::dropIfExists('barang_keluar');
     }
 };
