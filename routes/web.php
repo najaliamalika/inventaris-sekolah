@@ -8,6 +8,7 @@ use App\Http\Controllers\JenisBarangController;
 use App\Http\Controllers\KeluarController;
 use App\Http\Controllers\MasukController;
 use App\Http\Controllers\PeminjamanController;
+use App\Http\Controllers\PengajuanController;
 use App\Models\Peminjaman;
 use Illuminate\Support\Facades\Route;
 
@@ -60,6 +61,13 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::put('/barang-keluar/{keluar_id}', [BarangKeluarController::class, 'update'])->name('barang-keluar.update');
     Route::delete('/barang-keluar/{keluar_id}', [BarangKeluarController::class, 'destroy'])->name('barang-keluar.destroy');
     Route::get('/barang-keluar/get-available-barang/{jenis_barang_id}', [BarangKeluarController::class, 'getAvailableBarang'])->name('barang-keluar.get-available-barang');
+
+    // Pengajuan Routes
+    Route::resource('pengajuan', PengajuanController::class);
+    Route::post('/pengajuan/{pengajuan_id}/update-status', [PengajuanController::class, 'updateStatus'])
+        ->name('pengajuan.update-status');
+    Route::get('/api/pengajuan/available-barang/{jenisBarangId}', [PengajuanController::class, 'getAvailableBarangForPerbaikan'])
+        ->name('pengajuan.available-barang');
 });
 
 Route::get('/', function () {

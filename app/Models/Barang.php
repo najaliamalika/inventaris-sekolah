@@ -51,6 +51,11 @@ class Barang extends Model
         return $this->hasMany(BarangKeluarItem::class, 'barang_id', 'barang_id');
     }
 
+    public function pengajuanPerbaikanItems()
+    {
+        return $this->hasMany(PengajuanPerbaikanItem::class, 'barang_id', 'barang_id');
+    }
+
     public function getGambarUrlAttribute()
     {
         return $this->gambar

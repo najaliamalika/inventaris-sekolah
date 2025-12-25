@@ -217,7 +217,7 @@ class BarangKeluarController extends Controller
         ]);
 
         // Validate jumlah matches selected barang count
-        if (count($validated['barang_ids']) !== $validated['jumlah']) {
+        if (count($validated['barang_ids']) !== (int) $validated['jumlah']) {
             return back()
                 ->withInput()
                 ->with('error', 'Jumlah barang yang dipilih tidak sesuai dengan jumlah yang diinput');

@@ -249,7 +249,8 @@
                         {{ __('Batal') }}
                     </a>
 
-                    <button type="submit" :disabled="selectedBarang.length != jumlah || selectedBarang.length === 0"
+                    <button type="submit" x-data @click="$dispatch('open-modal', 'update_confirmation')"
+                        :disabled="selectedBarang.length != jumlah || selectedBarang.length === 0"
                         class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -258,6 +259,10 @@
                         {{ __('Perbarui') }}
                     </button>
                 </div>
+
+                <x-confirm-modal id="update_confirmation"
+                    message="Apakah Anda yakin ingin memperbarui data barang keluar ini?" okLabel="Perbarui"
+                    cancelLabel="Batal" :url="route('barang-keluar.update', $barangKeluar->keluar_id)" formId="update_barang_keluar" />
             </form>
         </div>
     </div>

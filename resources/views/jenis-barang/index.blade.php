@@ -13,25 +13,39 @@
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <!-- Search Form -->
-                <form action="{{ route('jenis-barang.index') }}" method="GET" class="lg:col-span-2 flex gap-3">
+                <form action="{{ route('jenis-barang.index') }}" method="GET" id="searchForm" class="lg:col-span-2">
                     <div class="relative flex-1">
-                        <input type="text" name="search" placeholder="Cari berdasarkan kategori, jenis, atau kode"
-                            value="{{ request('search') }}"
-                            class="w-full px-4 py-3 pl-12 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white">
+                        <input type="text" name="search" id="searchInput"
+                            placeholder="Cari berdasarkan kategori, jenis, atau kode" value="{{ request('search') }}"
+                            class="w-full px-4 py-3 pl-12 pr-10 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white">
                         <svg class="absolute left-4 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
+                        <!-- Loading indicator -->
+                        <div id="searchLoading" class="hidden absolute right-3 top-3">
+                            <svg class="animate-spin h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                        </div>
                     </div>
-                    <button type="submit"
-                        class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold rounded-xl transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2 whitespace-nowrap">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                        </svg>
-                        <span class="hidden sm:inline">Filter</span>
-                    </button>
+
+                    @if (request('search'))
+                        <a href="{{ route('jenis-barang.index') }}"
+                            class="absolute right-12 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                            title="Clear search">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </a>
+                    @endif
                 </form>
 
                 <!-- Create Button -->
@@ -152,24 +166,40 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-6 py-12 text-center">
+                            <td colspan="7" class="px-6 py-12 text-center">
                                 <div class="flex flex-col items-center justify-center">
                                     <svg class="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" fill="none"
                                         stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                             d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                     </svg>
-                                    <p class="text-lg font-semibold text-gray-500 dark:text-gray-400 mb-2">Tidak Ada
-                                        Data</p>
-                                    <p class="text-sm text-gray-400 dark:text-gray-500 mb-6">Kategori yang Anda cari
-                                        tidak
-                                        ditemukan</p>
-                                    @hasrole('admin')
-                                        <a href="{{ route('jenis-barang.create') }}"
-                                            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 text-sm font-medium">
-                                            Tambah Kategori Pertama
+                                    <p class="text-lg font-semibold text-gray-500 dark:text-gray-400 mb-2">
+                                        @if (request('search'))
+                                            Tidak Ada Hasil Pencarian
+                                        @else
+                                            Tidak Ada Data
+                                        @endif
+                                    </p>
+                                    <p class="text-sm text-gray-400 dark:text-gray-500 mb-6">
+                                        @if (request('search'))
+                                            Jenis barang "{{ request('search') }}" tidak ditemukan
+                                        @else
+                                            Belum ada jenis barang yang ditambahkan
+                                        @endif
+                                    </p>
+                                    @if (request('search'))
+                                        <a href="{{ route('jenis-barang.index') }}"
+                                            class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200 text-sm font-medium">
+                                            Reset Pencarian
                                         </a>
-                                    @endhasrole
+                                    @else
+                                        @hasrole('admin')
+                                            <a href="{{ route('jenis-barang.create') }}"
+                                                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 text-sm font-medium">
+                                                Tambah Jenis Barang Pertama
+                                            </a>
+                                        @endhasrole
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -185,4 +215,44 @@
             </div>
         @endif
     </div>
+
+    @push('scripts')
+        <script>
+            // Debounce function
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            // Auto submit form function
+            const autoSubmitForm = debounce(function() {
+                const form = document.getElementById('searchForm');
+                const loading = document.getElementById('searchLoading');
+
+                // Show loading indicator
+                if (loading) {
+                    loading.classList.remove('hidden');
+                }
+
+                form.submit();
+            }, 800); // 800ms delay
+
+            // Add event listener
+            document.addEventListener('DOMContentLoaded', function() {
+                const searchInput = document.getElementById('searchInput');
+
+                // Search input with debounce
+                if (searchInput) {
+                    searchInput.addEventListener('input', autoSubmitForm);
+                }
+            });
+        </script>
+    @endpush
 </x-app-layout>
