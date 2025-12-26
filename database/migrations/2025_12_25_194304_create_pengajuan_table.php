@@ -12,8 +12,9 @@ return new class extends Migration {
     {
         Schema::create('pengajuan', function (Blueprint $table) {
             $table->uuid('pengajuan_id')->primary();
-            $table->uuid('jenis_barang_id')->nullable();
-            $table->string('nama_barang');
+            $table->uuid('jenis_barang_id')->nullable(true);
+            $table->dateTime('tanggal');
+            $table->string('nama_barang')->nullable(true);
             $table->enum('tipe', ['pembelian', 'perbaikan'])->default('pembelian');
             $table->integer('jumlah');
             $table->integer('estimasi_biaya')->default(0);

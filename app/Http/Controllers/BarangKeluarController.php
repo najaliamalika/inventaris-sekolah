@@ -109,7 +109,6 @@ class BarangKeluarController extends Controller
             'barang_ids.min' => 'Minimal pilih 1 barang',
         ]);
 
-        // Validate jumlah matches selected barang count
         if (count($validated['barang_ids']) !== (int) $validated['jumlah']) {
             return back()
                 ->withInput()
@@ -119,7 +118,6 @@ class BarangKeluarController extends Controller
         DB::beginTransaction();
 
         try {
-            // Create Barang Keluar
             $barangKeluar = BarangKeluar::create([
                 'keluar_id' => (string) Str::uuid(),
                 'jenis_barang_id' => $validated['jenis_barang_id'],
@@ -130,27 +128,21 @@ class BarangKeluarController extends Controller
                 'keterangan' => $validated['keterangan'] ?? null,
             ]);
 
-            // Process each selected barang
             foreach ($validated['barang_ids'] as $barangId) {
-                // Verify barang exists and is available
                 $barang = Barang::where('barang_id', $barangId)
                     ->where('status', 'aktif')
                     ->where('kondisi', 'baik')
                     ->firstOrFail();
 
-                // Create pivot record
                 BarangKeluarItem::create([
                     'keluar_item_id' => (string) Str::uuid(),
                     'keluar_id' => $barangKeluar->keluar_id,
                     'barang_id' => $barang->barang_id,
                 ]);
 
-                // Handle based on kategori
                 if ($validated['kategori'] === 'sedang_diperbaiki') {
-                    // Update kondisi to diperbaiki (status tetap aktif)
                     $barang->update(['kondisi' => 'diperbaiki']);
                 } else {
-                    // Set status to nonaktif (soft delete)
                     $barang->update(['status' => 'nonaktif']);
                 }
             }
@@ -252,24 +244,20 @@ class BarangKeluarController extends Controller
                 'keterangan' => $validated['keterangan'] ?? null,
             ]);
 
-            // Delete old items
             $barangKeluar->items()->delete();
 
-            // Process new selected barang
             foreach ($validated['barang_ids'] as $barangId) {
                 $barang = Barang::where('barang_id', $barangId)
                     ->where('status', 'aktif')
                     ->where('kondisi', 'baik')
                     ->firstOrFail();
 
-                // Create pivot record
                 BarangKeluarItem::create([
                     'keluar_item_id' => (string) Str::uuid(),
                     'keluar_id' => $barangKeluar->keluar_id,
                     'barang_id' => $barang->barang_id,
                 ]);
 
-                // Handle based on kategori
                 if ($validated['kategori'] === 'sedang_diperbaiki') {
                     $barang->update(['kondisi' => 'diperbaiki']);
                 } else {

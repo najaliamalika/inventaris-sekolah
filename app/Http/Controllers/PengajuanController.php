@@ -41,15 +41,21 @@ class PengajuanController extends Controller
             $query->where('jenis_barang_id', $request->jenis_barang_id);
         }
 
-        $pengajuan = $query->orderBy('created_at', 'desc')->paginate(10);
+        if ($request->filled('tanggal_mulai')) {
+            if ($request->filled('tanggal_akhir')) {
+                $query->whereBetween('tanggal', [$request->tanggal_mulai, $request->tanggal_akhir]);
+            } else {
+                $query->whereDate('tanggal', $request->tanggal_mulai);
+            }
+        }
 
-        // Stats
+        $pengajuan = $query->orderBy('tanggal', 'desc')->paginate(10);
+
         $totalPengajuan = Pengajuan::count();
         $totalMenunggu = Pengajuan::where('status', 'menunggu')->count();
         $totalDisetujui = Pengajuan::where('status', 'disetujui')->count();
         $totalDitolak = Pengajuan::where('status', 'ditolak')->count();
 
-        // Get jenis barang for filter
         $jenisBarangList = JenisBarang::orderBy('jenis')->get();
 
         return view('pengajuan.index', compact(
@@ -64,7 +70,6 @@ class PengajuanController extends Controller
 
     public function create()
     {
-        // Get all jenis barang
         $jenisBarang = JenisBarang::orderBy('jenis')->get();
 
         return view('pengajuan.create', compact('jenisBarang'));
@@ -72,7 +77,6 @@ class PengajuanController extends Controller
 
     public function getAvailableBarangForPerbaikan($jenisBarangId)
     {
-        // Get barang yang aktif dan kondisi baik (bisa diperbaiki)
         $barang = Barang::where('jenis_barang_id', $jenisBarangId)
             ->where('status', 'aktif')
             ->where('kondisi', 'baik')
@@ -85,25 +89,24 @@ class PengajuanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'tanggal' => 'required|date',
             'tipe' => 'required|in:pembelian,perbaikan',
             'jenis_barang_id' => 'nullable|exists:jenis_barang,jenis_barang_id',
-            'nama_barang' => 'required|string|max:255',
+            'nama_barang' => 'nullable|string|max:255',
             'jumlah' => 'required|integer|min:1',
             'estimasi_biaya' => 'required|integer|min:0',
             'alasan' => 'required|string',
 
-            // For perbaikan only
             'barang_ids' => 'nullable|array',
             'barang_ids.*' => 'nullable|exists:barang,barang_id',
         ], [
+            'tanggal.required' => 'Tanggal wajib diisi',
             'tipe.required' => 'Tipe pengajuan wajib dipilih',
-            'nama_barang.required' => 'Nama barang wajib diisi',
             'jumlah.required' => 'Jumlah wajib diisi',
             'estimasi_biaya.required' => 'Estimasi biaya wajib diisi',
             'alasan.required' => 'Alasan pengajuan wajib diisi',
         ]);
 
-        // Additional validation for perbaikan
         if ($validated['tipe'] === 'perbaikan') {
             if (empty($validated['jenis_barang_id'])) {
                 return back()
@@ -111,7 +114,13 @@ class PengajuanController extends Controller
                     ->with('error', 'Jenis barang wajib dipilih untuk pengajuan perbaikan');
             }
 
-            if (empty($validated['barang_ids']) || count($validated['barang_ids']) !== $validated['jumlah']) {
+            if (!empty($validated['nama_barang'])) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Nama barang tidak diperlukan untuk pengajuan perbaikan');
+            }
+
+            if (empty($validated['barang_ids']) || count($validated['barang_ids']) !== (int) $validated['jumlah']) {
                 return back()
                     ->withInput()
                     ->with('error', 'Jumlah barang yang dipilih harus sesuai dengan jumlah yang diinput');
@@ -121,11 +130,11 @@ class PengajuanController extends Controller
         DB::beginTransaction();
 
         try {
-            // Create Pengajuan
             $pengajuan = Pengajuan::create([
                 'pengajuan_id' => (string) Str::uuid(),
                 'jenis_barang_id' => $validated['tipe'] === 'perbaikan' ? $validated['jenis_barang_id'] : null,
-                'nama_barang' => $validated['nama_barang'],
+                'tanggal' => $validated['tanggal'],
+                'nama_barang' => $validated['tipe'] === 'perbaikan' ? null : $validated['nama_barang'],
                 'tipe' => $validated['tipe'],
                 'jumlah' => $validated['jumlah'],
                 'estimasi_biaya' => $validated['estimasi_biaya'],
@@ -133,7 +142,6 @@ class PengajuanController extends Controller
                 'status' => 'menunggu',
             ]);
 
-            // If perbaikan, create items
             if ($validated['tipe'] === 'perbaikan' && !empty($validated['barang_ids'])) {
                 foreach ($validated['barang_ids'] as $barangId) {
                     PengajuanPerbaikanItem::create([
@@ -172,7 +180,6 @@ class PengajuanController extends Controller
         $pengajuan = Pengajuan::with(['jenisBarang', 'perbaikanItems.barang'])
             ->findOrFail($pengajuan_id);
 
-        // Only allow edit if status is 'menunggu'
         if ($pengajuan->status !== 'menunggu') {
             return redirect()
                 ->route('pengajuan.index')
@@ -188,7 +195,6 @@ class PengajuanController extends Controller
     {
         $pengajuan = Pengajuan::with('perbaikanItems')->findOrFail($pengajuan_id);
 
-        // Only allow update if status is 'menunggu'
         if ($pengajuan->status !== 'menunggu') {
             return redirect()
                 ->route('pengajuan.index')
@@ -196,9 +202,10 @@ class PengajuanController extends Controller
         }
 
         $validated = $request->validate([
+            'tanggal' => 'required|date',
             'tipe' => 'required|in:pembelian,perbaikan',
             'jenis_barang_id' => 'nullable|exists:jenis_barang,jenis_barang_id',
-            'nama_barang' => 'required|string|max:255',
+            'nama_barang' => 'nullable|string|max:255',
             'jumlah' => 'required|integer|min:1',
             'estimasi_biaya' => 'required|integer|min:0',
             'alasan' => 'required|string',
@@ -207,7 +214,6 @@ class PengajuanController extends Controller
             'barang_ids.*' => 'nullable|exists:barang,barang_id',
         ]);
 
-        // Validation for perbaikan
         if ($validated['tipe'] === 'perbaikan') {
             if (empty($validated['jenis_barang_id'])) {
                 return back()
@@ -215,7 +221,13 @@ class PengajuanController extends Controller
                     ->with('error', 'Jenis barang wajib dipilih untuk pengajuan perbaikan');
             }
 
-            if (empty($validated['barang_ids']) || count($validated['barang_ids']) !== $validated['jumlah']) {
+            if (!empty($validated['nama_barang'])) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Nama barang tidak diperlukan untuk pengajuan perbaikan');
+            }
+
+            if (empty($validated['barang_ids']) || count($validated['barang_ids']) !== (int) $validated['jumlah']) {
                 return back()
                     ->withInput()
                     ->with('error', 'Jumlah barang yang dipilih harus sesuai dengan jumlah yang diinput');
@@ -225,17 +237,16 @@ class PengajuanController extends Controller
         DB::beginTransaction();
 
         try {
-            // Update Pengajuan
             $pengajuan->update([
                 'jenis_barang_id' => $validated['tipe'] === 'perbaikan' ? $validated['jenis_barang_id'] : null,
-                'nama_barang' => $validated['nama_barang'],
+                'tanggal' => $validated['tanggal'],
+                'nama_barang' => $validated['tipe'] === 'perbaikan' ? null : $validated['nama_barang'],
                 'tipe' => $validated['tipe'],
                 'jumlah' => $validated['jumlah'],
                 'estimasi_biaya' => $validated['estimasi_biaya'],
                 'alasan' => $validated['alasan'],
             ]);
 
-            // Delete old items and create new ones for perbaikan
             $pengajuan->perbaikanItems()->delete();
 
             if ($validated['tipe'] === 'perbaikan' && !empty($validated['barang_ids'])) {
@@ -275,7 +286,6 @@ class PengajuanController extends Controller
         DB::beginTransaction();
 
         try {
-            // Update status
             $pengajuan->update([
                 'status' => $validated['status'],
                 'catatan' => $validated['catatan'] ?? null,
@@ -306,7 +316,6 @@ class PengajuanController extends Controller
 
     private function createBarangKeluarFromPengajuan(Pengajuan $pengajuan)
     {
-        // Create Barang Keluar
         $barangKeluar = BarangKeluar::create([
             'keluar_id' => (string) Str::uuid(),
             'jenis_barang_id' => $pengajuan->jenis_barang_id,
@@ -317,7 +326,6 @@ class PengajuanController extends Controller
             'keterangan' => 'Otomatis dari pengajuan perbaikan: ' . $pengajuan->alasan,
         ]);
 
-        // Create items and update barang kondisi
         foreach ($pengajuan->perbaikanItems as $item) {
             // Create pivot
             BarangKeluarItem::create([
@@ -326,7 +334,6 @@ class PengajuanController extends Controller
                 'barang_id' => $item->barang_id,
             ]);
 
-            // Update kondisi to 'diperbaiki'
             $item->barang->update(['kondisi' => 'diperbaiki']);
         }
     }
@@ -335,7 +342,6 @@ class PengajuanController extends Controller
     {
         $pengajuan = Pengajuan::with('perbaikanItems')->findOrFail($pengajuan_id);
 
-        // Only allow delete if status is 'menunggu' or 'ditolak'
         if ($pengajuan->status === 'disetujui') {
             return redirect()
                 ->route('pengajuan.index')
@@ -345,7 +351,6 @@ class PengajuanController extends Controller
         DB::beginTransaction();
 
         try {
-            // Cascade will handle deleting perbaikan items
             $pengajuan->delete();
 
             DB::commit();

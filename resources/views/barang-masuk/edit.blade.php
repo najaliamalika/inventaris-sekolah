@@ -8,7 +8,6 @@
         </div>
     </x-slot>
 
-    <!-- Back Button -->
     <div class="mb-6">
         <a href="{{ route('barang-masuk.index') }}"
             class="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200 group">
@@ -20,7 +19,6 @@
         </a>
     </div>
 
-    <!-- Main Card -->
     <div
         class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div class="p-8">
@@ -29,12 +27,10 @@
                 @csrf
                 @method('PUT')
 
-                <!-- Informasi Umum -->
                 <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informasi Umum</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Tanggal -->
                         <div class="group">
                             <x-input-label for="tanggal" :value="__('Tanggal')"
                                 class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
@@ -46,7 +42,6 @@
                             <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
                         </div>
 
-                        <!-- Kategori -->
                         <div class="group">
                             <x-input-label for="kategori" :value="__('Kategori')"
                                 class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
@@ -87,7 +82,6 @@
                     </div>
                 </div>
 
-                <!-- Detail Barang -->
                 <div>
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Detail Barang</h3>
@@ -138,7 +132,6 @@
             const jenisBarangList = @json($jenisBarang);
             const existingDetails = @json($barangMasuk->details->load('barangItems'));
 
-            // Template untuk detail item
             function createDetailItem(index, detail = null) {
                 const jenisOptions = jenisBarangList.map(jenis => {
                     const selected = detail && jenis.jenis_barang_id === detail.jenis_barang_id ? 'selected' : '';
@@ -233,7 +226,6 @@
             `;
             }
 
-            // Template untuk barang individual item
             function createBarangItem(detailIndex, barangIndex, barang = null) {
                 const barangId = barang ? barang.barang_id : '';
                 const namaBarang = barang ? barang.nama_barang : '';
@@ -285,7 +277,6 @@
             `;
             }
 
-            // Update barang items based on jumlah
             function updateBarangItems(detailIndex) {
                 const detailItem = document.querySelector(`.detail-item[data-index="${detailIndex}"]`);
                 const jumlah = parseInt(detailItem.querySelector('.jumlah-input').value) || 0;
@@ -294,23 +285,19 @@
                 const currentItems = container.querySelectorAll('.barang-item').length;
 
                 if (jumlah > currentItems) {
-                    // Add new items
                     for (let i = currentItems; i < jumlah; i++) {
                         container.insertAdjacentHTML('beforeend', createBarangItem(detailIndex, i));
                     }
                 } else if (jumlah < currentItems) {
-                    // Remove excess items
                     const items = container.querySelectorAll('.barang-item');
                     for (let i = currentItems - 1; i >= jumlah; i--) {
                         items[i].remove();
                     }
                 }
 
-                // Apply lokasi default if exists
                 applyLokasiToAll(detailIndex);
             }
 
-            // Apply lokasi default to all barang items
             function applyLokasiToAll(detailIndex) {
                 const detailItem = document.querySelector(`.detail-item[data-index="${detailIndex}"]`);
                 const lokasiDefault = detailItem.querySelector('.lokasi-default').value;
@@ -324,17 +311,10 @@
                 }
             }
 
-            // Update jenis info
-            function updateJenisInfo(detailIndex) {
-                // Can add additional logic here if needed
-            }
-
-            // Load existing details
             existingDetails.forEach((detail, index) => {
                 const container = document.getElementById('detailContainer');
                 container.insertAdjacentHTML('beforeend', createDetailItem(index, detail));
 
-                // Load barang items for this detail
                 const detailElement = container.querySelector(`.detail-item[data-index="${index}"]`);
                 const barangContainer = detailElement.querySelector('.barang-items');
 
@@ -344,7 +324,6 @@
                 });
             });
 
-            // Add detail item
             document.getElementById('addDetailBtn').addEventListener('click', function() {
                 const container = document.getElementById('detailContainer');
                 container.insertAdjacentHTML('beforeend', createDetailItem(detailIndex));
@@ -352,7 +331,6 @@
                 updateRemoveButtons();
             });
 
-            // Remove detail item
             document.addEventListener('click', function(e) {
                 if (e.target.closest('.remove-detail-btn')) {
                     const btn = e.target.closest('.remove-detail-btn');
@@ -369,7 +347,6 @@
                 }
             });
 
-            // Update item numbers
             function updateItemNumbers() {
                 document.querySelectorAll('.detail-item').forEach((item, index) => {
                     const numberBadge = item.querySelector('.bg-blue-600');
@@ -380,7 +357,6 @@
                 });
             }
 
-            // Update remove button visibility
             function updateRemoveButtons() {
                 const items = document.querySelectorAll('.detail-item');
                 items.forEach(item => {
@@ -389,7 +365,6 @@
                 });
             }
 
-            // Initialize button states
             updateRemoveButtons();
         </script>
     @endpush

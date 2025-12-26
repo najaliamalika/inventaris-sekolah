@@ -18,6 +18,7 @@ class Pengajuan extends Model
     protected $fillable = [
         'pengajuan_id',
         'jenis_barang_id',
+        'tanggal',
         'nama_barang',
         'tipe',
         'jumlah',
@@ -28,6 +29,7 @@ class Pengajuan extends Model
     ];
 
     protected $casts = [
+        'tanggal' => 'datetime',
         'jumlah' => 'integer',
         'estimasi_biaya' => 'integer',
     ];
@@ -37,13 +39,11 @@ class Pengajuan extends Model
         return $this->belongsTo(JenisBarang::class, 'jenis_barang_id', 'jenis_barang_id');
     }
 
-    // Items untuk pengajuan perbaikan
     public function perbaikanItems()
     {
         return $this->hasMany(PengajuanPerbaikanItem::class, 'pengajuan_id', 'pengajuan_id');
     }
 
-    // Barang yang akan diperbaiki (through pivot)
     public function barangPerbaikan()
     {
         return $this->hasManyThrough(
@@ -54,6 +54,11 @@ class Pengajuan extends Model
             'pengajuan_id',
             'barang_id'
         );
+    }
+
+    public function getTanggalFormatAttribute()
+    {
+        return $this->tanggal->format('d/m/Y');
     }
 
     public function getTipeLabel()
@@ -140,6 +145,14 @@ class Pengajuan extends Model
     public function scopeDitolak($query)
     {
         return $query->where('status', 'ditolak');
+    }
+
+    public function scopeByTanggal($query, $tanggalMulai, $tanggalAkhir = null)
+    {
+        if ($tanggalAkhir) {
+            return $query->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir]);
+        }
+        return $query->whereDate('tanggal', $tanggalMulai);
     }
 
     public function isPembelian()

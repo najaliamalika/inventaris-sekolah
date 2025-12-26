@@ -80,6 +80,18 @@
             <span>Barang Keluar</span>
         </a>
 
+        <!-- Pengajuan -->
+        <a href="{{ route('pengajuan.index') }}"
+            class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group
+                  {{ request()->routeIs('pengajuan.*') ? 'bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg shadow-green-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20' }}">
+            <svg class="w-5 h-5 mr-3 {{ request()->routeIs('pengajuan.*') ? 'text-white' : 'text-gray-400 group-hover:text-green-600' }}"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <span>Pengajuan</span>
+        </a>
+
         <div class="border-t border-gray-200 dark:border-gray-700 my-4"></div>
 
         <!-- Logout -->
