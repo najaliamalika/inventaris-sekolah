@@ -19,13 +19,6 @@ class PeminjamanBarang extends Model
         'peminjaman_id',
         'barang_id',
         'status',
-        'tanggal_pengembalian',
-        'foto_pengembalian',
-        'catatan',
-    ];
-
-    protected $casts = [
-        'tanggal_pengembalian' => 'datetime',
     ];
 
     public function peminjaman()

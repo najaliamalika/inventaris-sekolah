@@ -148,14 +148,16 @@
                         </a>
                     @endif
 
-                    <a href="{{ route('pengajuan.create') }}"
-                        class="ml-auto px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                        Buat Pengajuan
-                    </a>
+                    @hasrole('admin')
+                        <a href="{{ route('pengajuan.create') }}"
+                            class="ml-auto px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            Buat Pengajuan
+                        </a>
+                    @endhasrole
                 </div>
             </form>
         </div>
@@ -255,37 +257,41 @@
                                         </a>
 
                                         @if ($item->status == 'menunggu')
-                                            <a href="{{ route('pengajuan.edit', $item->pengajuan_id) }}"
-                                                class="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-all"
-                                                title="Edit">
-                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
-                                                    <path
-                                                        d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                                                </svg>
-                                            </a>
+                                            @hasrole('admin')
+                                                <a href="{{ route('pengajuan.edit', $item->pengajuan_id) }}"
+                                                    class="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-all"
+                                                    title="Edit">
+                                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                                        <path
+                                                            d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                                                    </svg>
+                                                </a>
+                                            @endhasrole
 
-                                            <button x-data
-                                                @click="$dispatch('open-modal', 'approve_{{ $item->pengajuan_id }}')"
-                                                class="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-all"
-                                                title="Setujui">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M5 13l4 4L19 7" />
-                                                </svg>
-                                            </button>
+                                            @hasanyrole('bendahara')
+                                                <button x-data
+                                                    @click="$dispatch('open-modal', 'approve_{{ $item->pengajuan_id }}')"
+                                                    class="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-all"
+                                                    title="Setujui">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </button>
 
-                                            <button x-data
-                                                @click="$dispatch('open-modal', 'reject_{{ $item->pengajuan_id }}')"
-                                                class="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-all"
-                                                title="Tolak">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                                </svg>
-                                            </button>
+                                                <button x-data
+                                                    @click="$dispatch('open-modal', 'reject_{{ $item->pengajuan_id }}')"
+                                                    class="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-all"
+                                                    title="Tolak">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
+                                                </button>
+                                            @endhasanyrole
 
                                             <x-modal name="approve_{{ $item->pengajuan_id }}" maxWidth="md">
                                                 <form
@@ -371,22 +377,24 @@
                                             </x-modal>
                                         @endif
 
-                                        @if ($item->status != 'disetujui')
-                                            <button x-data
-                                                @click="$dispatch('open-modal', 'delete_item_{{ $item->pengajuan_id }}')"
-                                                class="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-all"
-                                                title="Hapus">
-                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path
-                                                        d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                                                </svg>
-                                            </button>
+                                        @hasrole('admin')
+                                            @if ($item->status != 'disetujui')
+                                                <button x-data
+                                                    @click="$dispatch('open-modal', 'delete_item_{{ $item->pengajuan_id }}')"
+                                                    class="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-all"
+                                                    title="Hapus">
+                                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path
+                                                            d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                                    </svg>
+                                                </button>
 
-                                            <x-confirm-modal id="delete_item_{{ $item->pengajuan_id }}"
-                                                message="Apakah Anda yakin ingin menghapus pengajuan ini?"
-                                                okLabel="Hapus" cancelLabel="Batal" :url="route('pengajuan.destroy', $item->pengajuan_id)"
-                                                method="DELETE" />
-                                        @endif
+                                                <x-confirm-modal id="delete_item_{{ $item->pengajuan_id }}"
+                                                    message="Apakah Anda yakin ingin menghapus pengajuan ini?"
+                                                    okLabel="Hapus" cancelLabel="Batal" :url="route('pengajuan.destroy', $item->pengajuan_id)"
+                                                    method="DELETE" />
+                                            @endif
+                                        @endhasrole
                                     </div>
                                 </td>
                             </tr>

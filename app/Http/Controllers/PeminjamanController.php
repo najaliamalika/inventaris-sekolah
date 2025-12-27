@@ -21,13 +21,13 @@ class PeminjamanController extends Controller
 
     public function index(Request $request)
     {
-        $query = Peminjaman::with(['detailBarang.barang.jenisBarang']);
+        $query = Peminjaman::with(['peminjamanBarang.barang.jenisBarang']);
 
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('nama_peminjam', 'like', "%{$search}%")
-                    ->orWhereHas('detailBarang.barang', function ($q) use ($search) {
+                    ->orWhereHas('peminjamanBarang.barang', function ($q) use ($search) {
                         $q->where('nama_barang', 'like', "%{$search}%");
                     });
             });
@@ -35,29 +35,16 @@ class PeminjamanController extends Controller
 
         if ($request->filled('status')) {
             switch ($request->status) {
-                case 'semua_dikembalikan':
-                    $query->whereDoesntHave('detailBarang', function ($q) {
-                        $q->where('status', 'dipinjam');
-                    })->whereHas('detailBarang');
+                case 'dikembalikan':
+                    $query->whereNotNull('tanggal_pengembalian');
                     break;
 
-                case 'belum_ada_dikembalikan':
-                    $query->whereDoesntHave('detailBarang', function ($q) {
-                        $q->where('status', 'dikembalikan');
-                    })->whereHas('detailBarang');
-                    break;
-
-                case 'sebagian_dikembalikan':
-                    $query->whereHas('detailBarang', function ($q) {
-                        $q->where('status', 'dipinjam');
-                    })->whereHas('detailBarang', function ($q) {
-                        $q->where('status', 'dikembalikan');
-                    });
+                case 'dipinjam':
+                    $query->whereNull('tanggal_pengembalian');
                     break;
             }
         }
 
-        // Filter tanggal dengan range
         if ($request->filled('tanggal_mulai')) {
             if ($request->filled('tanggal_akhir')) {
                 $query->whereBetween('tanggal_peminjaman', [$request->tanggal_mulai, $request->tanggal_akhir]);
@@ -74,24 +61,27 @@ class PeminjamanController extends Controller
                 $item->foto_peminjaman_url = $this->fileService->url($item->foto_peminjaman);
             }
 
-            foreach ($item->detailBarang as $detail) {
+            if ($item->foto_pengembalian) {
+                $item->foto_pengembalian_url = $this->fileService->url($item->foto_pengembalian);
+            }
+
+            foreach ($item->peminjamanBarang as $detail) {
                 if ($detail->barang && $detail->barang->gambar) {
                     $detail->barang->gambar_url = $this->fileService->url($detail->barang->gambar);
-                }
-
-                if ($detail->foto_pengembalian) {
-                    $detail->foto_pengembalian_url = $this->fileService->url($detail->foto_pengembalian);
                 }
             }
         }
 
         $totalPeminjaman = Peminjaman::count();
-        $dipinjamCount = PeminjamanBarang::where('status', 'dipinjam')->count();
-        $dikembalikanCount = PeminjamanBarang::where('status', 'dikembalikan')->count();
+        $dipinjamCount = Peminjaman::whereNull('tanggal_pengembalian')->count();
+        $dikembalikanCount = Peminjaman::whereNotNull('tanggal_pengembalian')->count();
 
-        $totalBarangDipinjam = PeminjamanBarang::where('status', 'dipinjam')
+        $totalBarangDipinjam = PeminjamanBarang::whereHas('peminjaman', function ($q) {
+            $q->whereNull('tanggal_pengembalian');
+        })
             ->distinct('barang_id')
             ->count('barang_id');
+
         return view('peminjaman.index', compact(
             'peminjaman',
             'totalPeminjaman',
@@ -121,8 +111,6 @@ class PeminjamanController extends Controller
             'keterangan' => 'nullable|string',
             'barang_ids' => 'required|array|min:1',
             'barang_ids.*' => 'required|exists:barang,barang_id',
-            'catatan' => 'nullable|array',
-            'catatan.*' => 'nullable|string',
         ], [
             'foto_peminjaman.required' => 'Foto peminjaman wajib diisi',
             'foto_peminjaman.image' => 'File harus berupa gambar',
@@ -149,11 +137,10 @@ class PeminjamanController extends Controller
                 'keterangan' => $validated['keterangan'] ?? null,
             ]);
 
-            foreach ($validated['barang_ids'] as $index => $barangId) {
+            foreach ($validated['barang_ids'] as $barangId) {
                 $peminjaman->barang()->attach($barangId, [
                     'peminjaman_barang_id' => uuid_create(),
                     'status' => 'dipinjam',
-                    'catatan' => $validated['catatan'][$index] ?? null,
                 ]);
 
                 $barang = Barang::find($barangId);
@@ -179,10 +166,25 @@ class PeminjamanController extends Controller
             return back()->withInput();
         }
     }
+
     public function show(string $peminjaman_id)
     {
         $peminjaman = Peminjaman::with(['peminjamanBarang.barang.jenisBarang'])
             ->findOrFail($peminjaman_id);
+
+        if ($peminjaman->foto_peminjaman) {
+            $peminjaman->foto_peminjaman_url = $this->fileService->url($peminjaman->foto_peminjaman);
+        }
+
+        if ($peminjaman->foto_pengembalian) {
+            $peminjaman->foto_pengembalian_url = $this->fileService->url($peminjaman->foto_pengembalian);
+        }
+
+        foreach ($peminjaman->peminjamanBarang as $detail) {
+            if ($detail->barang && $detail->barang->gambar) {
+                $detail->barang->gambar_url = $this->fileService->url($detail->barang->gambar);
+            }
+        }
 
         return view('peminjaman.show', compact('peminjaman'));
     }
@@ -192,12 +194,8 @@ class PeminjamanController extends Controller
         $peminjaman = Peminjaman::with(['peminjamanBarang.barang.jenisBarang'])
             ->findOrFail($peminjaman_id);
 
-        $hasUnreturnedItems = $peminjaman->peminjamanBarang
-            ->where('status', 'dipinjam')
-            ->isNotEmpty();
-
-        if (!$hasUnreturnedItems) {
-            flash('Tidak dapat mengedit peminjaman karena semua barang sudah dikembalikan')->warning();
+        if ($peminjaman->tanggal_pengembalian) {
+            flash('Tidak dapat mengedit peminjaman yang sudah dikembalikan')->warning();
             return redirect()->route('peminjaman.show', $peminjaman_id);
         }
 
@@ -230,6 +228,11 @@ class PeminjamanController extends Controller
     {
         $peminjaman = Peminjaman::with('peminjamanBarang')->findOrFail($peminjaman_id);
 
+        if ($peminjaman->tanggal_pengembalian) {
+            flash('Tidak dapat mengedit peminjaman yang sudah dikembalikan')->warning();
+            return redirect()->route('peminjaman.show', $peminjaman_id);
+        }
+
         $validated = $request->validate([
             'tanggal_peminjaman' => 'required|date',
             'nama_peminjam' => 'required|string|max:255',
@@ -237,8 +240,6 @@ class PeminjamanController extends Controller
             'keterangan' => 'nullable|string',
             'barang_ids' => 'required|array|min:1',
             'barang_ids.*' => 'required|exists:barang,barang_id',
-            'catatan' => 'nullable|array',
-            'catatan.*' => 'nullable|string',
         ], [
             'foto_peminjaman.image' => 'File harus berupa gambar',
             'foto_peminjaman.mimes' => 'Format gambar harus jpg, jpeg, atau png',
@@ -270,7 +271,6 @@ class PeminjamanController extends Controller
             $peminjaman->update($updateData);
 
             $currentBarangIds = $peminjaman->peminjamanBarang
-                ->where('status', 'dipinjam')
                 ->pluck('barang_id')
                 ->toArray();
 
@@ -288,37 +288,21 @@ class PeminjamanController extends Controller
 
                 PeminjamanBarang::where('peminjaman_id', $peminjaman_id)
                     ->where('barang_id', $barangId)
-                    ->where('status', 'dipinjam')
                     ->delete();
             }
 
-            foreach ($addedBarangIds as $index => $barangId) {
-                $originalIndex = array_search($barangId, $newBarangIds);
-
+            foreach ($addedBarangIds as $barangId) {
                 PeminjamanBarang::create([
                     'peminjaman_barang_id' => uuid_create(),
                     'peminjaman_id' => $peminjaman_id,
                     'barang_id' => $barangId,
                     'status' => 'dipinjam',
-                    'catatan' => $validated['catatan'][$originalIndex] ?? null,
                 ]);
 
                 $barang = Barang::find($barangId);
                 if ($barang) {
                     $barang->update(['kondisi' => 'dipinjam']);
                 }
-            }
-
-            $unchangedBarangIds = array_intersect($currentBarangIds, $newBarangIds);
-            foreach ($unchangedBarangIds as $barangId) {
-                $originalIndex = array_search($barangId, $newBarangIds);
-
-                PeminjamanBarang::where('peminjaman_id', $peminjaman_id)
-                    ->where('barang_id', $barangId)
-                    ->where('status', 'dipinjam')
-                    ->update([
-                        'catatan' => $validated['catatan'][$originalIndex] ?? null,
-                    ]);
             }
 
             DB::commit();
@@ -337,19 +321,25 @@ class PeminjamanController extends Controller
 
     public function destroy(string $peminjaman_id)
     {
-        $peminjaman = Peminjaman::findOrFail($peminjaman_id);
+        $peminjaman = Peminjaman::with('peminjamanBarang.barang')->findOrFail($peminjaman_id);
 
         DB::beginTransaction();
 
         try {
+            if (!$peminjaman->tanggal_pengembalian) {
+                foreach ($peminjaman->peminjamanBarang as $detail) {
+                    if ($detail->barang) {
+                        $detail->barang->update(['kondisi' => 'baik']);
+                    }
+                }
+            }
+
             if ($peminjaman->foto_peminjaman) {
                 $this->fileService->delete($peminjaman->foto_peminjaman);
             }
 
-            foreach ($peminjaman->barang as $barang) {
-                if ($barang->pivot->foto_pengembalian) {
-                    $this->fileService->delete($barang->pivot->foto_pengembalian);
-                }
+            if ($peminjaman->foto_pengembalian) {
+                $this->fileService->delete($peminjaman->foto_pengembalian);
             }
 
             $peminjaman->delete();
@@ -368,19 +358,19 @@ class PeminjamanController extends Controller
         }
     }
 
-    public function kembalikanBarang(Request $request, string $peminjaman_barang_id)
+    public function kembalikanBarang(Request $request, string $peminjaman_id)
     {
-        $peminjamanBarang = PeminjamanBarang::findOrFail($peminjaman_barang_id);
+        $peminjaman = Peminjaman::with('peminjamanBarang.barang')->findOrFail($peminjaman_id);
 
-        if ($peminjamanBarang->status === 'dikembalikan') {
-            flash('Barang sudah dikembalikan sebelumnya')->warning();
+        if ($peminjaman->tanggal_pengembalian) {
+            flash('Peminjaman sudah dikembalikan sebelumnya')->warning();
             return back();
         }
 
         $validated = $request->validate([
             'tanggal_pengembalian' => 'required|date',
             'foto_pengembalian' => 'required|image|mimes:jpg,jpeg,png|max:5120',
-            'catatan' => 'nullable|string',
+            'keterangan' => 'nullable|string',
         ], [
             'tanggal_pengembalian.required' => 'Tanggal pengembalian wajib diisi',
             'foto_pengembalian.required' => 'Foto pengembalian wajib diisi',
@@ -392,24 +382,30 @@ class PeminjamanController extends Controller
         DB::beginTransaction();
 
         try {
-            $fotoPengembalianPath = $this->fileService->upload($request->file('foto_pengembalian'), 'pengembalian');
+            $fotoPengembalianPath = $this->fileService->upload(
+                $request->file('foto_pengembalian'),
+                'pengembalian'
+            );
 
-            $peminjamanBarang->update([
+            $peminjaman->update([
                 'tanggal_pengembalian' => $validated['tanggal_pengembalian'],
                 'foto_pengembalian' => $fotoPengembalianPath,
-                'catatan' => $validated['catatan'] ?? $peminjamanBarang->catatan,
-                'status' => 'dikembalikan',
+                'keterangan' => $validated['keterangan'] ?? $peminjaman->keterangan,
             ]);
 
-            $peminjamanBarang->barang->update(['kondisi' => 'baik']);
+            foreach ($peminjaman->peminjamanBarang as $detail) {
+                $detail->update(['status' => 'dikembalikan']);
 
-            $peminjamanBarang->fresh();
+                if ($detail->barang) {
+                    $detail->barang->update(['kondisi' => 'baik']);
+                }
+            }
 
             DB::commit();
 
-            flash('Barang berhasil dikembalikan')->success();
-            return redirect()->route('peminjaman.show', $peminjamanBarang->peminjaman_id)
-                ->with('success', 'Barang Berhasil Dikembalikan!');
+            flash('Semua barang berhasil dikembalikan')->success();
+            return redirect()->route('peminjaman.show', $peminjaman_id)
+                ->with('success', 'Semua Barang Berhasil Dikembalikan!');
         } catch (\Exception $e) {
             DB::rollBack();
 

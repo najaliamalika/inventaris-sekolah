@@ -8,7 +8,6 @@
 
     <div class="min-h-screen bg-gradient-to-br from-green-50 via-white to-indigo-50 py-12">
         <div class="max-w-7xl mx-auto px-6">
-            <!-- Search and Filter Section -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 <form action="{{ route('barang.index') }}" method="GET" class="md:col-span-2 space-y-3">
                     <div class="flex gap-3">
@@ -33,7 +32,6 @@
                         </button>
                     </div>
 
-                    <!-- Quick Filters -->
                     <div class="flex gap-3 flex-wrap">
                         <select name="kategori"
                             class="px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-green-500 focus:ring-green-500 text-sm bg-white">

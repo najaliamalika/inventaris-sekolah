@@ -13,8 +13,10 @@ return new class extends Migration {
         Schema::create('peminjaman', function (Blueprint $table) {
             $table->uuid('peminjaman_id')->primary();
             $table->dateTime('tanggal_peminjaman');
+            $table->dateTime('tanggal_pengembalian')->nullable();
             $table->string('nama_peminjam');
             $table->string('foto_peminjaman')->nullable();
+            $table->string('foto_pengembalian')->nullable();
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });
@@ -24,9 +26,6 @@ return new class extends Migration {
             $table->uuid('peminjaman_id');
             $table->uuid('barang_id');
             $table->enum('status', ['dipinjam', 'dikembalikan'])->default('dipinjam');
-            $table->dateTime('tanggal_pengembalian')->nullable();
-            $table->string('foto_pengembalian')->nullable();
-            $table->text('catatan')->nullable();
             $table->timestamps();
 
             $table->foreign('peminjaman_id')

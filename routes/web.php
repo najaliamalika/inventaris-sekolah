@@ -9,6 +9,7 @@ use App\Http\Controllers\KeluarController;
 use App\Http\Controllers\MasukController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\PengajuanController;
+use App\Http\Controllers\ReportController;
 use App\Models\Peminjaman;
 use Illuminate\Support\Facades\Route;
 
@@ -26,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth', 'verified')->group(function () {
     Route::get('/barang', [BarangController::class, 'index'])->name('barang.index');
     Route::get('/barang/{jenis_barang_id}/create', [BarangController::class, 'create'])->name('barang.create');
-    Route::post('/barang', [BarangController::class, 'store'])->name('barang.store');
+    Route::post('/barang', action: [BarangController::class, 'store'])->name('barang.store');
     Route::get('/barang/{jenis_barang_id}/{barang_id}/edit', [BarangController::class, 'edit'])->name('barang.edit');
     Route::get('/barang/{barang_id}', [BarangController::class, 'show'])->name('barang.show');
     Route::put('/barang/{barang_id}', [BarangController::class, 'update'])->name('barang.update');
@@ -68,6 +69,17 @@ Route::middleware('auth', 'verified')->group(function () {
         ->name('pengajuan.update-status');
     Route::get('/api/pengajuan/available-barang/{jenisBarangId}', [PengajuanController::class, 'getAvailableBarangForPerbaikan'])
         ->name('pengajuan.available-barang');
+
+    // Halaman Laporan
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+
+    // Download Laporan
+    Route::post('/reports/peminjaman', [ReportController::class, 'peminjamanReport'])->name('reports.peminjaman');
+    Route::post('/reports/barang-masuk', [ReportController::class, 'barangMasukReport'])->name('reports.barang-masuk');
+    Route::post('/reports/barang-keluar', [ReportController::class, 'barangKeluarReport'])->name('reports.barang-keluar');
+    Route::post('/reports/pengajuan', [ReportController::class, 'pengajuanReport'])->name('reports.pengajuan');
+
+    Route::post('/reports/laporan-tahunan', [ReportController::class, 'laporanTahunan'])->name('reports.tahunan');
 });
 
 Route::get('/', function () {

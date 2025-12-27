@@ -45,51 +45,66 @@
 
         <div class="border-t border-gray-200 dark:border-gray-700 my-4"></div>
 
-        <!-- Peminjaman -->
-        <a href="{{ route('peminjaman.index') }}"
-            class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group
+        @hasrole('admin')
+            <!-- Peminjaman -->
+            <a href="{{ route('peminjaman.index') }}"
+                class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group
                   {{ request()->routeIs('peminjaman.*') ? 'bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg shadow-green-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20' }}">
-            <svg class="w-5 h-5 mr-3 {{ request()->routeIs('peminjaman.*') ? 'text-white' : 'text-gray-400 group-hover:text-green-600' }}"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-            </svg>
-            <span>Peminjaman</span>
-        </a>
-
-        <!-- Barang Masuk -->
-        <a href="{{ route('barang-masuk.index') }}"
-            class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('peminjaman.*') ? 'text-white' : 'text-gray-400 group-hover:text-green-600' }}"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+                <span>Peminjaman</span>
+            </a>
+            <!-- Barang Masuk -->
+            <a href="{{ route('barang-masuk.index') }}"
+                class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group
                   {{ request()->routeIs('barang-masuk.*') ? 'bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg shadow-green-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20' }}">
-            <svg class="w-5 h-5 mr-3 {{ request()->routeIs('barang-masuk.*') ? 'text-white' : 'text-gray-400 group-hover:text-green-600' }}"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-            </svg>
-            <span>Barang Masuk</span>
-        </a>
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('barang-masuk.*') ? 'text-white' : 'text-gray-400 group-hover:text-green-600' }}"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                </svg>
+                <span>Barang Masuk</span>
+            </a>
 
-        <!-- Barang Keluar -->
-        <a href="{{ route('barang-keluar.index') }}"
-            class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group
+            <!-- Barang Keluar -->
+            <a href="{{ route('barang-keluar.index') }}"
+                class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group
                   {{ request()->routeIs('barang-keluar.*') ? 'bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg shadow-green-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20' }}">
-            <svg class="w-5 h-5 mr-3 {{ request()->routeIs('barang-keluar.*') ? 'text-white' : 'text-gray-400 group-hover:text-green-600' }}"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </svg>
-            <span>Barang Keluar</span>
-        </a>
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('barang-keluar.*') ? 'text-white' : 'text-gray-400 group-hover:text-green-600' }}"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+                <span>Barang Keluar</span>
+            </a>
+        @endhasrole
 
         <!-- Pengajuan -->
-        <a href="{{ route('pengajuan.index') }}"
-            class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group
+        @hasanyrole('admin|bendahara')
+            <a href="{{ route('pengajuan.index') }}"
+                class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group
                   {{ request()->routeIs('pengajuan.*') ? 'bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg shadow-green-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20' }}">
-            <svg class="w-5 h-5 mr-3 {{ request()->routeIs('pengajuan.*') ? 'text-white' : 'text-gray-400 group-hover:text-green-600' }}"
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('pengajuan.*') ? 'text-white' : 'text-gray-400 group-hover:text-green-600' }}"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <span>Pengajuan</span>
+            </a>
+        @endhasanyrole
+
+        <a href="{{ route('reports.index') }}"
+            class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group
+                  {{ request()->routeIs('reports.*') ? 'bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg shadow-green-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20' }}">
+            <svg class="w-5 h-5 mr-3 {{ request()->routeIs('reports.*') ? 'text-white' : 'text-gray-400 group-hover:text-green-600' }}"
                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l6-6 4 4 7-7M3 21h18" />
             </svg>
-            <span>Pengajuan</span>
+
+
+            <span>Laporan</span>
         </a>
 
         <div class="border-t border-gray-200 dark:border-gray-700 my-4"></div>

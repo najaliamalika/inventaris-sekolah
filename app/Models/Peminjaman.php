@@ -17,13 +17,16 @@ class Peminjaman extends Model
 
     protected $fillable = [
         'tanggal_peminjaman',
+        'tanggal_pengembalian',
         'nama_peminjam',
         'foto_peminjaman',
+        'foto_pengembalian',
         'keterangan',
     ];
 
     protected $casts = [
         'tanggal_peminjaman' => 'datetime',
+        'tanggal_pengembalian' => 'datetime',
     ];
 
     public function barang()
@@ -42,11 +45,6 @@ class Peminjaman extends Model
                 'catatan'
             ])
             ->withTimestamps();
-    }
-
-    public function detailBarang()
-    {
-        return $this->hasMany(PeminjamanBarang::class, 'peminjaman_id', 'peminjaman_id');
     }
 
     public function peminjamanBarang()

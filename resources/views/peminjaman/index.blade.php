@@ -61,7 +61,7 @@
     <div class="mb-6">
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <form action="{{ route('peminjaman.index') }}" method="GET" id="filterForm" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             🔍 Cari Peminjaman
@@ -95,42 +95,27 @@
                         <select name="status" id="statusSelect"
                             class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
                             <option value="">Semua Status</option>
-                            <option value="semua_dikembalikan"
-                                {{ request('status') == 'semua_dikembalikan' ? 'selected' : '' }}>
-                                Semua Dikembalikan
+                            <option value="dikembalikan" {{ request('status') == 'dikembalikan' ? 'selected' : '' }}>
+                                Sudah Dikembalikan
                             </option>
-                            <option value="belum_ada_dikembalikan"
-                                {{ request('status') == 'belum_ada_dikembalikan' ? 'selected' : '' }}>
-                                Belum Ada yang Dikembalikan
-                            </option>
-                            <option value="sebagian_dikembalikan"
-                                {{ request('status') == 'sebagian_dikembalikan' ? 'selected' : '' }}>
-                                Beberapa Sudah Dikembalikan
+                            <option value="dipinjam" {{ request('status') == 'dipinjam' ? 'selected' : '' }}>
+                                Sedang Dipinjam
                             </option>
                         </select>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            📅 Dari Tanggal
+                            📅 Tanggal Peminjaman
                         </label>
                         <input type="date" name="tanggal_mulai" id="tanggalMulaiInput"
                             value="{{ request('tanggal_mulai') }}"
                             class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                     </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            📅 Sampai Tanggal
-                        </label>
-                        <input type="date" name="tanggal_akhir" id="tanggalAkhirInput"
-                            value="{{ request('tanggal_akhir') }}"
-                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                    </div>
                 </div>
 
                 <div class="flex items-center gap-3 pt-2">
-                    @if (request()->hasAny(['search', 'status', 'tanggal_mulai', 'tanggal_akhir']))
+                    @if (request()->hasAny(['search', 'status', 'tanggal_mulai']))
                         <a href="{{ route('peminjaman.index') }}"
                             class="px-5 py-2.5 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -141,14 +126,16 @@
                         </a>
                     @endif
 
-                    <a href="{{ route('peminjaman.create') }}"
-                        class="ml-auto px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                        Tambah Peminjaman
-                    </a>
+                    @hasrole('admin')
+                        <a href="{{ route('peminjaman.create') }}"
+                            class="ml-auto px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            Tambah Peminjaman
+                        </a>
+                    @endhasrole
                 </div>
             </form>
         </div>
@@ -161,79 +148,79 @@
                 <table class="w-full">
                     <thead class="bg-gradient-to-r from-green-600 to-green-500 text-white">
                         <tr>
-                            <th class="px-4 py-4 text-left text-xs font-semibold uppercase">No</th>
-                            <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Tgl Pinjam</th>
-                            <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Peminjam</th>
-                            <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Jumlah</th>
-                            <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Foto Peminjaman</th>
-                            <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Status</th>
-                            <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Aksi</th>
+                            <th class="px-2 py-4 text-left text-xs font-semibold uppercase">No</th>
+                            <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Tgl Pinjam</th>
+                            <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Nama Barang</th>
+                            <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Peminjam</th>
+                            <th class="px-2 py-4 text-center text-xs font-semibold uppercase">Jumlah</th>
+                            <th class="px-2 py-4 text-center text-xs font-semibold uppercase">Foto</th>
+                            <th class="px-2 py-4 text-center text-xs font-semibold uppercase">Status</th>
+                            <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Tgl Kembali</th>
+                            <th class="px-2 py-4 text-center text-xs font-semibold uppercase">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach ($peminjaman as $index => $p)
                             @php
-                                $allReturned = $p->peminjamanBarang->every(fn($pb) => $pb->status === 'dikembalikan');
-                                $allBorrowed = $p->peminjamanBarang->every(fn($pb) => $pb->status === 'dipinjam');
+                                $isDikembalikan = !is_null($p->tanggal_pengembalian);
                             @endphp
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150">
-                                <td class="px-4 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
+                                <td class="px-2 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
                                     {{ $peminjaman->firstItem() + $index }}
                                 </td>
-                                <td class="px-4 py-4">
+                                <td class="px-2 py-4">
                                     <div class="flex items-center gap-2">
-                                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
                                         <span class="text-sm text-gray-600 dark:text-gray-400">
                                             {{ $p->tanggal_peminjaman->format('d M Y') }}
                                         </span>
                                     </div>
                                 </td>
-                                <td class="px-4 py-4">
+                                <td class="px-2 py-4">
+                                    <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                        {{ $p->peminjamanBarang->first()->barang->nama_barang . ' ' . ($p->peminjamanBarang->count() > 1 ? ' + ' . ($p->peminjamanBarang->count() - 1) . ' lainnya' : '') }}
+                                    </p>
+                                </td>
+                                <td class="px-2 py-4">
                                     <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                                         {{ $p->nama_peminjam }}
                                     </p>
                                 </td>
-                                <td class="px-4 py-4">
+                                <td class="px-2 py-4">
                                     <p class="text-sm font-normal text-center text-gray-900 dark:text-gray-100">
-                                        {{ count($p->barang) }}
+                                        {{ $p->peminjamanBarang->count() }}
                                     </p>
                                 </td>
-                                <td class="px-4 py-4">
-                                    <div class="flex items-center gap-3">
-                                        @if ($p->barang)
-                                            <img src="{{ $p->foto_peminjaman_url ?? 'https://www.shutterstock.com/image-vector/default-ui-image-placeholder-wireframes-600nw-1037719192.jpg' }}"
-                                                alt="{{ $p->nama_peminjam }}"
-                                                class="mx-auto w-20 h-20 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-600" />
-                                        @else
-                                            <span class="text-sm text-gray-400 dark:text-gray-500">Barang
-                                                dihapus</span>
-                                        @endif
+                                <td class="px-2 py-4">
+                                    <div class="flex justify-center">
+                                        <img src="{{ $p->foto_peminjaman_url ?? 'https://www.shutterstock.com/image-vector/default-ui-image-placeholder-wireframes-600nw-1037719192.jpg' }}"
+                                            alt="{{ $p->nama_peminjam }}"
+                                            class="w-12 h-12 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-600" />
                                     </div>
                                 </td>
 
                                 <td class="px-2 py-2 text-center">
-                                    @if ($allBorrowed)
-                                        <span class="px-3 py-1 rounded-lg text-xs font-medium bg-red-100 text-red-700">
-                                            Belum ada yang dikembalikan
-                                        </span>
-                                    @elseif ($allReturned)
+                                    @if ($isDikembalikan)
                                         <span
-                                            class="px-3 py-1 rounded-lg text-xs font-medium bg-green-100 text-green-700">
-                                            Semua barang dikembalikan
+                                            class="px-3 py-1 rounded-lg text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                                            Sudah Kembali
                                         </span>
                                     @else
                                         <span
-                                            class="px-3 py-1 rounded-lg text-xs font-medium bg-yellow-100 text-yellow-700">
-                                            Beberapa sudah dikembalikan
+                                            class="px-3 py-1 rounded-lg text-xs font-medium bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
+                                            Sedang Dipinjam
                                         </span>
                                     @endif
                                 </td>
 
-                                <td class="px-4 py-4">
+                                <td class="px-2 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">
+                                            {{ $isDikembalikan ? $p->tanggal_pengembalian->format('d M Y') : '-' }}
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <td class="px-2 py-4">
                                     <div class="flex items-center justify-center gap-1">
                                         <a href="{{ route('peminjaman.show', $p->peminjaman_id) }}"
                                             class="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-all"
@@ -247,27 +234,29 @@
                                             </svg>
                                         </a>
 
-                                        @if ($p->status === 'dipinjam')
-                                            <a href="{{ route('peminjaman.edit', $p->peminjaman_id) }}"
-                                                class="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-all"
-                                                title="Edit">
-                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
-                                                    <path
-                                                        d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                                                </svg>
-                                            </a>
-                                        @endif
+                                        @hasrole('admin')
+                                            @if (!$isDikembalikan)
+                                                <a href="{{ route('peminjaman.edit', $p->peminjaman_id) }}"
+                                                    class="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-all"
+                                                    title="Edit">
+                                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                                        <path
+                                                            d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                                                    </svg>
+                                                </a>
+                                            @endif
 
-                                        <button type="button" x-data
-                                            @click="$dispatch('open-modal', 'delete_peminjaman_{{ $p->peminjaman_id }}')"
-                                            class="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-all"
-                                            title="Hapus">
-                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                                <path
-                                                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                                            </svg>
-                                        </button>
+                                            <button type="button" x-data
+                                                @click="$dispatch('open-modal', 'delete_peminjaman_{{ $p->peminjaman_id }}')"
+                                                class="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-all"
+                                                title="Hapus">
+                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                                </svg>
+                                            </button>
+                                        @endhasrole
                                     </div>
                                 </td>
                             </tr>
@@ -293,20 +282,20 @@
                         d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
                 <p class="text-lg font-semibold text-gray-500 dark:text-gray-400 mb-2">
-                    @if (request()->hasAny(['search', 'status', 'tanggal_mulai', 'tanggal_akhir']))
+                    @if (request()->hasAny(['search', 'status', 'tanggal_mulai']))
                         Tidak Ada Data yang Sesuai
                     @else
                         Belum Ada Data Peminjaman
                     @endif
                 </p>
                 <p class="text-sm text-gray-400 dark:text-gray-500 mb-6">
-                    @if (request()->hasAny(['search', 'status', 'tanggal_mulai', 'tanggal_akhir']))
+                    @if (request()->hasAny(['search', 'status', 'tanggal_mulai']))
                         Coba ubah filter atau kata kunci pencarian Anda
                     @else
                         Mulai tambahkan data peminjaman barang
                     @endif
                 </p>
-                @if (request()->hasAny(['search', 'status', 'tanggal_mulai', 'tanggal_akhir']))
+                @if (request()->hasAny(['search', 'status', 'tanggal_mulai']))
                     <a href="{{ route('peminjaman.index') }}"
                         class="inline-flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium">
                         Reset Filter
@@ -354,7 +343,6 @@
                 const searchInput = document.getElementById('searchInput');
                 const statusSelect = document.getElementById('statusSelect');
                 const tanggalMulaiInput = document.getElementById('tanggalMulaiInput');
-                const tanggalAkhirInput = document.getElementById('tanggalAkhirInput');
 
                 if (searchInput) {
                     searchInput.addEventListener('input', autoSubmitForm);
@@ -368,12 +356,6 @@
 
                 if (tanggalMulaiInput) {
                     tanggalMulaiInput.addEventListener('change', function() {
-                        document.getElementById('filterForm').submit();
-                    });
-                }
-
-                if (tanggalAkhirInput) {
-                    tanggalAkhirInput.addEventListener('change', function() {
                         document.getElementById('filterForm').submit();
                     });
                 }

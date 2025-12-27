@@ -159,14 +159,16 @@
                         </a>
                     @endif
 
-                    <a href="{{ route('barang-keluar.create') }}"
-                        class="ml-auto px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                        Tambah Barang Keluar
-                    </a>
+                    @hasrole('admin')
+                        <a href="{{ route('barang-keluar.create') }}"
+                            class="ml-auto px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            Tambah Barang Keluar
+                        </a>
+                    @endhasrole
                 </div>
             </form>
         </div>
@@ -179,13 +181,13 @@
                 <table class="w-full">
                     <thead class="bg-gradient-to-r from-red-600 to-red-500 text-white">
                         <tr>
-                            <th class="px-4 py-4 text-left text-xs font-semibold uppercase">No</th>
-                            <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Tanggal</th>
-                            <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Jenis Barang</th>
-                            <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Kategori</th>
-                            <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Penerima</th>
-                            <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Jumlah</th>
-                            <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Aksi</th>
+                            <th class="px-2 py-4 text-left text-xs font-semibold uppercase">No</th>
+                            <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Tanggal</th>
+                            <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Nama Barang</th>
+                            <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Jenis Barang</th>
+                            <th class="px-2 py-4 w-60 text-left text-xs font-semibold uppercase">Kategori</th>
+                            <th class="px-2 py-4 text-center text-xs font-semibold uppercase">Jumlah</th>
+                            <th class="px-2 py-4 text-center text-xs font-semibold uppercase">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -200,6 +202,11 @@
                                             {{ $item->tanggal->format('d M Y') }}
                                         </span>
                                     </div>
+                                </td>
+                                <td class="px-4 py-4">
+                                    <p class="text-sm text-gray-900 dark:text-gray-100">
+                                        {{ $item->items->first()->barang->nama_barang . ($item->items->count() > 1 ? ' + ' . ($item->items->count() - 1) . ' lainnya' : '') }}
+                                    </p>
                                 </td>
                                 <td class="px-4 py-4">
                                     <div class="flex flex-col">
@@ -222,15 +229,10 @@
                                         {{ $item->kategori_icon }} {{ $item->kategori_label }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-4">
-                                    <p class="text-sm text-gray-900 dark:text-gray-100">
-                                        {{ $item->penerima ?? '-' }}
-                                    </p>
-                                </td>
                                 <td class="px-4 py-4 text-center">
                                     <span
-                                        class="inline-flex items-center px-3 py-1 rounded-lg bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 font-semibold text-sm">
-                                        {{ number_format($item->jumlah) }} item
+                                        class="inline-flex items-center px-3 py-1 rounded-lg text-gray-700 dark:text-white font-semibold text-sm">
+                                        {{ number_format($item->jumlah) }}
                                     </span>
                                 </td>
                                 <td class="px-4 py-4">
@@ -247,29 +249,31 @@
                                             </svg>
                                         </a>
 
-                                        <a href="{{ route('barang-keluar.edit', $item->keluar_id) }}"
-                                            class="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-all"
-                                            title="Edit">
-                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
-                                                <path
-                                                    d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                                            </svg>
-                                        </a>
+                                        @hasrole('admin')
+                                            <a href="{{ route('barang-keluar.edit', $item->keluar_id) }}"
+                                                class="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-all"
+                                                title="Edit">
+                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                                    <path
+                                                        d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                                                </svg>
+                                            </a>
 
-                                        <button x-data
-                                            @click="$dispatch('open-modal', 'delete_item_{{ $item->keluar_id }}')"
-                                            class="p-2.5 text-red-600 hover:bg-red-100 rounded-lg transition-all duration-200 hover:scale-110"
-                                            title="Hapus">
-                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                                <path
-                                                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                                            </svg>
-                                        </button>
+                                            <button x-data
+                                                @click="$dispatch('open-modal', 'delete_item_{{ $item->keluar_id }}')"
+                                                class="p-2.5 text-red-600 hover:bg-red-100 rounded-lg transition-all duration-200 hover:scale-110"
+                                                title="Hapus">
+                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path
+                                                        d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                                </svg>
+                                            </button>
 
-                                        <x-confirm-modal id="delete_item_{{ $item->keluar_id }}"
-                                            message="Apakah Anda yakin ingin menghapus transaksi ini? Barang akan dikembalikan ke status semula."
-                                            okLabel="Hapus" cancelLabel="Batal" :url="route('barang-keluar.destroy', $item->keluar_id)" method="DELETE" />
+                                            <x-confirm-modal id="delete_item_{{ $item->keluar_id }}"
+                                                message="Apakah Anda yakin ingin menghapus transaksi ini? Barang akan dikembalikan ke status semula."
+                                                okLabel="Hapus" cancelLabel="Batal" :url="route('barang-keluar.destroy', $item->keluar_id)" method="DELETE" />
+                                        @endhasrole
                                     </div>
                                 </td>
                             </tr>

@@ -8,7 +8,6 @@
         </div>
     </x-slot>
 
-    <!-- Back Button -->
     <div class="mb-6 max-w-5xl mx-auto px-6">
         <a href="{{ route('peminjaman.index') }}"
             class="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200 group">
@@ -20,18 +19,15 @@
         </a>
     </div>
 
-    <!-- Main Card -->
     <div class="max-w-5xl mx-auto px-6 pb-12">
         <div
             class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
 
-            <!-- Form Content -->
             <div class="p-8">
                 <form id="create_peminjaman" method="POST" action="{{ route('peminjaman.store') }}"
                     enctype="multipart/form-data" class="space-y-6" x-data="peminjamanForm()">
                     @csrf
 
-                    <!-- Row 1: Tanggal & Nama Peminjam -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="group">
                             <x-input-label for="tanggal_peminjaman" :value="__('Tanggal Peminjaman')"
@@ -40,7 +36,7 @@
                             </x-input-label>
                             <x-text-input id="tanggal_peminjaman"
                                 class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
-                                type="datetime-local" name="tanggal_peminjaman" :value="old('tanggal_peminjaman')" required />
+                                type="date" name="tanggal_peminjaman" :value="old('tanggal_peminjaman', date('Y-m-d'))" required />
                             <x-input-error :messages="$errors->get('tanggal_peminjaman')" class="mt-2" />
                         </div>
 
@@ -57,7 +53,6 @@
                         </div>
                     </div>
 
-                    <!-- Keterangan Peminjaman -->
                     <div class="group">
                         <x-input-label for="keterangan" :value="__('Keterangan Peminjaman')"
                             class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
@@ -68,7 +63,6 @@
                         <x-input-error :messages="$errors->get('keterangan')" class="mt-2" />
                     </div>
 
-                    <!-- Image Upload Section -->
                     <div class="group">
                         <x-input-label for="foto_peminjaman" :value="__('Foto Peminjaman')"
                             class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
@@ -93,7 +87,6 @@
                                 accept="image/*" required />
                         </div>
 
-                        <!-- Image Preview -->
                         <div id="preview_wrapper" class="mt-4 hidden">
                             <div
                                 class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 border-2 border-gray-200 dark:border-gray-600">
@@ -123,7 +116,6 @@
                         <x-input-error :messages="$errors->get('foto_peminjaman')" class="mt-2" />
                     </div>
 
-                    <!-- Divider -->
                     <div class="border-t-2 border-gray-200 dark:border-gray-700 pt-6">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
@@ -140,7 +132,6 @@
                         </div>
                     </div>
 
-                    <!-- Barang Items -->
                     <div class="space-y-4">
                         <template x-for="(item, index) in items" :key="index">
                             <div
@@ -163,50 +154,38 @@
                                     </button>
                                 </div>
 
-                                <div class="grid grid-cols-1 gap-4">
-                                    <!-- Barang Selection -->
-                                    <div class="group">
-                                        <label
-                                            class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                                            <span class="text-red-500">*</span>
-                                            Pilih Barang
-                                        </label>
-                                        <div class="relative">
-                                            <select :name="`barang_ids[${index}]`" x-model="item.barang_id" required
-                                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                                                <option value="">Pilih Barang</option>
-                                                @foreach ($barang as $item)
-                                                    <option value="{{ $item->barang_id }}">
-                                                        {{ $item->nama_barang }} - {{ $item->jenisBarang->jenis ?? '' }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            <div
-                                                class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                                <svg class="h-5 w-5 text-gray-400" fill="none"
-                                                    stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M19 9l-7 7-7-7" />
-                                                </svg>
-                                            </div>
+                                <div class="group">
+                                    <label
+                                        class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
+                                        <span class="text-red-500">*</span>
+                                        Pilih Barang
+                                    </label>
+                                    <div class="relative">
+                                        <select :name="`barang_ids[${index}]`" x-model="item.barang_id" required
+                                            class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 bg-white dark:bg-gray-700 dark:text-white appearance-none">
+                                            <option value="">Pilih Barang</option>
+                                            @foreach ($barang as $item)
+                                                <option value="{{ $item->barang_id }}">
+                                                    {{ $item->nama_barang }} (
+                                                    {{ $item->jenisBarang->kode_utama . $item->kode_barang }} ) -
+                                                    {{ $item->jenisBarang->jenis ?? '' }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <div
+                                            class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 9l-7 7-7-7" />
+                                            </svg>
                                         </div>
-                                    </div>
-
-                                    <!-- Catatan -->
-                                    <div class="group">
-                                        <label class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-                                            Catatan (Opsional)
-                                        </label>
-                                        <textarea :name="`catatan[${index}]`" x-model="item.catatan" rows="2"
-                                            class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 bg-white dark:bg-gray-700 dark:text-white"
-                                            placeholder="Contoh: Kondisi barang saat dipinjam..."></textarea>
                                     </div>
                                 </div>
                             </div>
                         </template>
                     </div>
 
-                    <!-- Add Item Button -->
                     <div class="flex justify-center pt-2">
                         <button type="button" @click="addItem"
                             class="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-700 border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-green-500 dark:hover:border-green-500 rounded-xl text-gray-700 dark:text-gray-300 font-semibold hover:bg-green-50 dark:hover:bg-green-900/20 transition-all duration-200">
@@ -218,7 +197,6 @@
                         </button>
                     </div>
 
-                    <!-- Action Buttons -->
                     <div
                         class="flex items-center justify-end pt-6 border-t border-gray-200 dark:border-gray-700 space-x-4">
                         <a href="{{ route('peminjaman.index') }}"
@@ -253,13 +231,11 @@
             function peminjamanForm() {
                 return {
                     items: [{
-                        barang_id: '',
-                        catatan: ''
+                        barang_id: ''
                     }],
                     addItem() {
                         this.items.push({
-                            barang_id: '',
-                            catatan: ''
+                            barang_id: ''
                         });
                     },
                     removeItem(index) {
@@ -270,7 +246,6 @@
                 }
             }
 
-            // File input handler
             const fileInput = document.getElementById('foto_peminjaman');
             const fileNameDisplay = document.getElementById('fileName');
             const previewWrapper = document.getElementById('preview_wrapper');
@@ -281,7 +256,6 @@
                 const file = this.files[0];
 
                 if (file) {
-                    // Validate file size (5MB)
                     if (file.size > 5 * 1024 * 1024) {
                         alert('Ukuran file terlalu besar! Maksimal 5MB');
                         this.value = '';
@@ -304,7 +278,6 @@
                 }
             });
 
-            // Remove image
             removeImageBtn.addEventListener('click', function() {
                 fileInput.value = '';
                 fileNameDisplay.textContent = '📷 Pilih foto peminjaman (jpg, jpeg, png - Max 5MB)';
@@ -313,7 +286,6 @@
                 previewWrapper.classList.add('hidden');
             });
 
-            // Form group focus animations
             document.addEventListener('DOMContentLoaded', function() {
                 const formGroups = document.querySelectorAll('.group');
                 formGroups.forEach(group => {

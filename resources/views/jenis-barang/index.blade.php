@@ -138,29 +138,31 @@
                                         </svg>
                                     </a>
 
-                                    <a href="{{ route('jenis-barang.edit', $jenis->jenis_barang_id) }}"
-                                        class="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-all duration-200"
-                                        title="Edit">
-                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
-                                            <path
-                                                d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                                        </svg>
-                                    </a>
+                                    @hasrole('admin')
+                                        <a href="{{ route('jenis-barang.edit', $jenis->jenis_barang_id) }}"
+                                            class="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-lg transition-all duration-200"
+                                            title="Edit">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
+                                                <path
+                                                    d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                                            </svg>
+                                        </a>
 
-                                    <button x-data
-                                        @click="$dispatch('open-modal', 'delete_template_{{ $jenis->jenis_barang_id }}')"
-                                        class="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-all duration-200"
-                                        title="Hapus">
-                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                            <path
-                                                d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-9l-1 1H5v2h14V4z" />
-                                        </svg>
-                                    </button>
+                                        <button x-data
+                                            @click="$dispatch('open-modal', 'delete_template_{{ $jenis->jenis_barang_id }}')"
+                                            class="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-all duration-200"
+                                            title="Hapus">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                <path
+                                                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-9l-1 1H5v2h14V4z" />
+                                            </svg>
+                                        </button>
 
-                                    <x-confirm-modal id="delete_template_{{ $jenis->jenis_barang_id }}"
-                                        message="Apakah Anda yakin ingin menghapus jenis barang {{ $jenis->jenis }}?"
-                                        okLabel="Hapus" cancelLabel="Batal" :url="route('jenis-barang.destroy', $jenis->jenis_barang_id)" method="DELETE" />
+                                        <x-confirm-modal id="delete_template_{{ $jenis->jenis_barang_id }}"
+                                            message="Apakah Anda yakin ingin menghapus jenis barang {{ $jenis->jenis }}?"
+                                            okLabel="Hapus" cancelLabel="Batal" :url="route('jenis-barang.destroy', $jenis->jenis_barang_id)" method="DELETE" />
+                                    @endhasrole
                                 </div>
                             </td>
                         </tr>

@@ -29,6 +29,15 @@ class UserSeeder extends Seeder
         );
         $user->assignRole('kepala_sekolah');
 
+        $bendahara = User::firstOrCreate(
+            ['username' => 'bendahara'],
+            [
+                'user_id' => Str::uuid(),
+                'password' => Hash::make('bendahara123'),
+            ]
+        );
+        $bendahara->assignRole('bendahara');
+
         $this->command->info('✅ Users berhasil dibuat dan role telah diberikan!');
     }
 }

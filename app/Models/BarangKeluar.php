@@ -40,7 +40,6 @@ class BarangKeluar extends Model
         return $this->hasMany(BarangKeluarItem::class, 'keluar_id', 'keluar_id');
     }
 
-    // Get barang through items (even if status is nonaktif)
     public function barang()
     {
         return $this->hasManyThrough(

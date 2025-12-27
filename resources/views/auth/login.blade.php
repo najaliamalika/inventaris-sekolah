@@ -72,25 +72,6 @@
                             <x-input-error :messages="$errors->get('password')" class="mt-2" />
                         </div>
 
-                        <!-- Remember Me & Forgot Password -->
-                        <div class="flex items-center justify-between">
-                            <label class="flex items-center cursor-pointer group">
-                                <input id="remember_me" type="checkbox"
-                                    class="w-4 h-4 rounded border-gray-300 text-green-600 shadow-sm focus:ring-green-500 cursor-pointer transition-all"
-                                    name="remember">
-                                <span class="ml-2 text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
-                                    {{ __('Ingat saya') }}
-                                </span>
-                            </label>
-
-                            @if (Route::has('password.request'))
-                                <a href="{{ route('password.request') }}"
-                                    class="text-sm text-green-600 hover:text-green-700 font-medium transition-colors duration-200">
-                                    {{ __('Lupa kata sandi?') }}
-                                </a>
-                            @endif
-                        </div>
-
                         <!-- Login Button -->
                         <button type="submit"
                             class="w-full px-6 py-3.5 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 group">
@@ -103,19 +84,6 @@
                         </button>
                     </form>
                 </div>
-
-                <!-- Footer -->
-                @if (Route::has('register'))
-                    <div class="px-8 py-6 bg-gray-50 border-t border-gray-100">
-                        <p class="text-center text-sm text-gray-600">
-                            Belum punya akun?
-                            <a href="{{ route('register') }}"
-                                class="text-green-600 hover:text-green-700 font-semibold transition-colors duration-200 hover:underline">
-                                Daftar di sini
-                            </a>
-                        </p>
-                    </div>
-                @endif
             </div>
 
             <!-- Bottom Text -->
