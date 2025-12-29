@@ -13,7 +13,7 @@
                 <div style="background-image: url('{{ asset('images/LOGOMAN1.png') }}')"
                     class="h-8 w-8 bg-cover bg-center bg-no-repeat rounded-lg"></div>
             </div>
-            <span class="text-xl font-bold text-gray-800 dark:text-white">INVENTARIS</span>
+            <span class="text-sm font-bold text-gray-800 dark:text-white">INVENTARIS MAN 1 KOTA TANGERANG</span>
         </a>
     </div>
 

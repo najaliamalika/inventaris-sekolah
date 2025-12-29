@@ -37,7 +37,7 @@
                                 <span class="text-red-500">*</span>
                             </x-input-label>
                             <x-text-input id="tanggal"
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
+                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
                                 type="date" name="tanggal" :value="old('tanggal', $pengajuan->tanggal->format('Y-m-d'))" required />
                             <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
                         </div>
@@ -48,14 +48,14 @@
                                 <span class="text-red-500">*</span>
                             </x-input-label>
                             <select id="tipe" name="tipe" required
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
+                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
                                 <option value="pembelian"
                                     {{ old('tipe', $pengajuan->tipe) == 'pembelian' ? 'selected' : '' }}>
-                                    💰 Pembelian Barang Baru
+                                    Pembelian Barang Baru
                                 </option>
                                 <option value="perbaikan"
                                     {{ old('tipe', $pengajuan->tipe) == 'perbaikan' ? 'selected' : '' }}>
-                                    🔧 Perbaikan Barang
+                                    Perbaikan Barang
                                 </option>
                             </select>
                             <x-input-error :messages="$errors->get('tipe')" class="mt-2" />
@@ -68,7 +68,7 @@
                                 <span class="text-red-500">*</span>
                             </x-input-label>
                             <select id="jenis_barang_id" name="jenis_barang_id"
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
+                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
                                 <option value="">-- Pilih Jenis Barang --</option>
                                 @foreach ($jenisBarang as $jenis)
                                     <option value="{{ $jenis->jenis_barang_id }}"
@@ -88,7 +88,7 @@
                                     <span class="text-red-500">*</span>
                                 </x-input-label>
                                 <x-text-input id="nama_barang"
-                                    class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
+                                    class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
                                     type="text" name="nama_barang" :value="old('nama_barang', $pengajuan->nama_barang)"
                                     placeholder="Contoh: Laptop HP ProBook 450 G8" required />
                                 <x-input-error :messages="$errors->get('nama_barang')" class="mt-2" />
@@ -101,7 +101,7 @@
                                 <span class="text-red-500">*</span>
                             </x-input-label>
                             <x-text-input id="jumlah"
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
+                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
                                 type="number" name="jumlah" min="1" :value="old('jumlah', $pengajuan->jumlah)" required />
                             <x-input-error :messages="$errors->get('jumlah')" class="mt-2" />
                         </div>
@@ -112,7 +112,7 @@
                                 <span class="text-red-500">*</span>
                             </x-input-label>
                             <x-text-input id="estimasi_biaya"
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
+                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
                                 type="number" name="estimasi_biaya" min="0" :value="old('estimasi_biaya', $pengajuan->estimasi_biaya)" required />
                             <x-input-error :messages="$errors->get('estimasi_biaya')" class="mt-2" />
                         </div>
@@ -123,7 +123,7 @@
                                 <span class="text-red-500">*</span>
                             </x-input-label>
                             <textarea id="alasan" name="alasan" rows="4" required
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
+                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
                                 placeholder="Jelaskan alasan pengajuan secara detail...">{{ old('alasan', $pengajuan->alasan) }}</textarea>
                             <x-input-error :messages="$errors->get('alasan')" class="mt-2" />
                         </div>
@@ -138,14 +138,14 @@
                         </h3>
 
                         <div
-                            class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+                            class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-4">
                             <div class="flex items-start gap-3">
-                                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0"
+                                <svg class="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0"
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <div class="text-sm text-blue-800 dark:text-blue-300">
+                                <div class="text-sm text-green-800 dark:text-green-300">
                                     <p class="font-semibold mb-1">Pilih jenis barang terlebih dahulu</p>
                                     <p>Barang yang ditampilkan adalah barang dengan kondisi <strong>baik</strong>.
                                         Jumlah barang yang dipilih harus sesuai dengan jumlah yang diinput.</p>
@@ -173,7 +173,7 @@
                     </a>
 
                     <button type="button" x-data @click="$dispatch('open-modal', 'update_confirmation')"
-                        class="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2">
+                        class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -264,9 +264,9 @@
                 availableBarang.forEach(barang => {
                     const isChecked = existingBarangIds.includes(barang.barang_id) ? 'checked' : '';
                     html += `
-                        <label class="barang-checkbox-item relative flex items-start p-4 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all duration-200 ${isChecked ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : ''}">
+                        <label class="barang-checkbox-item relative flex items-start p-4 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all duration-200 ${isChecked ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : ''}">
                             <input type="checkbox" name="barang_ids[]" value="${barang.barang_id}" 
-                                class="barang-checkbox w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 mt-0.5" 
+                                class="barang-checkbox w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500 focus:ring-2 mt-0.5" 
                                 onchange="updateSelectedCount()" ${isChecked}>
                             <div class="ml-3 flex-1">
                                 <div class="font-semibold text-gray-900 dark:text-gray-100">
@@ -288,7 +288,7 @@
                         <div class="flex items-center justify-between text-sm">
                             <span class="text-gray-700 dark:text-gray-300">
                                 <strong>Dipilih:</strong> 
-                                <span id="selectedCount" class="text-blue-600 dark:text-blue-400 font-semibold">0</span> dari 
+                                <span id="selectedCount" class="text-green-600 dark:text-green-400 font-semibold">0</span> dari 
                                 <strong>Jumlah diinput:</strong> 
                                 <span id="requiredCount" class="text-gray-900 dark:text-gray-100 font-semibold">${document.getElementById('jumlah').value || 0}</span>
                             </span>
@@ -314,7 +314,7 @@
                     selectedCountEl.textContent = selected;
                     selectedCountEl.className = selected === required ?
                         'text-green-600 dark:text-green-400 font-semibold' :
-                        'text-blue-600 dark:text-blue-400 font-semibold';
+                        'text-green-600 dark:text-green-400 font-semibold';
                 }
 
                 if (requiredCountEl) {
@@ -324,10 +324,10 @@
                 document.querySelectorAll('.barang-checkbox-item').forEach(item => {
                     const checkbox = item.querySelector('.barang-checkbox');
                     if (checkbox.checked) {
-                        item.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+                        item.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
                         item.classList.remove('border-gray-200', 'dark:border-gray-600');
                     } else {
-                        item.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+                        item.classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
                         item.classList.add('border-gray-200', 'dark:border-gray-600');
                     }
                 });

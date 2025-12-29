@@ -26,6 +26,9 @@ class LaporanTahunanExport implements WithMultipleSheets
     {
         $admin = [
             new LaporanTahunanPeminjamanSheet($this->peminjaman, $this->year),
+            new LaporanTahunanBarangMasukSheet($this->barangMasuk, $this->year),
+            new LaporanTahunanBarangKeluarSheet($this->barangKeluar, $this->year),
+            new LaporanTahunanPengajuanSheet($this->pengajuan, $this->year)
         ];
 
         $kepala = [
@@ -33,11 +36,14 @@ class LaporanTahunanExport implements WithMultipleSheets
             new LaporanTahunanBarangKeluarSheet($this->barangKeluar, $this->year),
             new LaporanTahunanPengajuanSheet($this->pengajuan, $this->year)
         ];
+        $bendahara = [
+            new LaporanTahunanPengajuanSheet($this->pengajuan, $this->year)
+
+        ];
         /** @var User $user */
         $user = auth()->user();
 
-        return
-            $user->hasRole('admin') ? $admin : $kepala
+        return ($user->hasRole('admin') ? $admin : ($user->hasRole('kepala') ? $kepala : $bendahara))
         ;
     }
 }

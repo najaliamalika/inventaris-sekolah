@@ -199,21 +199,18 @@
                     @forelse($barangMasuk as $item)
                         @php
                             $grandTotal += $item->total_harga;
-                            $isFirstRow = true;
-                            $isFirstDetail = true;
                         @endphp
                         @foreach ($item->details as $detail)
                             @php
                                 $barangItems = $detail->barangItems;
-                                $isFirstItemInDetail = true;
                             @endphp
 
                             @if ($barangItems->isEmpty())
                                 <tr>
                                     <td class="text-center">{{ $no++ }}</td>
-                                    <td>{{ $isFirstRow ? $item->tanggal->format('d/m/Y') : '' }}</td>
-                                    <td>{{ $isFirstRow ? ucfirst($item->kategori) : '' }}</td>
-                                    <td>{{ $isFirstRow ? $item->nama_supplier : '' }}</td>
+                                    <td>{{ $item->tanggal->format('d/m/Y') }}</td>
+                                    <td>{{ ucfirst($item->kategori) }}</td>
+                                    <td>{{ $item->nama_supplier }}</td>
                                     <td>{{ $detail->jenisBarang->jenis ?? '-' }}</td>
                                     <td class="text-center">-</td>
                                     <td>-</td>
@@ -222,47 +219,31 @@
                                     </td>
                                     <td class="text-right">Rp
                                         {{ number_format($detail->harga_satuan * $detail->jumlah, 0, ',', '.') }}</td>
-                                    <td class="text-right">
-                                        {{ $isFirstRow ? 'Rp ' . number_format($item->total_harga, 0, ',', '.') : '' }}
-                                    </td>
+                                    <td class="text-right">Rp {{ number_format($item->total_harga, 0, ',', '.') }}</td>
                                     <td>{{ $detail->keterangan ?? ($item->keterangan ?? '-') }}</td>
                                 </tr>
-                                @php
-                                    $totalItems++;
-                                    $isFirstRow = false;
-                                    $isFirstDetail = false;
-                                @endphp
+                                @php $totalItems++; @endphp
                             @else
                                 @foreach ($barangItems as $barang)
                                     <tr>
                                         <td class="text-center">{{ $no++ }}</td>
-                                        <td>{{ $isFirstRow ? $item->tanggal->format('d/m/Y') : '' }}</td>
-                                        <td>{{ $isFirstRow ? ucfirst($item->kategori) : '' }}</td>
-                                        <td>{{ $isFirstRow ? $item->nama_supplier : '' }}</td>
-                                        <td>{{ $isFirstItemInDetail ? $detail->jenisBarang->jenis ?? '-' : '' }}</td>
+                                        <td>{{ $item->tanggal->format('d/m/Y') }}</td>
+                                        <td>{{ ucfirst($item->kategori) }}</td>
+                                        <td>{{ $item->nama_supplier }}</td>
+                                        <td>{{ $detail->jenisBarang->jenis ?? '-' }}</td>
                                         <td class="text-center">
                                             {{ $barang->kode_barang ? $detail->jenisBarang->kode_utama . $barang->kode_barang : '-' }}
                                         </td>
                                         <td>{{ $barang->nama_barang ?? '-' }}</td>
-                                        <td class="text-center">
-                                            {{ $isFirstItemInDetail ? $detail->jenisBarang->satuan ?? '-' : '' }}</td>
-                                        <td class="text-right">
-                                            {{ $isFirstItemInDetail ? 'Rp ' . number_format($detail->harga_satuan ?? 0, 0, ',', '.') : '' }}
-                                        </td>
-                                        <td class="text-right">
-                                            {{ $isFirstItemInDetail ? 'Rp ' . number_format($detail->harga_satuan * $detail->jumlah, 0, ',', '.') : '' }}
-                                        </td>
-                                        <td class="text-right">
-                                            {{ $isFirstRow ? 'Rp ' . number_format($item->total_harga, 0, ',', '.') : '' }}
-                                        </td>
+                                        <td class="text-center">{{ $detail->jenisBarang->satuan ?? '-' }}</td>
+                                        <td class="text-right">Rp
+                                            {{ number_format($detail->harga_satuan ?? 0, 0, ',', '.') }}</td>
+                                        <td class="text-right">Rp
+                                            {{ number_format($detail->harga_satuan * $detail->jumlah, 0, ',', '.') }}</td>
+                                        <td class="text-right">Rp {{ number_format($item->total_harga, 0, ',', '.') }}</td>
                                         <td>{{ $detail->keterangan ?? ($item->keterangan ?? '-') }}</td>
                                     </tr>
-                                    @php
-                                        $totalItems++;
-                                        $isFirstRow = false;
-                                        $isFirstDetail = false;
-                                        $isFirstItemInDetail = false;
-                                    @endphp
+                                    @php $totalItems++; @endphp
                                 @endforeach
                             @endif
                         @endforeach
@@ -383,7 +364,7 @@
                         $totalBiaya = 0;
                     @endphp
                     @forelse($pengajuan as $item)
-                        @php $totalBiaya += $item->estimasi_biaya; @endphp
+                        @php $totalBiaya += ($item->status === 'disetujui' ? $item->estimasi_biaya : 0); @endphp
                         <tr>
                             <td class="text-center">{{ $no++ }}</td>
                             <td>{{ $item->tanggal->format('d/m/Y') }}</td>

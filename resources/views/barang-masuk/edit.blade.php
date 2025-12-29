@@ -50,10 +50,10 @@
                             <select id="kategori" name="kategori" required
                                 class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
                                 <option value="pembelian"
-                                    {{ old('kategori', $barangMasuk->kategori) == 'pembelian' ? 'selected' : '' }}>💰
+                                    {{ old('kategori', $barangMasuk->kategori) == 'pembelian' ? 'selected' : '' }}>
                                     Pembelian</option>
                                 <option value="bantuan"
-                                    {{ old('kategori', $barangMasuk->kategori) == 'bantuan' ? 'selected' : '' }}>🎁
+                                    {{ old('kategori', $barangMasuk->kategori) == 'bantuan' ? 'selected' : '' }}>
                                     Bantuan</option>
                             </select>
                             <x-input-error :messages="$errors->get('kategori')" class="mt-2" />
@@ -86,7 +86,7 @@
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Detail Barang</h3>
                         <button type="button" id="addDetailBtn"
-                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium flex items-center gap-2">
+                            class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -143,13 +143,15 @@
                 const harga = detail ? detail.harga_satuan : 0;
                 const keterangan = detail ? (detail.keterangan || '') : '';
 
+                const uniqueId = 'input_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
                 return `
             <div class="detail-item bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700/50 dark:to-gray-800/50 p-6 rounded-xl border-2 border-gray-200 dark:border-gray-600" data-index="${index}">
                 ${detailId ? `<input type="hidden" name="detail_ids[]" value="${detailId}">` : ''}
                 
                 <div class="flex items-center justify-between mb-4">
                     <h4 class="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                        <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">${index + 1}</span>
+                        <span class="bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">${index + 1}</span>
                         Jenis Barang #${index + 1}
                     </h4>
                     <button type="button" class="remove-detail-btn text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-lg transition-all" data-index="${index}">
@@ -187,8 +189,11 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Harga Satuan
                             </label>
-                            <input type="number" name="harga_satuan[]" min="0" value="${harga}"
-                                class="block w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-white dark:bg-gray-700 dark:text-white">
+                            <input type="text" name="harga_satuan[]" min="0" value="${harga}"
+                            inputmode="numeric"
+                            data-format-number="true"
+                            data-number-id="${uniqueId}"
+                            class="block w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-white dark:bg-gray-700 dark:text-white">
                         </div>
 
                         <!-- Lokasi Default -->
@@ -212,7 +217,7 @@
                     </div>
 
                     <!-- Barang Items Container -->
-                    <div class="barang-items-container bg-blue-50 dark:bg-blue-900/10 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div class="barang-items-container bg-green-50 dark:bg-green-900/10 p-4 rounded-lg border border-green-200 dark:border-green-800">
                         <div class="flex items-center justify-between mb-3">
                             <h5 class="font-semibold text-sm text-gray-700 dark:text-gray-300">Detail Barang Individual</h5>
                             <span class="text-xs text-gray-500 dark:text-gray-400">Sesuai dengan jumlah barang</span>
@@ -311,11 +316,97 @@
                 }
             }
 
+            function initializeNumberFormat(input) {
+                if (!input || input.dataset.numberInitialized) return;
+                input.dataset.numberInitialized = 'true';
+
+                // Format number
+                function fmt(n) {
+                    if (!n) return '';
+                    const clean = String(n).replace(/\D/g, '');
+                    return clean ? clean.replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
+                }
+
+                // Unformat number
+                function unfmt(s) {
+                    return String(s).replace(/\./g, '');
+                }
+
+                // Get digit position
+                function getDigitPos(str, cursorPos) {
+                    let pos = 0;
+                    for (let i = 0; i < cursorPos; i++) {
+                        if (str[i] && str[i] !== '.') pos++;
+                    }
+                    return pos;
+                }
+
+                // Get cursor position from digit position
+                function getCursorPos(str, digitPos) {
+                    let count = 0;
+                    for (let i = 0; i <= str.length; i++) {
+                        if (count === digitPos) return i;
+                        if (i < str.length && str[i] !== '.') count++;
+                    }
+                    return str.length;
+                }
+
+                // Format initial value
+                if (input.value) {
+                    input.value = fmt(input.value);
+                }
+
+                // Input event
+                input.addEventListener('input', function() {
+                    const pos = getDigitPos(this.value, this.selectionStart);
+                    this.value = fmt(this.value);
+                    const newPos = getCursorPos(this.value, pos);
+                    this.setSelectionRange(newPos, newPos);
+                });
+
+                // Paste event
+                input.addEventListener('paste', function(e) {
+                    e.preventDefault();
+                    const paste = (e.clipboardData || window.clipboardData).getData('text');
+                    const clean = paste.replace(/\D/g, '');
+                    if (!clean) return;
+
+                    const start = this.selectionStart;
+                    const end = this.selectionEnd;
+                    const posStart = getDigitPos(this.value, start);
+                    const posEnd = getDigitPos(this.value, end);
+                    const raw = unfmt(this.value);
+                    const newRaw = raw.substring(0, posStart) + clean + raw.substring(posEnd);
+
+                    this.value = fmt(newRaw);
+
+                    const newDigitPos = posStart + clean.length;
+                    const newCursorPos = getCursorPos(this.value, newDigitPos);
+                    this.setSelectionRange(newCursorPos, newCursorPos);
+                });
+
+                // Keydown event
+                input.addEventListener('keydown', function(e) {
+                    const allowed = [8, 9, 27, 13, 46, 35, 36, 37, 38, 39, 40];
+                    if (allowed.includes(e.keyCode) ||
+                        ((e.ctrlKey || e.metaKey) && [65, 67, 86, 88, 90].includes(e.keyCode))) {
+                        return;
+                    }
+                    if ((e.keyCode < 48 || e.keyCode > 57) && (e.keyCode < 96 || e.keyCode > 105)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
             existingDetails.forEach((detail, index) => {
                 const container = document.getElementById('detailContainer');
                 container.insertAdjacentHTML('beforeend', createDetailItem(index, detail));
 
                 const detailElement = container.querySelector(`.detail-item[data-index="${index}"]`);
+                const hargaInput = detailElement.querySelector('[data-format-number="true"]');
+                if (hargaInput) {
+                    initializeNumberFormat(hargaInput);
+                }
                 const barangContainer = detailElement.querySelector('.barang-items');
 
                 detail.barang_items.forEach((barang, barangIndex) => {
@@ -327,6 +418,14 @@
             document.getElementById('addDetailBtn').addEventListener('click', function() {
                 const container = document.getElementById('detailContainer');
                 container.insertAdjacentHTML('beforeend', createDetailItem(detailIndex));
+
+                // Initialize number format untuk input harga satuan yang baru ditambahkan
+                const newDetailItem = container.querySelector(`.detail-item[data-index="${detailIndex}"]`);
+                const hargaInput = newDetailItem.querySelector('[data-format-number="true"]');
+                if (hargaInput) {
+                    initializeNumberFormat(hargaInput);
+                }
+
                 detailIndex++;
                 updateRemoveButtons();
             });
@@ -349,11 +448,11 @@
 
             function updateItemNumbers() {
                 document.querySelectorAll('.detail-item').forEach((item, index) => {
-                    const numberBadge = item.querySelector('.bg-blue-600');
+                    const numberBadge = item.querySelector('.bg-green-600');
                     const title = item.querySelector('h4');
                     numberBadge.textContent = index + 1;
                     title.innerHTML =
-                        `<span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">${index + 1}</span> Jenis Barang #${index + 1}`;
+                        `<span class="bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm">${index + 1}</span> Jenis Barang #${index + 1}`;
                 });
             }
 
@@ -362,6 +461,19 @@
                 items.forEach(item => {
                     const removeBtn = item.querySelector('.remove-detail-btn');
                     removeBtn.style.display = items.length > 1 ? 'block' : 'none';
+                });
+            }
+
+            const form = document.getElementById('update_barang_masuk');
+            if (form && !form.dataset.numberFormHandler) {
+                form.dataset.numberFormHandler = 'true';
+                form.addEventListener('submit', function() {
+                    const inputs = this.querySelectorAll('[data-format-number="true"]');
+                    inputs.forEach(inp => {
+                        if (inp.value) {
+                            inp.value = inp.value.replace(/\./g, '');
+                        }
+                    });
                 });
             }
 

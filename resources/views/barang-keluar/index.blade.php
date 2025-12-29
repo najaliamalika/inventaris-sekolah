@@ -11,10 +11,10 @@
 
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div
-            class="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-xl p-5 border border-red-200 dark:border-red-800">
+            class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-5 border border-blue-200 dark:border-blue-800">
             <div class="flex items-center justify-between mb-2">
-                <p class="text-xs font-medium text-red-600 dark:text-red-400">Total Transaksi</p>
-                <svg class="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <p class="text-xs font-medium text-blue-600 dark:text-blue-400">Total Transaksi</p>
+                <svg class="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
@@ -35,10 +35,10 @@
         </div>
 
         <div
-            class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-5 border border-blue-200 dark:border-blue-800">
+            class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-5 border border-green-200 dark:border-green-800">
             <div class="flex items-center justify-between mb-2">
-                <p class="text-xs font-medium text-blue-600 dark:text-blue-400">Habis Pakai</p>
-                <svg class="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <p class="text-xs font-medium text-green-600 dark:text-green-400">Habis Pakai</p>
+                <svg class="w-7 h-7 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                 </svg>
@@ -67,19 +67,19 @@
                 <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            🔍 Cari
+                            Cari
                         </label>
                         <div class="relative">
                             <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
                                 placeholder="Penerima atau keterangan..."
-                                class="w-full px-4 py-2.5 pl-10 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                                class="w-full px-4 py-2.5 pl-10 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                             <svg class="absolute left-3 top-3 w-5 h-5 text-gray-400" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                             <div id="searchLoading" class="hidden absolute right-3 top-3">
-                                <svg class="animate-spin h-5 w-5 text-red-600" xmlns="http://www.w3.org/2000/svg"
+                                <svg class="animate-spin h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg"
                                     fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10"
                                         stroke="currentColor" stroke-width="4"></circle>
@@ -93,36 +93,36 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            📊 Kategori
+                            Kategori
                         </label>
                         <select name="kategori" id="kategoriSelect"
-                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
+                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
                             <option value="">Semua</option>
-                            <option value="habis_pakai" {{ request('kategori') == 'habis_pakai' ? 'selected' : '' }}>📦
+                            <option value="habis_pakai" {{ request('kategori') == 'habis_pakai' ? 'selected' : '' }}>
                                 Habis Pakai</option>
-                            <option value="rusak" {{ request('kategori') == 'rusak' ? 'selected' : '' }}>💔 Rusak
+                            <option value="rusak" {{ request('kategori') == 'rusak' ? 'selected' : '' }}>Rusak
                             </option>
-                            <option value="tidak_layak" {{ request('kategori') == 'tidak_layak' ? 'selected' : '' }}>❌
+                            <option value="tidak_layak" {{ request('kategori') == 'tidak_layak' ? 'selected' : '' }}>
                                 Tidak Layak</option>
                             <option value="sedang_diperbaiki"
-                                {{ request('kategori') == 'sedang_diperbaiki' ? 'selected' : '' }}>🔧 Sedang Diperbaiki
+                                {{ request('kategori') == 'sedang_diperbaiki' ? 'selected' : '' }}>Sedang Diperbaiki
                             </option>
-                            <option value="dihibahkan" {{ request('kategori') == 'dihibahkan' ? 'selected' : '' }}>🎁
+                            <option value="dihibahkan" {{ request('kategori') == 'dihibahkan' ? 'selected' : '' }}>
                                 Dihibahkan</option>
                         </select>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            📦 Jenis Barang
+                            Jenis Barang
                         </label>
                         <select name="jenis_barang_id" id="jenisBarangSelect"
-                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
+                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
                             <option value="">Semua</option>
                             @foreach ($jenisBarangList as $jenis)
                                 <option value="{{ $jenis->jenis_barang_id }}"
                                     {{ request('jenis_barang_id') == $jenis->jenis_barang_id ? 'selected' : '' }}>
-                                    {{ $jenis->kategori }} - {{ $jenis->jenis }}
+                                    {{ $jenis->jenis }} - {{ $jenis->kode_utama }}
                                 </option>
                             @endforeach
                         </select>
@@ -130,20 +130,20 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            📅 Dari Tanggal
+                            Dari Tanggal
                         </label>
                         <input type="date" name="tanggal_mulai" id="tanggalMulaiInput"
                             value="{{ request('tanggal_mulai') }}"
-                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            📅 Sampai Tanggal
+                            Sampai Tanggal
                         </label>
                         <input type="date" name="tanggal_akhir" id="tanggalAkhirInput"
                             value="{{ request('tanggal_akhir') }}"
-                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                     </div>
                 </div>
 
@@ -161,7 +161,7 @@
 
                     @hasrole('admin')
                         <a href="{{ route('barang-keluar.create') }}"
-                            class="ml-auto px-5 py-2.5 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                            class="ml-auto px-5 py-2.5 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -179,7 +179,7 @@
         @if ($barangKeluar->count() > 0)
             <div class="overflow-x-auto">
                 <table class="w-full">
-                    <thead class="bg-gradient-to-r from-red-600 to-red-500 text-white">
+                    <thead class="bg-gradient-to-r from-green-600 to-green-500 text-white">
                         <tr>
                             <th class="px-2 py-4 text-left text-xs font-semibold uppercase">No</th>
                             <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Tanggal</th>
@@ -221,12 +221,12 @@
                                 <td class="px-4 py-4">
                                     <span
                                         class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium 
-                                        @if ($item->kategori == 'habis_pakai') bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400
-                                        @elseif($item->kategori == 'rusak') bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400
+                                        @if ($item->kategori == 'habis_pakai') bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400
+                                        @elseif($item->kategori == 'rusak') bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400
                                         @elseif($item->kategori == 'tidak_layak') bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-400
                                         @elseif($item->kategori == 'sedang_diperbaiki') bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400
                                         @else bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 @endif">
-                                        {{ $item->kategori_icon }} {{ $item->kategori_label }}
+                                        {{ $item->kategori_label }}
                                     </span>
                                 </td>
                                 <td class="px-4 py-4 text-center">
@@ -316,7 +316,7 @@
                     </a>
                 @else
                     <a href="{{ route('barang-keluar.create') }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium">
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6" />

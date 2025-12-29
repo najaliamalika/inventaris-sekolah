@@ -80,8 +80,7 @@ class BarangKeluarController extends Controller
     public function getAvailableBarang($jenisBarangId)
     {
         $barang = Barang::where('jenis_barang_id', $jenisBarangId)
-            ->where('status', 'aktif')
-            ->where('kondisi', 'baik')
+            ->where('kondisi', ['baik', 'diperbaiki'])
             ->with('jenisBarang')
             ->get();
 

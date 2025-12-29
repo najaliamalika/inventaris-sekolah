@@ -49,11 +49,11 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Welcome Card -->
-            <div class="mb-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl overflow-hidden">
+            <div class="mb-8 bg-gradient-to-r from-green-600 to-green-600 rounded-2xl shadow-xl overflow-hidden">
                 <div class="p-8 text-white">
-                    <h1 class="text-3xl font-bold mb-2">Selamat Datang! 👋</h1>
-                    <p class="text-blue-100 text-lg">Kelola inventaris sekolah Anda dengan mudah dan efisien</p>
-                    <p class="text-blue-200 text-sm mt-2">{{ now()->isoFormat('dddd, D MMMM YYYY') }}</p>
+                    <h1 class="text-3xl font-bold mb-2">Selamat Datang!</h1>
+                    <p class="text-green-100 text-lg">Kelola inventaris sekolah Anda dengan mudah dan efisien</p>
+                    <p class="text-green-200 text-sm mt-2">{{ now()->isoFormat('dddd, D MMMM YYYY') }}</p>
                 </div>
             </div>
 
@@ -136,7 +136,7 @@
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-lg font-bold text-gray-900 dark:text-white">Jenis dengan Barang Terbanyak</h3>
                         <a href="{{ route('jenis-barang.index') }}"
-                            class="text-sm text-blue-600 dark:text-blue-400 hover:underline">Lihat Semua</a>
+                            class="text-sm text-green-600 dark:text-green-400 hover:underline">Lihat Semua</a>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         @php

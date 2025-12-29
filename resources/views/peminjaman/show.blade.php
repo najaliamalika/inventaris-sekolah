@@ -310,26 +310,26 @@
                     @hasrole('admin')
                         @if (!$isDikembalikan)
                             <div
-                                class="mt-8 bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
+                                class="mt-8 bg-green-50 dark:bg-green-900/20 rounded-xl p-6 border border-green-200 dark:border-green-800">
                                 <div class="flex items-start gap-4">
                                     <div class="flex-shrink-0">
-                                        <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none"
+                                        <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none"
                                             stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                     </div>
                                     <div class="flex-1">
-                                        <h4 class="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">
+                                        <h4 class="text-sm font-semibold text-green-900 dark:text-green-300 mb-2">
                                             Pengembalian Barang
                                         </h4>
-                                        <p class="text-sm text-blue-800 dark:text-blue-400 mb-4">
+                                        <p class="text-sm text-green-800 dark:text-green-400 mb-4">
                                             Semua barang akan dikembalikan sekaligus. Klik tombol di bawah untuk memproses
                                             pengembalian.
                                         </p>
                                         <button type="button" x-data
                                             @click="$dispatch('open-modal', 'kembalikan-peminjaman')"
-                                            class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors duration-200 text-sm gap-2 shadow-sm">
+                                            class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors duration-200 text-sm gap-2 shadow-sm">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -365,7 +365,7 @@
                                                 </label>
                                                 <input type="date" name="tanggal_pengembalian" required
                                                     value="{{ old('tanggal_pengembalian', date('Y-m-d')) }}"
-                                                    class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 bg-white dark:bg-gray-700 dark:text-white" />
+                                                    class="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-white dark:bg-gray-700 dark:text-white" />
                                             </div>
 
                                             <div>
@@ -374,7 +374,7 @@
                                                     Foto Pengembalian <span class="text-red-500">*</span>
                                                 </label>
                                                 <input type="file" name="foto_pengembalian" accept="image/*" required
-                                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-400" />
+                                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100 dark:file:bg-green-900/30 dark:file:text-green-400" />
                                                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                                     Format: JPG, JPEG, PNG (max. 5MB)
                                                 </p>
@@ -406,7 +406,7 @@
                                                 Batal
                                             </button>
                                             <button type="submit"
-                                                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                                                 Kembalikan Semua
                                             </button>
                                         </div>

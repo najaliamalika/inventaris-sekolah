@@ -66,7 +66,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            🔍 Cari
+                            Cari
                         </label>
                         <div class="relative">
                             <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
@@ -92,7 +92,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            📊 Kategori
+                            Kategori
                         </label>
                         <select name="kategori" id="kategoriSelect"
                             class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
@@ -106,7 +106,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            📅 Dari Tanggal
+                            Dari Tanggal
                         </label>
                         <input type="date" name="tanggal_mulai" id="tanggalMulaiInput"
                             value="{{ request('tanggal_mulai') }}"
@@ -115,7 +115,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            📅 Sampai Tanggal
+                            Sampai Tanggal
                         </label>
                         <input type="date" name="tanggal_akhir" id="tanggalAkhirInput"
                             value="{{ request('tanggal_akhir') }}"
@@ -137,11 +137,7 @@
 
                     @hasrole('admin')
                         <a href="{{ route('barang-masuk.create') }}"
-                            class="ml-auto px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
+                            class="ml-auto px-5 py-2.5 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
                             Tambah Barang Masuk
                         </a>
                     @endhasrole
@@ -205,12 +201,12 @@
                                     @if ($item->kategori == 'pembelian')
                                         <span
                                             class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400">
-                                            💰 Pembelian
+                                            Pembelian
                                         </span>
                                     @else
                                         <span
                                             class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
-                                            🎁 Bantuan
+                                            Bantuan
                                         </span>
                                     @endif
                                 </td>

@@ -21,7 +21,7 @@
         <div class="flex gap-2">
             @hasrole('admin')
                 <a href="{{ route('barang-masuk.edit', $barangMasuk->masuk_id) }}"
-                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm font-medium flex items-center gap-2">
+                    class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -60,11 +60,11 @@
                     <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">
                         @if ($barangMasuk->kategori == 'pembelian')
                             <span class="inline-flex items-center gap-1">
-                                💰 Pembelian
+                                Pembelian
                             </span>
                         @else
                             <span class="inline-flex items-center gap-1">
-                                🎁 Bantuan
+                                Bantuan
                             </span>
                         @endif
                     </p>
@@ -106,18 +106,18 @@
     @foreach ($barangMasuk->details as $index => $detail)
         <div
             class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
-            <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-4">
+            <div class="bg-gradient-to-r from-green-600 to-green-500 p-4">
                 <div class="flex items-center justify-between">
                     <div>
                         <h3 class="text-white font-semibold text-lg">
                             {{ $detail->jenisBarang->jenis }}
                         </h3>
-                        <p class="text-blue-100 text-sm">
+                        <p class="text-green-100 text-sm">
                             {{ $detail->jenisBarang->kategori }} • {{ $detail->jenisBarang->satuan }}
                         </p>
                     </div>
                     <div class="text-right">
-                        <p class="text-blue-100 text-sm">Jumlah</p>
+                        <p class="text-green-100 text-sm">Jumlah</p>
                         <p class="text-white font-bold text-2xl">{{ $detail->jumlah }}</p>
                     </div>
                 </div>
@@ -149,7 +149,7 @@
 
                 <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
                     <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                         </svg>
@@ -166,7 +166,7 @@
                                             {{ $barang->nama_barang }}
                                         </h5>
                                         @if ($barang->kode_barang)
-                                            <p class="text-xs text-blue-600 dark:text-blue-400 font-mono">
+                                            <p class="text-xs text-green-600 dark:text-green-400 font-mono">
                                                 {{ $detail->jenisBarang->kode_utama . '' . $barang->kode_barang }}
                                             </p>
                                         @endif

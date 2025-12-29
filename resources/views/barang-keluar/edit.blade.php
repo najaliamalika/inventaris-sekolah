@@ -75,19 +75,19 @@
                                 class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
                                 <option value="">-- Pilih Kategori --</option>
                                 <option value="habis_pakai"
-                                    {{ old('kategori', $barangKeluar->kategori) == 'habis_pakai' ? 'selected' : '' }}>📦
+                                    {{ old('kategori', $barangKeluar->kategori) == 'habis_pakai' ? 'selected' : '' }}>
                                     Habis Pakai</option>
                                 <option value="rusak"
-                                    {{ old('kategori', $barangKeluar->kategori) == 'rusak' ? 'selected' : '' }}>💔
+                                    {{ old('kategori', $barangKeluar->kategori) == 'rusak' ? 'selected' : '' }}>
                                     Rusak</option>
                                 <option value="tidak_layak"
-                                    {{ old('kategori', $barangKeluar->kategori) == 'tidak_layak' ? 'selected' : '' }}>❌
+                                    {{ old('kategori', $barangKeluar->kategori) == 'tidak_layak' ? 'selected' : '' }}>
                                     Tidak Layak</option>
                                 <option value="sedang_diperbaiki"
                                     {{ old('kategori', $barangKeluar->kategori) == 'sedang_diperbaiki' ? 'selected' : '' }}>
-                                    🔧 Sedang Diperbaiki</option>
+                                    Sedang Diperbaiki</option>
                                 <option value="dihibahkan"
-                                    {{ old('kategori', $barangKeluar->kategori) == 'dihibahkan' ? 'selected' : '' }}>🎁
+                                    {{ old('kategori', $barangKeluar->kategori) == 'dihibahkan' ? 'selected' : '' }}>
                                     Dihibahkan</option>
                             </select>
                             <x-input-error :messages="$errors->get('kategori')" class="mt-2" />
@@ -130,8 +130,9 @@
                     </div>
                 </div>
 
-                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
-                    <h4 class="font-semibold text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+                <div
+                    class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4">
+                    <h4 class="font-semibold text-green-900 dark:text-green-100 mb-2 flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -140,18 +141,18 @@
                     </h4>
                     <div class="space-y-1 mt-3">
                         @foreach ($barangKeluar->items as $item)
-                            <p class="text-sm text-blue-800 dark:text-blue-200">
+                            <p class="text-sm text-green-800 dark:text-green-200">
                                 • {{ $item->barang->nama_barang }}
                                 @if ($item->barang->kode_barang)
-                                    <span class="font-mono text-xs bg-blue-100 dark:bg-blue-800 px-2 py-0.5 rounded">
+                                    <span class="font-mono text-xs bg-green-100 dark:bg-green-800 px-2 py-0.5 rounded">
                                         {{ $item->barang->jenisBarang->kode_utama . '' . $item->barang->kode_barang }}
                                     </span>
                                 @endif
                             </p>
                         @endforeach
                     </div>
-                    <p class="text-xs text-blue-700 dark:text-blue-300 mt-3 italic">
-                        💡 Pilih barang baru di bawah untuk mengganti barang yang sudah dipilih sebelumnya
+                    <p class="text-xs text-green-700 dark:text-green-300 mt-3 italic">
+                        Pilih barang baru di bawah untuk mengganti barang yang sudah dipilih sebelumnya
                     </p>
                 </div>
 
@@ -167,7 +168,7 @@
                     <div x-show="!selectedJenis"
                         class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4 mb-4">
                         <p class="text-sm text-yellow-800 dark:text-yellow-200">
-                            ⚠️ Silakan pilih jenis barang terlebih dahulu
+                            Silakan pilih jenis barang terlebih dahulu
                         </p>
                     </div>
 
@@ -210,9 +211,6 @@
                                             <span class="font-medium">Lokasi:</span> <span
                                                 x-text="barang.lokasi"></span>
                                         </p>
-                                        <span
-                                            class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                                            x-text="barang.kondisi"></span>
                                     </div>
                                 </div>
                             </div>
@@ -233,7 +231,7 @@
                 <div x-show="selectedBarang.length > 0 && selectedBarang.length != jumlah"
                     class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
                     <p class="text-sm text-red-800 dark:text-red-200">
-                        ❌ Jumlah barang yang dipilih (<span x-text="selectedBarang.length"></span>) tidak sesuai dengan
+                        Jumlah barang yang dipilih (<span x-text="selectedBarang.length"></span>) tidak sesuai dengan
                         jumlah yang diinput (<span x-text="jumlah"></span>)
                     </p>
                 </div>
@@ -305,6 +303,9 @@
                             const response = await fetch(`/barang-keluar/get-available-barang/${this.selectedJenis}`);
                             const data = await response.json();
                             this.availableBarang = data;
+                            this.selectedBarang = data.filter(b => (b.kondisi === 'diperbaiki') || (b.status ===
+                                'nonaktif'));
+
                         } catch (error) {
                             console.error('Error loading barang:', error);
                             this.availableBarang = [];

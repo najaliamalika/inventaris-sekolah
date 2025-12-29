@@ -96,12 +96,10 @@
             @forelse($data as $barangMasuk)
                 @php
                     $grandTotal += $barangMasuk->total_harga;
-                    $isFirstDetail = true;
                 @endphp
                 @foreach ($barangMasuk->details as $detail)
                     @php
                         $barangItems = $detail->barangItems;
-                        $isFirstItem = true;
                     @endphp
 
                     @if ($barangItems->isEmpty())
@@ -120,32 +118,14 @@
                         </tr>
                         @php $totalItems++; @endphp
                     @else
-                        {{-- Jika ada barang items, tampilkan setiap barang --}}
+                        {{-- Jika ada barang items, tampilkan setiap barang dengan semua kolom terisi --}}
                         @foreach ($barangItems as $barang)
                             <tr>
                                 <td class="text-center">{{ $no++ }}</td>
-                                @if ($isFirstItem && $isFirstDetail)
-                                    <td
-                                        rowspan="{{ $barangMasuk->details->sum(fn($d) => $d->barangItems->count() ?: 1) }}">
-                                        {{ $barangMasuk->tanggal->format('d/m/Y') }}
-                                    </td>
-                                    <td
-                                        rowspan="{{ $barangMasuk->details->sum(fn($d) => $d->barangItems->count() ?: 1) }}">
-                                        {{ ucfirst($barangMasuk->kategori) }}
-                                    </td>
-                                    <td
-                                        rowspan="{{ $barangMasuk->details->sum(fn($d) => $d->barangItems->count() ?: 1) }}">
-                                        {{ $barangMasuk->nama_supplier }}
-                                    </td>
-                                    @php
-                                        $isFirstDetail = false;
-                                    @endphp
-                                @endif
-                                @if ($isFirstItem)
-                                    <td rowspan="{{ $barangItems->count() }}">{{ $detail->jenisBarang->jenis ?? '-' }}
-                                    </td>
-                                    @php $isFirstItem = false; @endphp
-                                @endif
+                                <td>{{ $barangMasuk->tanggal->format('d/m/Y') }}</td>
+                                <td>{{ ucfirst($barangMasuk->kategori) }}</td>
+                                <td>{{ $barangMasuk->nama_supplier }}</td>
+                                <td>{{ $detail->jenisBarang->jenis ?? '-' }}</td>
                                 <td class="text-center">
                                     {{ $barang->kode_barang ? $barang->jenisBarang->kode_utama . $barang->kode_barang : '-' }}
                                 </td>
@@ -177,7 +157,7 @@
     </table>
 
     <div class="footer">
-        <p>Dicetak pada: {{ date('d/m/Y') }}</p>
+        <p>Dicetak pada: {{ date('d/m/Y H:i:s') }}</p>
         <p style="margin-top: 5px;">Total Data: {{ $totalItems }} item dari {{ $data->count() }} transaksi</p>
     </div>
 </body>

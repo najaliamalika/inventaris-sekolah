@@ -12,18 +12,15 @@
         <div class="border-b border-gray-200 dark:border-gray-700">
             <nav class="flex -mb-px space-x-8" role="tablist">
                 <button onclick="switchMainTab('tahunan')"
-                    class="main-tab border-b-2 border-blue-500 py-4 px-1 text-center font-medium text-sm text-blue-600 dark:text-blue-400"
+                    class="main-tab border-b-2 border-green-500 py-4 px-1 text-center font-medium text-sm text-green-600 dark:text-green-400"
                     data-tab="tahunan">
-                    📊 Laporan Tahunan @hasanyrole('bendahara|kepala_sekolah')
-                    @endhasanyrole
+                    Laporan Tahunan
                 </button>
-                @hasanyrole('bendahara|kepala_sekolah')
-                    <button onclick="switchMainTab('range')"
-                        class="main-tab border-b-2 border-transparent py-4 px-1 text-center font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
-                        data-tab="range">
-                        📅 Range Waktu (Per Jenis)
-                    </button>
-                @endhasanyrole
+                <button onclick="switchMainTab('range')"
+                    class="main-tab border-b-2 border-transparent py-4 px-1 text-center font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
+                    data-tab="range">
+                    Range Waktu (Per Jenis)
+                </button>
             </nav>
         </div>
     </div>
@@ -32,7 +29,7 @@
         <div class="main-content" data-content="tahunan">
             <div
                 class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden max-w-3xl mx-auto">
-                <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-6">
+                <div class="bg-gradient-to-r from-green-500 to-green-600 p-6">
                     <div class="flex items-center gap-3 mb-2">
                         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -40,38 +37,49 @@
                         </svg>
                         <h2 class="text-2xl font-bold text-white">Laporan Tahunan Lengkap</h2>
                     </div>
-                    @hasanyrole('bendahara|kepala_sekolah')
-                        <p class="text-indigo-100 text-sm">Download semua laporan (Barang Masuk, Barang Keluar,
-                            Pengajuan) dalam 1 file</p>
-                    @endhasanyrole
                     @hasrole('admin')
-                        <p class="text-indigo-100 text-sm">Download laporan Peminjaman Barang</p>
+                        <p class="text-green-100 text-sm">Download semua laporan (Peminjaman, Barang Masuk, Barang Keluar,
+                            Pengajuan) dalam 1 file</p>
                     @endhasrole
-
-
+                    @hasrole('kepala_sekolah')
+                        <p class="text-green-100 text-sm">Download semua laporan (Barang Masuk, Barang Keluar, Pengajuan)
+                            dalam 1 file</p>
+                    @endhasrole
+                    @hasrole('bendahara')
+                        <p class="text-green-100 text-sm">Download laporan Pengajuan Barang</p>
+                    @endhasrole
                 </div>
+
                 <div class="p-8">
-                    @hasanyrole('bendahara|kepala_sekolah')
+                    @hasanyrole('admin|kepala_sekolah')
                         <div
-                            class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                            class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
                             <div class="flex items-start gap-3">
-                                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0"
+                                <svg class="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0"
                                     fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd"
                                         d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
                                         clip-rule="evenodd" />
                                 </svg>
                                 <div>
-                                    <h4 class="font-semibold text-blue-900 dark:text-blue-100 text-sm mb-1">Yang Termasuk
+                                    <h4 class="font-semibold text-green-900 dark:text-green-100 text-sm mb-1">Yang Termasuk
                                         dalam Laporan:</h4>
-                                    <ul class="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                                    <ul class="text-sm text-green-800 dark:text-green-200 space-y-1">
+                                        @hasrole('admin')
+                                            <li>• Laporan Peminjaman</li>
+                                        @endhasrole
                                         <li>• Laporan Barang Masuk</li>
                                         <li>• Laporan Barang Keluar</li>
                                         <li>• Laporan Pengajuan</li>
                                     </ul>
-                                    <p class="text-xs text-blue-700 dark:text-blue-300 mt-2">
-                                        <strong>Excel:</strong> 3 sheets dalam 1 file | <strong>PDF:</strong> Semua laporan
-                                        dalam 1 dokumen
+                                    <p class="text-xs text-green-700 dark:text-green-300 mt-2">
+                                        <strong>Excel:</strong>
+                                        @hasrole('admin')
+                                            4 sheets dalam 1 file
+                                            @elsehasrole('kepala_sekolah')
+                                            3 sheets dalam 1 file
+                                        @endhasrole
+                                        | <strong>PDF:</strong> Semua laporan dalam 1 dokumen
                                     </p>
                                 </div>
                             </div>
@@ -91,8 +99,8 @@
                                 </span>
                             </label>
                             <input type="number" name="year" value="{{ date('Y') }}" min="2020"
-                                max="{{ date('Y') }}" required
-                                class="w-full px-4 py-3 text-lg border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                                max="{{ date('Y') }}" requigreen
+                                class="w-full px-4 py-3 text-lg border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Pilih tahun untuk mengunduh laporan
                             </p>
                         </div>
@@ -109,34 +117,35 @@
                             </label>
                             <div class="grid grid-cols-2 gap-3">
                                 <label
-                                    class="relative flex items-center justify-center p-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:border-indigo-500 transition-all group">
-                                    <input type="radio" name="format" value="excel" required
+                                    class="relative flex items-center justify-center p-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:border-green-500 transition-all group">
+                                    <input type="radio" name="format" value="excel" requigreen
                                         class="absolute opacity-0 peer">
                                     <div
-                                        class="text-center peer-checked:text-indigo-600 dark:peer-checked:text-indigo-400">
+                                        class="text-center peer-checked:text-green-600 dark:peer-checked:text-green-400">
                                         <div
                                             class="text-3xl mb-2 peer-checked:scale-110 transition-transform group-hover:scale-105">
                                             📊</div>
                                         <div class="font-semibold">Excel</div>
                                         <div class="text-xs text-gray-500 dark:text-gray-400">
-                                            @hasanyrole('bendahara|kepala_sekolah')
-                                                3 Sheets
-                                            @endhasanyrole
                                             @hasrole('admin')
+                                                4 Sheets
+                                                @elsehasrole('kepala_sekolah')
+                                                3 Sheets
+                                                @elsehasrole('bendahara')
                                                 1 Sheet
                                             @endhasrole
                                         </div>
                                     </div>
                                     <div
-                                        class="absolute inset-0 border-2 border-indigo-500 rounded-lg opacity-0 peer-checked:opacity-100 transition-opacity">
+                                        class="absolute inset-0 border-2 border-green-500 rounded-lg opacity-0 peer-checked:opacity-100 transition-opacity">
                                     </div>
                                 </label>
 
                                 <label
-                                    class="relative flex items-center justify-center p-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:border-indigo-500 transition-all group">
+                                    class="relative flex items-center justify-center p-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:border-green-500 transition-all group">
                                     <input type="radio" name="format" value="pdf" class="absolute opacity-0 peer">
                                     <div
-                                        class="text-center peer-checked:text-indigo-600 dark:peer-checked:text-indigo-400">
+                                        class="text-center peer-checked:text-green-600 dark:peer-checked:text-green-400">
                                         <div
                                             class="text-3xl mb-2 peer-checked:scale-110 transition-transform group-hover:scale-105">
                                             📄</div>
@@ -144,19 +153,19 @@
                                         <div class="text-xs text-gray-500 dark:text-gray-400">1 Dokumen</div>
                                     </div>
                                     <div
-                                        class="absolute inset-0 border-2 border-indigo-500 rounded-lg opacity-0 peer-checked:opacity-100 transition-opacity">
+                                        class="absolute inset-0 border-2 border-green-500 rounded-lg opacity-0 peer-checked:opacity-100 transition-opacity">
                                     </div>
                                 </label>
                             </div>
                         </div>
 
                         <button type="submit"
-                            class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-4 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-lg">
+                            class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-600 hover:to-green-700 text-white py-4 rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-lg">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                             </svg>
-                            Download Laporan Tahunan @hasanyrole('bendahara|kepala_sekolah')
+                            Download Laporan Tahunan @hasanyrole('admin|kepala_sekolah')
                                 Lengkap
                             @endhasanyrole
                         </button>
@@ -165,181 +174,188 @@
             </div>
         </div>
 
-        <!-- RANGE WAKTU (Per Jenis Laporan) -->
         <div class="main-content hidden" data-content="range">
-            <!-- Sub Tabs: Jenis Laporan -->
             <div class="mb-6">
                 <div class="border-b border-gray-200 dark:border-gray-700">
                     <nav class="flex -mb-px space-x-4 overflow-x-auto" role="tablist">
-                        <button onclick="switchSubTab('peminjaman')"
-                            class="sub-tab border-b-2 border-blue-500 py-3 px-3 text-center font-medium text-sm text-blue-600 dark:text-blue-400 whitespace-nowrap"
-                            data-tab="peminjaman">
-                            📋 Peminjaman
-                        </button>
-                        <button onclick="switchSubTab('barang-masuk')"
-                            class="sub-tab border-b-2 border-transparent py-3 px-3 text-center font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 whitespace-nowrap"
-                            data-tab="barang-masuk">
-                            📥 Barang Masuk
-                        </button>
-                        <button onclick="switchSubTab('barang-keluar')"
-                            class="sub-tab border-b-2 border-transparent py-3 px-3 text-center font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 whitespace-nowrap"
-                            data-tab="barang-keluar">
-                            📤 Barang Keluar
-                        </button>
+                        @hasrole('admin')
+                            <button onclick="switchSubTab('peminjaman')"
+                                class="sub-tab border-b-2 py-3 px-3 text-center font-medium text-sm whitespace-nowrap border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
+                                data-tab="peminjaman" data-default="{{ $isAdmin ? 'true' : 'false' }}">
+                                Peminjaman
+                            </button>
+                        @endhasrole
+                        @hasanyrole('admin|kepala_sekolah')
+                            <button onclick="switchSubTab('barang-masuk')"
+                                class="sub-tab border-b-2 py-3 px-3 text-center font-medium text-sm whitespace-nowrap border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
+                                data-tab="barang-masuk" data-default="{{ $isKepala ? 'true' : 'false' }}">
+                                Barang Masuk
+                            </button>
+                            <button onclick="switchSubTab('barang-keluar')"
+                                class="sub-tab border-b-2 py-3 px-3 text-center font-medium text-sm whitespace-nowrap border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
+                                data-tab="barang-keluar">
+                                Barang Keluar
+                            </button>
+                        @endhasanyrole
                         <button onclick="switchSubTab('pengajuan')"
-                            class="sub-tab border-b-2 border-transparent py-3 px-3 text-center font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 whitespace-nowrap"
-                            data-tab="pengajuan">
-                            📝 Pengajuan
+                            class="sub-tab border-b-2 py-3 px-3 text-center font-medium text-sm whitespace-nowrap border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
+                            data-tab="pengajuan" data-default="{{ $isBendahara ? 'true' : 'false' }}">
+                            Pengajuan
                         </button>
                     </nav>
+
                 </div>
             </div>
 
-            <!-- PEMINJAMAN -->
-            <div class="report-content" data-report="peminjaman">
-                <div
-                    class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden max-w-2xl mx-auto">
-                    <div class="bg-gradient-to-r from-blue-600 to-blue-500 p-6">
-                        <h2 class="text-xl font-semibold text-white">Laporan Peminjaman</h2>
-                        <p class="text-blue-100 text-sm mt-1">Download laporan peminjaman berdasarkan rentang tanggal
-                        </p>
-                    </div>
-                    <div class="p-6">
-                        <form action="{{ route('reports.peminjaman') }}" method="POST" class="space-y-4">
-                            @csrf
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
-                                    Mulai</label>
-                                <input type="date" name="start_date" required
-                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
-                                    Akhir</label>
-                                <input type="date" name="end_date" required
-                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Format
-                                    Download</label>
-                                <select name="format" required
-                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                                    <option value="excel">📊 Excel (.xlsx)</option>
-                                    <option value="pdf">📄 PDF</option>
-                                </select>
-                            </div>
-                            <button type="submit"
-                                class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
-                                Download Laporan
-                            </button>
-                        </form>
+            @hasrole('admin')
+                <div class="report-content" data-report="peminjaman">
+                    <div
+                        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden max-w-2xl mx-auto">
+                        <div class="bg-gradient-to-r from-green-600 to-green-500 p-6">
+                            <h2 class="text-xl font-semibold text-white">Laporan Peminjaman</h2>
+                            <p class="text-green-100 text-sm mt-1">Download laporan peminjaman berdasarkan rentang tanggal
+                            </p>
+                        </div>
+                        <div class="p-6">
+                            <form action="{{ route('reports.peminjaman') }}" method="POST" class="space-y-4">
+                                @csrf
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
+                                        Mulai</label>
+                                    <input type="date" name="start_date" requigreen
+                                        class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
+                                        Akhir</label>
+                                    <input type="date" name="end_date" requigreen
+                                        class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Format
+                                        Download</label>
+                                    <select name="format" requigreen
+                                        class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                                        <option value="excel">Excel (.xlsx)</option>
+                                        <option value="pdf">PDF</option>
+                                    </select>
+                                </div>
+                                <button type="submit"
+                                    class="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
+                                    Download Laporan
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endhasrole
 
-            <!-- BARANG MASUK -->
-            <div class="report-content hidden" data-report="barang-masuk">
+            @hasanyrole('admin|kepala_sekolah')
+                <div class="report-content @hasrole('admin')hidden @endhasrole" data-report="barang-masuk">
+                    <div
+                        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden max-w-2xl mx-auto">
+                        <div class="bg-gradient-to-r from-green-600 to-green-500 p-6">
+                            <h2 class="text-xl font-semibold text-white">Laporan Barang Masuk</h2>
+                            <p class="text-green-100 text-sm mt-1">Download laporan barang masuk berdasarkan rentang
+                                tanggal</p>
+                        </div>
+                        <div class="p-6">
+                            <form action="{{ route('reports.barang-masuk') }}" method="POST" class="space-y-4">
+                                @csrf
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
+                                        Mulai</label>
+                                    <input type="date" name="start_date" requigreen
+                                        class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
+                                        Akhir</label>
+                                    <input type="date" name="end_date" requigreen
+                                        class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Format
+                                        Download</label>
+                                    <select name="format" requigreen
+                                        class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                                        <option value="excel">Excel (.xlsx)</option>
+                                        <option value="pdf">PDF</option>
+                                    </select>
+                                </div>
+                                <button type="submit"
+                                    class="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
+                                    Download Laporan
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endhasanyrole
+
+            @hasanyrole('admin|kepala_sekolah')
+                <div class="report-content hidden" data-report="barang-keluar">
+                    <div
+                        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden max-w-2xl mx-auto">
+                        <div class="bg-gradient-to-r from-green-600 to-green-500 p-6">
+                            <h2 class="text-xl font-semibold text-white">Laporan Barang Keluar</h2>
+                            <p class="text-green-100 text-sm mt-1">Download laporan barang keluar berdasarkan rentang
+                                tanggal
+                            </p>
+                        </div>
+                        <div class="p-6">
+                            <form action="{{ route('reports.barang-keluar') }}" method="POST" class="space-y-4">
+                                @csrf
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
+                                        Mulai</label>
+                                    <input type="date" name="start_date" requigreen
+                                        class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
+                                        Akhir</label>
+                                    <input type="date" name="end_date" requigreen
+                                        class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Format
+                                        Download</label>
+                                    <select name="format" requigreen
+                                        class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                                        <option value="excel">Excel (.xlsx)</option>
+                                        <option value="pdf">PDF</option>
+                                    </select>
+                                </div>
+                                <button type="submit"
+                                    class="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
+                                    Download Laporan
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @endhasanyrole
+
+            <div class="report-content @hasanyrole('admin|kepala_sekolah')hidden @endhasanyrole"
+                data-report="pengajuan">
                 <div
                     class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden max-w-2xl mx-auto">
                     <div class="bg-gradient-to-r from-green-600 to-green-500 p-6">
-                        <h2 class="text-xl font-semibold text-white">Laporan Barang Masuk</h2>
-                        <p class="text-green-100 text-sm mt-1">Download laporan barang masuk berdasarkan rentang
-                            tanggal</p>
-                    </div>
-                    <div class="p-6">
-                        <form action="{{ route('reports.barang-masuk') }}" method="POST" class="space-y-4">
-                            @csrf
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
-                                    Mulai</label>
-                                <input type="date" name="start_date" required
-                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
-                                    Akhir</label>
-                                <input type="date" name="end_date" required
-                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Format
-                                    Download</label>
-                                <select name="format" required
-                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                                    <option value="excel">📊 Excel (.xlsx)</option>
-                                    <option value="pdf">📄 PDF</option>
-                                </select>
-                            </div>
-                            <button type="submit"
-                                class="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
-                                Download Laporan
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- BARANG KELUAR -->
-            <div class="report-content hidden" data-report="barang-keluar">
-                <div
-                    class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden max-w-2xl mx-auto">
-                    <div class="bg-gradient-to-r from-red-600 to-red-500 p-6">
-                        <h2 class="text-xl font-semibold text-white">Laporan Barang Keluar</h2>
-                        <p class="text-red-100 text-sm mt-1">Download laporan barang keluar berdasarkan rentang tanggal
-                        </p>
-                    </div>
-                    <div class="p-6">
-                        <form action="{{ route('reports.barang-keluar') }}" method="POST" class="space-y-4">
-                            @csrf
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
-                                    Mulai</label>
-                                <input type="date" name="start_date" required
-                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
-                                    Akhir</label>
-                                <input type="date" name="end_date" required
-                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Format
-                                    Download</label>
-                                <select name="format" required
-                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                                    <option value="excel">📊 Excel (.xlsx)</option>
-                                    <option value="pdf">📄 PDF</option>
-                                </select>
-                            </div>
-                            <button type="submit"
-                                class="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
-                                Download Laporan
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PENGAJUAN -->
-            <div class="report-content hidden" data-report="pengajuan">
-                <div
-                    class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden max-w-2xl mx-auto">
-                    <div class="bg-gradient-to-r from-purple-600 to-purple-500 p-6">
                         <h2 class="text-xl font-semibold text-white">Laporan Pengajuan</h2>
-                        <p class="text-purple-100 text-sm mt-1">Download laporan pengajuan berdasarkan rentang tanggal
+                        <p class="text-green-100 text-sm mt-1">Download laporan pengajuan berdasarkan rentang tanggal
                         </p>
                     </div>
                     <div class="p-6">
@@ -348,26 +364,26 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
                                     Mulai</label>
-                                <input type="date" name="start_date" required
-                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                                <input type="date" name="start_date" requigreen
+                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
                                     Akhir</label>
-                                <input type="date" name="end_date" required
-                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                                <input type="date" name="end_date" requigreen
+                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Format
                                     Download</label>
-                                <select name="format" required
-                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                                    <option value="excel">📊 Excel (.xlsx)</option>
-                                    <option value="pdf">📄 PDF</option>
+                                <select name="format" requigreen
+                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                                    <option value="excel">Excel (.xlsx)</option>
+                                    <option value="pdf">PDF</option>
                                 </select>
                             </div>
                             <button type="submit"
-                                class="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                                class="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -383,61 +399,82 @@
 
     @push('scripts')
         <script>
-            let currentMainTab = 'tahunan';
-            let currentSubTab = 'peminjaman';
+            document.addEventListener('DOMContentLoaded', function() {
+                const defaultTab = document.querySelector('.sub-tab[data-default="true"]');
 
-            function switchMainTab(tab) {
-                currentMainTab = tab;
+                if (defaultTab) {
+                    switchSubTab(defaultTab.dataset.tab);
+                } else {
+                    const firstTab = document.querySelector('.sub-tab');
+                    if (firstTab) {
+                        switchSubTab(firstTab.dataset.tab);
+                    }
+                }
+            });
 
-                // Update main tab styling
+            const userRole = {
+                isAdmin: @json($isAdmin ?? false),
+                isKepala: @json($isKepala ?? false),
+                isBendahara: @json($isBendahara ?? false),
+            };
+
+            let defaultSubTab = 'pengajuan';
+            if (userRole.isAdmin) {
+                defaultSubTab = 'peminjaman';
+            } else if (userRole.isKepala) {
+                defaultSubTab = 'barang-masuk';
+            }
+
+            function switchMainTab(tabName) {
                 document.querySelectorAll('.main-tab').forEach(btn => {
-                    if (btn.dataset.tab === tab) {
+                    const isActive = btn.dataset.tab === tabName;
+
+                    if (isActive) {
                         btn.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
-                        btn.classList.add('border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+                        btn.classList.add('border-green-500', 'text-green-600', 'dark:text-green-400');
                     } else {
                         btn.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
-                        btn.classList.remove('border-blue-500', 'text-blue-600', 'dark:text-blue-400');
+                        btn.classList.remove('border-green-500', 'text-green-600', 'dark:text-green-400');
                     }
                 });
 
-                // Show/hide main content
                 document.querySelectorAll('.main-content').forEach(content => {
-                    if (content.dataset.content === tab) {
+                    if (content.dataset.content === tabName) {
+                        content.classList.remove('hidden');
+                    } else {
+                        content.classList.add('hidden');
+                    }
+                });
+
+                if (tabName === 'range') {
+                    switchSubTab(defaultSubTab);
+                }
+            }
+
+            function switchSubTab(tabName) {
+                document.querySelectorAll('.sub-tab').forEach(btn => {
+                    const isActive = btn.dataset.tab === tabName;
+
+                    if (isActive) {
+                        btn.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400',
+                            'hover:text-gray-700', 'hover:border-gray-300', 'dark:hover:text-gray-300');
+                        btn.classList.add('border-green-500', 'text-green-600', 'dark:text-green-400');
+                    } else {
+                        btn.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400',
+                            'hover:text-gray-700', 'hover:border-gray-300', 'dark:hover:text-gray-300');
+                        btn.classList.remove('border-green-500', 'text-green-600', 'dark:text-green-400');
+                    }
+                });
+
+                // Show/hide report content
+                document.querySelectorAll('.report-content').forEach(content => {
+                    if (content.dataset.report === tabName) {
                         content.classList.remove('hidden');
                     } else {
                         content.classList.add('hidden');
                     }
                 });
             }
-
-            function switchSubTab(tab) {
-                currentSubTab = tab;
-
-                // Update sub tab styling
-                document.querySelectorAll('.sub-tab').forEach(btn => {
-                    if (btn.dataset.tab === tab) {
-                        btn.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
-                        btn.classList.add('border-blue-500', 'text-blue-600', 'dark:text-blue-400');
-                    } else {
-                        btn.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
-                        btn.classList.remove('border-blue-500', 'text-blue-600', 'dark:text-blue-400');
-                    }
-                });
-
-                // Show/hide report content
-                const rangeContent = document.querySelector('.main-content[data-content="range"]');
-                if (rangeContent) {
-                    rangeContent.querySelectorAll('.report-content').forEach(content => {
-                        if (content.dataset.report === tab) {
-                            content.classList.remove('hidden');
-                        } else {
-                            content.classList.add('hidden');
-                        }
-                    });
-                }
-            }
-
-            // Initialize on page load
             document.addEventListener('DOMContentLoaded', function() {
                 switchMainTab('tahunan');
             });

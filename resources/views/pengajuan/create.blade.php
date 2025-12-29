@@ -36,7 +36,7 @@
                                 <span class="text-red-500">*</span>
                             </x-input-label>
                             <x-text-input id="tanggal"
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
+                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
                                 type="date" name="tanggal" :value="old('tanggal', date('Y-m-d'))" required />
                             <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
                         </div>
@@ -47,10 +47,10 @@
                                 <span class="text-red-500">*</span>
                             </x-input-label>
                             <select id="tipe" name="tipe" required x-model="tipe" @change="onTipeChange()"
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
+                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
                                 <option value="">-- Pilih Tipe --</option>
-                                <option value="pembelian">🛒 Pembelian Barang Baru</option>
-                                <option value="perbaikan">🔧 Perbaikan Barang</option>
+                                <option value="pembelian">Pembelian Barang Baru</option>
+                                <option value="perbaikan">Perbaikan Barang</option>
                             </select>
                             <p class="mt-1 text-xs text-gray-500">
                                 <span x-show="tipe === 'pembelian'">Untuk mengajukan pembelian barang baru</span>
@@ -66,7 +66,7 @@
                             </x-input-label>
                             <select id="jenis_barang_id" name="jenis_barang_id" x-model="selectedJenis"
                                 @change="loadAvailableBarang()" :required="tipe === 'perbaikan'"
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
+                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
                                 <option value="">-- Pilih Jenis Barang --</option>
                                 @foreach ($jenisBarang as $jenis)
                                     <option value="{{ $jenis->jenis_barang_id }}"
@@ -85,7 +85,7 @@
                                 <span class="text-red-500">*</span>
                             </x-input-label>
                             <x-text-input id="nama_barang"
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
+                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
                                 type="text" name="nama_barang" x-model="nama_barang"
                                 x-bind:required="tipe !== 'perbaikan'" placeholder="Contoh: Laptop HP ProBook 450 G8" />
                             <x-input-error :messages="$errors->get('nama_barang')" class="mt-2" />
@@ -97,7 +97,7 @@
                                 <span class="text-red-500">*</span>
                             </x-input-label>
                             <x-text-input id="jumlah"
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
+                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
                                 type="number" name="jumlah" :value="old('jumlah', 1)" min="1" required
                                 x-model="jumlah" @input="checkSelectionLimit()" />
                             <p class="mt-1 text-xs text-gray-500" x-show="tipe === 'perbaikan'">
@@ -112,9 +112,9 @@
                                 <span class="text-red-500">*</span>
                             </x-input-label>
                             <x-text-input id="estimasi_biaya"
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
+                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
                                 type="number" name="estimasi_biaya" :value="old('estimasi_biaya', 0)" min="0" required
-                                placeholder="0" />
+                                placeholder="0" inputmode="numeric" />
                             <x-input-error :messages="$errors->get('estimasi_biaya')" class="mt-2" />
                         </div>
 
@@ -124,7 +124,7 @@
                                 <span class="text-red-500">*</span>
                             </x-input-label>
                             <textarea id="alasan" name="alasan" rows="4" required
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
+                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
                                 placeholder="Jelaskan alasan pengajuan secara detail...">{{ old('alasan') }}</textarea>
                             <x-input-error :messages="$errors->get('alasan')" class="mt-2" />
                         </div>
@@ -138,7 +138,7 @@
                         <span class="px-3 py-1 rounded-full text-sm font-semibold"
                             :class="selectedBarang.length == jumlah ?
                                 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' :
-                                'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'"
+                                'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200'"
                             x-text="`${selectedBarang.length} / ${jumlah} dipilih`"></span>
                     </div>
 
@@ -157,7 +157,7 @@
                     </div>
 
                     <div x-show="loading" class="flex flex-col items-center justify-center py-12">
-                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"></div>
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mb-4"></div>
                         <p class="text-gray-600 dark:text-gray-400 text-sm">Memuat data barang...</p>
                     </div>
 
@@ -166,15 +166,15 @@
                         <template x-for="barang in availableBarang" :key="barang.barang_id">
                             <div @click="toggleBarang(barang)"
                                 :class="{
-                                    'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 shadow-md': isSelected(barang
+                                    'border-green-500 bg-green-50 dark:bg-green-900/20 shadow-md': isSelected(barang
                                         .barang_id),
-                                    'border-gray-200 dark:border-gray-600 hover:border-indigo-300 dark:hover:border-indigo-700':
+                                    'border-gray-200 dark:border-gray-600 hover:border-green-300 dark:hover:border-green-700':
                                         !isSelected(barang.barang_id)
                                 }"
                                 class="relative border-2 rounded-xl p-4 cursor-pointer transition-all duration-200 hover:shadow-md">
 
                                 <div x-show="isSelected(barang.barang_id)"
-                                    class="absolute -top-2 -right-2 bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg">
+                                    class="absolute -top-2 -right-2 bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 13l4 4L19 7" />
@@ -190,7 +190,7 @@
 
                                     <div class="space-y-2">
                                         <div x-show="barang.kode_barang"
-                                            class="flex items-center gap-2 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 px-2 py-1 rounded">
+                                            class="flex items-center gap-2 text-xs bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-2 py-1 rounded">
                                             <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -271,14 +271,15 @@
                     </div>
                 </div>
 
-                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
+                <div
+                    class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4">
                     <div class="flex gap-3">
-                        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="none"
+                        <svg class="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" fill="none"
                             stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <div class="text-sm text-blue-800 dark:text-blue-200">
+                        <div class="text-sm text-green-800 dark:text-green-200">
                             <p class="font-semibold mb-2">Informasi Penting:</p>
                             <ul class="list-disc list-inside space-y-1">
                                 <li>Pengajuan akan masuk ke status <strong>Menunggu</strong> setelah dibuat</li>
@@ -307,7 +308,7 @@
 
                     <button type="submit"
                         :disabled="(tipe === 'perbaikan' && selectedBarang.length != jumlah) || !tipe"
-                        class="px-8 py-3 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg">
+                        class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />

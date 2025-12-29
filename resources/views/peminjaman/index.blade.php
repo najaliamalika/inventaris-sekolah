@@ -64,7 +64,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            🔍 Cari Peminjaman
+                            Cari Peminjaman
                         </label>
                         <div class="relative">
                             <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
@@ -90,7 +90,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            📊 Status
+                            Status
                         </label>
                         <select name="status" id="statusSelect"
                             class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
@@ -106,7 +106,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            📅 Tanggal Peminjaman
+                            Tanggal Peminjaman
                         </label>
                         <input type="date" name="tanggal_mulai" id="tanggalMulaiInput"
                             value="{{ request('tanggal_mulai') }}"
@@ -128,7 +128,7 @@
 
                     @hasrole('admin')
                         <a href="{{ route('peminjaman.create') }}"
-                            class="ml-auto px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                            class="ml-auto px-5 py-2.5 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -153,7 +153,6 @@
                             <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Nama Barang</th>
                             <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Peminjam</th>
                             <th class="px-2 py-4 text-center text-xs font-semibold uppercase">Jumlah</th>
-                            <th class="px-2 py-4 text-center text-xs font-semibold uppercase">Foto</th>
                             <th class="px-2 py-4 text-center text-xs font-semibold uppercase">Status</th>
                             <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Tgl Kembali</th>
                             <th class="px-2 py-4 text-center text-xs font-semibold uppercase">Aksi</th>
@@ -190,14 +189,6 @@
                                         {{ $p->peminjamanBarang->count() }}
                                     </p>
                                 </td>
-                                <td class="px-2 py-4">
-                                    <div class="flex justify-center">
-                                        <img src="{{ $p->foto_peminjaman_url ?? 'https://www.shutterstock.com/image-vector/default-ui-image-placeholder-wireframes-600nw-1037719192.jpg' }}"
-                                            alt="{{ $p->nama_peminjam }}"
-                                            class="w-12 h-12 object-cover rounded-lg border-2 border-gray-200 dark:border-gray-600" />
-                                    </div>
-                                </td>
-
                                 <td class="px-2 py-2 text-center">
                                     @if ($isDikembalikan)
                                         <span

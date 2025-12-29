@@ -68,11 +68,11 @@
                             <select id="kategori" name="kategori" required
                                 class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
                                 <option value="">-- Pilih Kategori --</option>
-                                <option value="habis_pakai">📦 Habis Pakai</option>
-                                <option value="rusak">💔 Rusak</option>
-                                <option value="tidak_layak">❌ Tidak Layak</option>
-                                <option value="sedang_diperbaiki">🔧 Sedang Diperbaiki</option>
-                                <option value="dihibahkan">🎁 Dihibahkan</option>
+                                <option value="habis_pakai">Habis Pakai</option>
+                                <option value="rusak">Rusak</option>
+                                <option value="tidak_layak">Tidak Layak</option>
+                                <option value="sedang_diperbaiki">Sedang Diperbaiki</option>
+                                <option value="dihibahkan">Dihibahkan</option>
                             </select>
                             <x-input-error :messages="$errors->get('kategori')" class="mt-2" />
                         </div>

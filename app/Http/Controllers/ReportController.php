@@ -19,7 +19,17 @@ class ReportController extends Controller
 {
     public function index()
     {
-        return view('reports.index');
+        /** @var User $user */
+        $user = auth()->user();
+
+        return view(
+            'reports.index',
+            [
+                'isAdmin' => $user->hasRole('admin'),
+                'isKepala' => $user->hasRole('kepala_sekolah'),
+                'isBendahara' => $user->hasRole('bendahara')
+            ]
+        );
     }
 
     // LAPORAN TAHUNAN (SEMUA DATA DALAM 1 FILE)

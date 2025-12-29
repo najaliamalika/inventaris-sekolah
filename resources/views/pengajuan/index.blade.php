@@ -10,10 +10,10 @@
 
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div
-            class="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20 rounded-xl p-5 border border-indigo-200 dark:border-indigo-800">
+            class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-5 border border-green-200 dark:border-green-800">
             <div class="flex items-center justify-between mb-2">
-                <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Total Pengajuan</p>
-                <svg class="w-7 h-7 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <p class="text-xs font-medium text-green-600 dark:text-green-400">Total Pengajuan</p>
+                <svg class="w-7 h-7 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
@@ -64,19 +64,19 @@
                 <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            🔍 Cari
+                            Cari
                         </label>
                         <div class="relative">
                             <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
                                 placeholder="Nama barang atau alasan..."
-                                class="w-full px-4 py-2.5 pl-10 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                                class="w-full px-4 py-2.5 pl-10 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                             <svg class="absolute left-3 top-3 w-5 h-5 text-gray-400" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                             <div id="searchLoading" class="hidden absolute right-3 top-3">
-                                <svg class="animate-spin h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg"
+                                <svg class="animate-spin h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg"
                                     fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10"
                                         stroke="currentColor" stroke-width="4"></circle>
@@ -90,14 +90,14 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            📋 Tipe
+                            Tipe
                         </label>
                         <select name="tipe" id="tipeSelect"
-                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
+                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
                             <option value="">Semua</option>
-                            <option value="pembelian" {{ request('tipe') == 'pembelian' ? 'selected' : '' }}>🛒
+                            <option value="pembelian" {{ request('tipe') == 'pembelian' ? 'selected' : '' }}>
                                 Pembelian</option>
-                            <option value="perbaikan" {{ request('tipe') == 'perbaikan' ? 'selected' : '' }}>🔧
+                            <option value="perbaikan" {{ request('tipe') == 'perbaikan' ? 'selected' : '' }}>
                                 Perbaikan</option>
                         </select>
                     </div>
@@ -105,31 +105,31 @@
                     <!-- Status -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            📊 Status
+                            Status
                         </label>
                         <select name="status" id="statusSelect"
-                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
+                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
                             <option value="">Semua</option>
-                            <option value="menunggu" {{ request('status') == 'menunggu' ? 'selected' : '' }}>⏳ Menunggu
+                            <option value="menunggu" {{ request('status') == 'menunggu' ? 'selected' : '' }}>Menunggu
                             </option>
-                            <option value="disetujui" {{ request('status') == 'disetujui' ? 'selected' : '' }}>✅
+                            <option value="disetujui" {{ request('status') == 'disetujui' ? 'selected' : '' }}>
                                 Disetujui</option>
-                            <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>❌ Ditolak
+                            <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak
                             </option>
                         </select>
                     </div>
 
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            📦 Jenis Barang
+                            Jenis Barang
                         </label>
                         <select name="jenis_barang_id" id="jenisBarangSelect"
-                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
+                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
                             <option value="">Semua</option>
                             @foreach ($jenisBarangList as $jenis)
                                 <option value="{{ $jenis->jenis_barang_id }}"
                                     {{ request('jenis_barang_id') == $jenis->jenis_barang_id ? 'selected' : '' }}>
-                                    {{ $jenis->kategori }} - {{ $jenis->jenis }}
+                                    {{ $jenis->kategori }} - {{ $jenis->kode_utama }}
                                 </option>
                             @endforeach
                         </select>
@@ -150,7 +150,7 @@
 
                     @hasrole('admin')
                         <a href="{{ route('pengajuan.create') }}"
-                            class="ml-auto px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                            class="ml-auto px-5 py-2.5 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -168,7 +168,7 @@
         @if ($pengajuan->count() > 0)
             <div class="overflow-x-auto">
                 <table class="w-full">
-                    <thead class="bg-gradient-to-r from-indigo-600 to-indigo-500 text-white">
+                    <thead class="bg-gradient-to-r from-green-600 to-green-500 text-white">
                         <tr>
                             <th class="px-4 py-4 text-left text-xs font-semibold uppercase">No</th>
                             <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Tanggal</th>
@@ -436,7 +436,7 @@
                     </a>
                 @else
                     <a href="{{ route('pengajuan.create') }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
+                        class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 6v6m0 0v6m0-6h6m-6 0H6" />

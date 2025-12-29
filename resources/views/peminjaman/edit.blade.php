@@ -154,7 +154,7 @@
                                 Daftar Barang yang Dipinjam
                             </h3>
                             <span
-                                class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm font-semibold"
+                                class="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-sm font-semibold"
                                 x-text="`${items.length} Barang`"></span>
                         </div>
                     </div>
