@@ -14,6 +14,7 @@ use App\Exports\BarangMasukExport;
 use App\Exports\BarangKeluarExport;
 use App\Exports\PengajuanExport;
 use App\Exports\LaporanTahunanExport;
+use App\Models\JenisBarang;
 
 class ReportController extends Controller
 {
@@ -43,6 +44,10 @@ class ReportController extends Controller
         $year = $request->year;
 
         // Ambil semua data berdasarkan tahun
+        $jenisBarang = JenisBarang::with(['barang'])
+            ->orderBy('jenis', 'asc')
+            ->get();
+
         $peminjaman = Peminjaman::with(['peminjamanBarang.barang.jenisBarang'])
             ->whereYear('tanggal_peminjaman', $year)
             ->orderBy('tanggal_peminjaman', 'desc')
@@ -65,13 +70,14 @@ class ReportController extends Controller
 
         if ($request->input('format') === 'excel') {
             return Excel::download(
-                new LaporanTahunanExport($peminjaman, $barangMasuk, $barangKeluar, $pengajuan, $year),
+                new LaporanTahunanExport($jenisBarang, $peminjaman, $barangMasuk, $barangKeluar, $pengajuan, $year),
                 'laporan-tahunan-' . $year . '.xlsx'
             );
         }
 
         // PDF
         $pdf = PDF::loadView('reports.pdf.laporan-tahunan', [
+            'jenisBarang' => $jenisBarang,
             'peminjaman' => $peminjaman,
             'barangMasuk' => $barangMasuk,
             'barangKeluar' => $barangKeluar,

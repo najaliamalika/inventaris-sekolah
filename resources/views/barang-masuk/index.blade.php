@@ -158,7 +158,7 @@
                             <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Nama Barang</th>
                             <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Kategori</th>
                             <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Supplier</th>
-                            <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Total Item</th>
+                            <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Jumlah</th>
                             <th class="px-4 py-4 text-right text-xs font-semibold uppercase">Total Nilai</th>
                             <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Aksi</th>
                         </tr>

@@ -172,11 +172,11 @@
                         <tr>
                             <th class="px-4 py-4 text-left text-xs font-semibold uppercase">No</th>
                             <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Tanggal</th>
-                            <th class="px-4 py-4 w-40 text-left text-xs font-semibold uppercase">Nama Barang</th>
-                            <th class="px-4 py-4 w-40 text-left text-xs font-semibold uppercase">Tipe</th>
+                            <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Nama Barang</th>
+                            <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Tipe</th>
                             <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Jenis Barang</th>
-                            <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Jumlah</th>
-                            <th class="px-4 py-4 w-40 text-right text-xs font-semibold uppercase">Est. Biaya</th>
+                            <th class="px-4 py-4 w-[94px] text-center text-xs font-semibold uppercase">Jumlah</th>
+                            <th class="px-4 py-4 text-right text-xs font-semibold uppercase">Est. Biaya</th>
                             <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Status</th>
                             <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Aksi</th>
                         </tr>
@@ -223,10 +223,15 @@
                                     @endif
                                 </td>
                                 <td class="px-4 py-4 text-center">
-                                    <span
-                                        class="inline-flex items-center px-3 py-1 rounded-lg bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-400 font-semibold text-sm">
-                                        {{ number_format($item->jumlah) }}
-                                    </span>
+                                    <div class="flex flex-col items-center">
+                                        <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                            {{ number_format($item->jumlah) }}
+                                        </span>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                                            ({{ number_format($item->jumlah) }}
+                                            barang)
+                                        </span>
+                                    </div>
                                 </td>
                                 <td class="px-4 py-4 text-right">
                                     <span class="text-sm font-bold text-gray-900 dark:text-gray-100">

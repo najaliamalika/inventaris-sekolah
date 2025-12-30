@@ -94,7 +94,7 @@
                 $totalBiaya = 0;
             @endphp
             @forelse($data as $pengajuan)
-                @php $totalBiaya += $pengajuan->estimasi_biaya; @endphp
+                @php $totalBiaya += ($pengajuan->status === 'disetujui' ? $pengajuan->estimasi_biaya : 0); @endphp
                 <tr>
                     <td class="text-center">{{ $no++ }}</td>
                     <td>{{ $pengajuan->tanggal->format('d/m/Y') }}</td>

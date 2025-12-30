@@ -109,6 +109,53 @@
         <p>Dicetak pada: {{ date('d F Y') }}</p>
     </div>
 
+    {{-- DATA BARANG --}}
+    @hasanyrole('admin|kepala_sekolah')
+        <div class="section-break">
+            <div class="header">
+                <h2>LAPORAN DATA BARANG</h2>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th width="4%">No</th>
+                        <th width="10%">Jenis Barang</th>
+                        <th width="14%">Kategori</th>
+                        <th width="18%">Nama Barang</th>
+                        <th width="11%">Kode Barang</th>
+                        <th width="9%">Kondisi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php $no = 1; @endphp
+                    @forelse($jenisBarang as $j)
+                        @foreach ($j->barang as $barang)
+                            <tr>
+                                <td class="text-center">{{ $no++ }}</td>
+                                <td>{{ $j->jenis }}</td>
+                                <td>{{ $j->kategori }}</td>
+                                <td>{{ $barang->nama_barang ?? '-' }}</td>
+                                <td>{{ $barang->kode_barang ? $j->kode_utama . '' . $barang->kode_barang : '-' }}</td>
+                                <td class="text-center">
+                                    {{ $barang->kondisi ? $barang->kondisi : '-' }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="9" class="text-center">Tidak ada data</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            <div class="footer">
+                <p><strong>Total Barang: {{ $jenisBarang->sum(fn($j) => $j->barang->count()) }}</strong></p>
+            </div>
+        </div>
+    @endhasanyrole
+
     {{-- LAPORAN PEMINJAMAN --}}
     @hasrole('admin')
         <div class="section-break">
@@ -165,7 +212,7 @@
         </div>
     @endhasrole
 
-    @hasanyrole('bendahara|kepala_sekolah')
+    @hasanyrole('admin|kepala_sekolah')
         {{-- LAPORAN BARANG MASUK --}}
         <div class="section-break">
             <div class="header">
@@ -335,85 +382,85 @@
                 <p><strong>Total Barang Keluar: {{ $barangKeluar->count() }} transaksi</strong></p>
             </div>
         </div>
-
-        {{-- LAPORAN PENGAJUAN --}}
-        <div class="section-break">
-            <div class="header">
-                <h2>LAPORAN PENGAJUAN</h2>
-                <p>Periode: Tahun {{ $year }}</p>
-            </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th width="4%">No</th>
-                        <th width="9%">Tanggal</th>
-                        <th width="8%">Tipe</th>
-                        <th width="13%">Jenis/Nama Barang</th>
-                        <th width="15%">Item Perbaikan</th>
-                        <th width="6%">Jml</th>
-                        <th width="10%">Est. Biaya</th>
-                        <th width="8%">Status</th>
-                        <th width="14%">Alasan</th>
-                        <th width="13%">Catatan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php
-                        $no = 1;
-                        $totalBiaya = 0;
-                    @endphp
-                    @forelse($pengajuan as $item)
-                        @php $totalBiaya += ($item->status === 'disetujui' ? $item->estimasi_biaya : 0); @endphp
-                        <tr>
-                            <td class="text-center">{{ $no++ }}</td>
-                            <td>{{ $item->tanggal->format('d/m/Y') }}</td>
-                            <td>{{ ucfirst($item->tipe) }}</td>
-                            <td>
-                                @if ($item->jenisBarang)
-                                    {{ $item->jenisBarang->jenis }}
-                                @else
-                                    {{ $item->nama_barang ?? '-' }}
-                                @endif
-                            </td>
-                            <td>
-                                @if ($item->tipe === 'perbaikan' && $item->perbaikanItems->count() > 0)
-                                    @foreach ($item->perbaikanItems as $perbaikan)
-                                        {{ $perbaikan->barang->nama_barang ?? '-' }}@if (!$loop->last)
-                                            ,
-                                        @endif
-                                    @endforeach
-                                @else
-                                    -
-                                @endif
-                            </td>
-                            <td class="text-center">{{ $item->jumlah }}</td>
-                            <td class="text-right">{{ number_format($item->estimasi_biaya, 0, ',', '.') }}</td>
-                            <td class="text-center status-{{ $item->status }}">{{ ucfirst($item->status) }}</td>
-                            <td>{{ Str::limit($item->alasan, 50) }}</td>
-                            <td>{{ $item->catatan ?? '-' }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="10" class="text-center">Tidak ada data</td>
-                        </tr>
-                    @endforelse
-
-                    @if ($pengajuan->count() > 0)
-                        <tr style="background-color: #f8f8f8;">
-                            <td colspan="6" class="text-right"><strong>TOTAL ESTIMASI BIAYA:</strong></td>
-                            <td class="text-right"><strong>Rp {{ number_format($totalBiaya, 0, ',', '.') }}</strong></td>
-                            <td colspan="3"></td>
-                        </tr>
-                    @endif
-                </tbody>
-            </table>
-
-            <div class="footer">
-                <p><strong>Total Pengajuan: {{ $pengajuan->count() }} pengajuan</strong></p>
-            </div>
-        </div>
     @endhasanyrole
+
+    {{-- LAPORAN PENGAJUAN --}}
+    <div class="section-break">
+        <div class="header">
+            <h2>LAPORAN PENGAJUAN</h2>
+            <p>Periode: Tahun {{ $year }}</p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th width="4%">No</th>
+                    <th width="9%">Tanggal</th>
+                    <th width="8%">Tipe</th>
+                    <th width="13%">Jenis/Nama Barang</th>
+                    <th width="15%">Item Perbaikan</th>
+                    <th width="6%">Jml</th>
+                    <th width="10%">Est. Biaya</th>
+                    <th width="8%">Status</th>
+                    <th width="14%">Alasan</th>
+                    <th width="13%">Catatan</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                    $no = 1;
+                    $totalBiaya = 0;
+                @endphp
+                @forelse($pengajuan as $item)
+                    @php $totalBiaya += ($item->status === 'disetujui' ? $item->estimasi_biaya : 0); @endphp
+                    <tr>
+                        <td class="text-center">{{ $no++ }}</td>
+                        <td>{{ $item->tanggal->format('d/m/Y') }}</td>
+                        <td>{{ ucfirst($item->tipe) }}</td>
+                        <td>
+                            @if ($item->jenisBarang)
+                                {{ $item->jenisBarang->jenis }}
+                            @else
+                                {{ $item->nama_barang ?? '-' }}
+                            @endif
+                        </td>
+                        <td>
+                            @if ($item->tipe === 'perbaikan' && $item->perbaikanItems->count() > 0)
+                                @foreach ($item->perbaikanItems as $perbaikan)
+                                    {{ $perbaikan->barang->nama_barang ?? '-' }}@if (!$loop->last)
+                                        ,
+                                    @endif
+                                @endforeach
+                            @else
+                                -
+                            @endif
+                        </td>
+                        <td class="text-center">{{ $item->jumlah }}</td>
+                        <td class="text-right">{{ number_format($item->estimasi_biaya, 0, ',', '.') }}</td>
+                        <td class="text-center status-{{ $item->status }}">{{ ucfirst($item->status) }}</td>
+                        <td>{{ Str::limit($item->alasan, 50) }}</td>
+                        <td>{{ $item->catatan ?? '-' }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="10" class="text-center">Tidak ada data</td>
+                    </tr>
+                @endforelse
+
+                @if ($pengajuan->count() > 0)
+                    <tr style="background-color: #f8f8f8;">
+                        <td colspan="6" class="text-right"><strong>TOTAL ESTIMASI BIAYA:</strong></td>
+                        <td class="text-right"><strong>Rp {{ number_format($totalBiaya, 0, ',', '.') }}</strong></td>
+                        <td colspan="3"></td>
+                    </tr>
+                @endif
+            </tbody>
+        </table>
+
+        <div class="footer">
+            <p><strong>Total Pengajuan: {{ $pengajuan->count() }} pengajuan</strong></p>
+        </div>
+    </div>
 
     {{-- FOOTER AKHIR DOKUMEN --}}
     <div style="margin-top: 30px; text-align: center; font-size: 10px;">

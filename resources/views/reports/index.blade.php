@@ -38,11 +38,13 @@
                         <h2 class="text-2xl font-bold text-white">Laporan Tahunan Lengkap</h2>
                     </div>
                     @hasrole('admin')
-                        <p class="text-green-100 text-sm">Download semua laporan (Peminjaman, Barang Masuk, Barang Keluar,
+                        <p class="text-green-100 text-sm">Download semua laporan (Data Barang, Peminjaman, Barang Masuk,
+                            Barang Keluar,
                             Pengajuan) dalam 1 file</p>
                     @endhasrole
                     @hasrole('kepala_sekolah')
-                        <p class="text-green-100 text-sm">Download semua laporan (Barang Masuk, Barang Keluar, Pengajuan)
+                        <p class="text-green-100 text-sm">Download semua laporan (Data Barang, Barang Masuk, Barang Keluar,
+                            Pengajuan)
                             dalam 1 file</p>
                     @endhasrole
                     @hasrole('bendahara')
@@ -65,6 +67,7 @@
                                     <h4 class="font-semibold text-green-900 dark:text-green-100 text-sm mb-1">Yang Termasuk
                                         dalam Laporan:</h4>
                                     <ul class="text-sm text-green-800 dark:text-green-200 space-y-1">
+                                        <li>• Laporan Data Barang</li>
                                         @hasrole('admin')
                                             <li>• Laporan Peminjaman</li>
                                         @endhasrole
@@ -75,9 +78,9 @@
                                     <p class="text-xs text-green-700 dark:text-green-300 mt-2">
                                         <strong>Excel:</strong>
                                         @hasrole('admin')
-                                            4 sheets dalam 1 file
+                                            5 sheets dalam 1 file
                                             @elsehasrole('kepala_sekolah')
-                                            3 sheets dalam 1 file
+                                            4 sheets dalam 1 file
                                         @endhasrole
                                         | <strong>PDF:</strong> Semua laporan dalam 1 dokumen
                                     </p>
@@ -128,9 +131,9 @@
                                         <div class="font-semibold">Excel</div>
                                         <div class="text-xs text-gray-500 dark:text-gray-400">
                                             @hasrole('admin')
-                                                4 Sheets
+                                                5 Sheets
                                                 @elsehasrole('kepala_sekolah')
-                                                3 Sheets
+                                                4 Sheets
                                                 @elsehasrole('bendahara')
                                                 1 Sheet
                                             @endhasrole

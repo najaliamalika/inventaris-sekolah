@@ -185,9 +185,15 @@
                                     </p>
                                 </td>
                                 <td class="px-2 py-4">
-                                    <p class="text-sm font-normal text-center text-gray-900 dark:text-gray-100">
-                                        {{ $p->peminjamanBarang->count() }}
-                                    </p>
+                                    <div class="flex flex-col items-center">
+                                        <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                            {{ number_format($p->peminjamanBarang->count()) }}
+                                        </span>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                                            ({{ number_format($p->peminjamanBarang->count()) }}
+                                            barang)
+                                        </span>
+                                    </div>
                                 </td>
                                 <td class="px-2 py-2 text-center">
                                     @if ($isDikembalikan)
