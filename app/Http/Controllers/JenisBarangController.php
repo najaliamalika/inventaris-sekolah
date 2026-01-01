@@ -118,14 +118,14 @@ class JenisBarangController extends Controller
 
         $validated = $request->validate(
             [
-                'kategori' => 'required|string|max:255|unique:jenis_barang,kategori,' . $item_template_id . ',jenis_barang_id',
-                'jenis' => 'required|string|max:255',
+                'kategori' => 'required|string|max:255',
+                'jenis' => 'required|string|max:255|unique:jenis_barang,jenis,' . $item_template_id . ',jenis_barang_id',
                 'kode_utama' => 'nullable|string|max:255',
                 'satuan' => 'required|string|max:255',
             ],
             [
                 'kategori.required' => 'Kategori wajib diisi',
-                'kategori.unique' => 'Kategori sudah terdaftar',
+                'jenis.unique' => 'Jenis sudah terdaftar',
                 'jenis.required' => 'Jenis wajib diisi',
                 'satuan.required' => 'Satuan wajib diisi',
             ]
