@@ -16,7 +16,6 @@
         </div>
     </x-slot>
 
-    <!-- Back Button -->
     <div class="mb-6">
         <a href="{{ route('jenis-barang.show', $jenisBarang->jenis_barang_id) }}"
             class="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors duration-200 group">
@@ -28,12 +27,10 @@
         </a>
     </div>
 
-    <!-- Main Card -->
     <div
         class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
 
         @if ($jenisBarang)
-            <!-- Kategori Info Banner -->
             <div
                 class="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 px-8 py-4 border-b border-green-100 dark:border-green-800">
                 <div class="flex items-center gap-3">
@@ -62,7 +59,6 @@
             </div>
         @endif
 
-        <!-- Form Content -->
         <div class="p-8">
             <form id="create_item" method="POST" action="{{ route('barang.store') }}" enctype="multipart/form-data"
                 class="space-y-6">

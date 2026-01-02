@@ -15,9 +15,6 @@ class JenisBarangController extends Controller
         $this->fileService = $fileService;
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $query = JenisBarang::query()
@@ -28,7 +25,6 @@ class JenisBarangController extends Controller
             ])
             ->orderByDesc('updated_at');
 
-        // Search
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -43,18 +39,11 @@ class JenisBarangController extends Controller
         return view('jenis-barang.index', compact('jenisBarang'));
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('jenis-barang.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate(
@@ -81,9 +70,6 @@ class JenisBarangController extends Controller
             ->with('success', 'Jenis Barang Berhasil Ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $jenis_barang_id)
     {
         $jenisBarang = JenisBarang::withCount([
@@ -99,19 +85,12 @@ class JenisBarangController extends Controller
         return view('jenis-barang.show', compact('jenisBarang', 'barang'));
     }
 
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $item_template_id)
     {
         $jenisBarang = JenisBarang::findOrFail($item_template_id);
         return view('jenis-barang.edit', compact('jenisBarang'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $item_template_id)
     {
         $jenisBarang = JenisBarang::findOrFail($item_template_id);
@@ -137,15 +116,10 @@ class JenisBarangController extends Controller
         return redirect()->route('jenis-barang.index')
             ->with('success', 'Jenis Barang Berhasil Diperbarui!');
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $item_template_id)
     {
         $jenisBarang = JenisBarang::findOrFail($item_template_id);
 
-        // Cek apakah masih ada barang yang menggunakan template ini
         if ($jenisBarang->barang()->count() > 0) {
             flash('Jenis Barang tidak dapat dihapus karena masih digunakan oleh ' . $jenisBarang->barang()->count() . ' item')->error();
             return redirect()->route('jenis-barang.index');
