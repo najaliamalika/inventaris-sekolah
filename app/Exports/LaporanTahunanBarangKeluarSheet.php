@@ -33,7 +33,7 @@ class LaporanTahunanBarangKeluarSheet implements FromCollection, WithHeadings, W
             'Tanggal',
             'Jenis Barang',
             'Kategori',
-            'Nama Barang (Item)',
+            'Nama Barang',
             'Kode Barang',
             'Jumlah',
             'Penerima',

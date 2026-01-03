@@ -80,9 +80,9 @@
                 <th width="9%">Tanggal</th>
                 <th width="8%">Tipe</th>
                 <th width="13%">Jenis/Nama Barang</th>
-                <th width="15%">Item Perbaikan</th>
+                <th width="15%">Barang Perbaikan</th>
                 <th width="6%">Jml</th>
-                <th width="10%">Est. Biaya</th>
+                <th width="10%">Biaya</th>
                 <th width="8%">Status</th>
                 <th width="14%">Alasan</th>
                 <th width="13%">Catatan</th>
@@ -130,7 +130,7 @@
                 @endforelse
                 @if ($data->count() > 0)
                     <tr>
-                        <td colspan="6" class="text-right"><strong>TOTAL ESTIMASI BIAYA:</strong></td>
+                        <td colspan="6" class="text-right"><strong>TOTAL BIAYA:</strong></td>
                         <td class="text-right"><strong>Rp {{ number_format($totalBiaya, 0, ',', '.') }}</strong></td>
                         <td colspan="3"></td>
                     </tr>

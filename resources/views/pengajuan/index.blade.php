@@ -176,7 +176,7 @@
                             <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Tipe</th>
                             <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Jenis Barang</th>
                             <th class="px-4 py-4 w-[94px] text-center text-xs font-semibold uppercase">Jumlah</th>
-                            <th class="px-4 py-4 text-right text-xs font-semibold uppercase">Est. Biaya</th>
+                            <th class="px-4 py-4 text-right text-xs font-semibold uppercase">Biaya</th>
                             <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Status</th>
                             <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Aksi</th>
                         </tr>

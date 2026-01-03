@@ -33,7 +33,7 @@ class BarangKeluarExport implements FromCollection, WithHeadings, WithMapping, W
             'Tanggal',
             'Jenis Barang',
             'Kategori',
-            'Nama Barang (Item)',
+            'Nama Barang',
             'Kode Barang',
             'Jumlah',
             'Penerima',

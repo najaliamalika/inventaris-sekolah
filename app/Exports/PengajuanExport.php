@@ -36,7 +36,7 @@ class PengajuanExport implements FromCollection, WithHeadings, WithMapping, With
             'Nama Barang',
             'Item Perbaikan',
             'Jumlah',
-            'Estimasi Biaya',
+            'Biaya',
             'Status',
             'Alasan',
             'Catatan'

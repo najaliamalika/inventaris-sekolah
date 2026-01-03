@@ -36,7 +36,7 @@ class LaporanTahunanPengajuanSheet implements FromCollection, WithHeadings, With
             'Nama Barang',
             'Item Perbaikan',
             'Jumlah',
-            'Estimasi Biaya',
+            'Biaya',
             'Status',
             'Alasan',
             'Catatan'

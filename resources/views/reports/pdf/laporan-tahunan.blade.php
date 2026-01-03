@@ -232,8 +232,6 @@
                         <th width="15%">Nama Barang</th>
                         <th width="5%">Satuan</th>
                         <th width="11%">Harga Satuan</th>
-                        <th width="10%">Subtotal</th>
-                        <th width="11%">Total Harga</th>
                         <th width="15%">Keterangan</th>
                     </tr>
                 </thead>
@@ -264,9 +262,6 @@
                                     <td class="text-center">{{ $detail->jenisBarang->satuan ?? '-' }}</td>
                                     <td class="text-right">Rp {{ number_format($detail->harga_satuan ?? 0, 0, ',', '.') }}
                                     </td>
-                                    <td class="text-right">Rp
-                                        {{ number_format($detail->harga_satuan * $detail->jumlah, 0, ',', '.') }}</td>
-                                    <td class="text-right">Rp {{ number_format($item->total_harga, 0, ',', '.') }}</td>
                                     <td>{{ $detail->keterangan ?? ($item->keterangan ?? '-') }}</td>
                                 </tr>
                                 @php $totalItems++; @endphp
@@ -285,9 +280,6 @@
                                         <td class="text-center">{{ $detail->jenisBarang->satuan ?? '-' }}</td>
                                         <td class="text-right">Rp
                                             {{ number_format($detail->harga_satuan ?? 0, 0, ',', '.') }}</td>
-                                        <td class="text-right">Rp
-                                            {{ number_format($detail->harga_satuan * $detail->jumlah, 0, ',', '.') }}</td>
-                                        <td class="text-right">Rp {{ number_format($item->total_harga, 0, ',', '.') }}</td>
                                         <td>{{ $detail->keterangan ?? ($item->keterangan ?? '-') }}</td>
                                     </tr>
                                     @php $totalItems++; @endphp
@@ -302,18 +294,18 @@
 
                     @if ($barangMasuk->count() > 0)
                         <tr style="background-color: #f8f8f8;">
-                            <td colspan="7" class="text-right"><strong>TOTAL ITEM:</strong></td>
+                            <td colspan="6" class="text-right"><strong>TOTAL BARANG:</strong></td>
                             <td class="text-center"><strong>{{ $totalItems }}</strong></td>
                             <td colspan="2" class="text-right"><strong>TOTAL KESELURUHAN:</strong></td>
-                            <td class="text-right"><strong>Rp {{ number_format($grandTotal, 0, ',', '.') }}</strong></td>
-                            <td></td>
+                            <td class="text-right"><strong>Rp
+                                    {{ number_format($grandTotal, 0, ',', '.') }}</strong></td>
                         </tr>
                     @endif
                 </tbody>
             </table>
 
             <div class="footer">
-                <p><strong>Total Data: {{ $totalItems }} item dari {{ $barangMasuk->count() }} transaksi</strong></p>
+                <p><strong>Total Data: {{ $totalItems }} Barang dari {{ $barangMasuk->count() }} transaksi</strong></p>
             </div>
         </div>
 
@@ -398,9 +390,9 @@
                     <th width="9%">Tanggal</th>
                     <th width="8%">Tipe</th>
                     <th width="13%">Jenis/Nama Barang</th>
-                    <th width="15%">Item Perbaikan</th>
+                    <th width="15%">Barang Perbaikan</th>
                     <th width="6%">Jml</th>
-                    <th width="10%">Est. Biaya</th>
+                    <th width="10%">Biaya</th>
                     <th width="8%">Status</th>
                     <th width="14%">Alasan</th>
                     <th width="13%">Catatan</th>
@@ -449,7 +441,7 @@
 
                 @if ($pengajuan->count() > 0)
                     <tr style="background-color: #f8f8f8;">
-                        <td colspan="6" class="text-right"><strong>TOTAL ESTIMASI BIAYA:</strong></td>
+                        <td colspan="6" class="text-right"><strong>TOTAL BIAYA:</strong></td>
                         <td class="text-right"><strong>Rp {{ number_format($totalBiaya, 0, ',', '.') }}</strong></td>
                         <td colspan="3"></td>
                     </tr>

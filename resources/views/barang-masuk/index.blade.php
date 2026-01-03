@@ -24,7 +24,7 @@
         <div
             class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-5 border border-green-200 dark:border-green-800">
             <div class="flex items-center justify-between mb-2">
-                <p class="text-xs font-medium text-green-600 dark:text-green-400">Total Item Masuk</p>
+                <p class="text-xs font-medium text-green-600 dark:text-green-400">Total Barang Masuk</p>
                 <svg class="w-7 h-7 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />

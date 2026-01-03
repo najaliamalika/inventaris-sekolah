@@ -147,7 +147,7 @@
 
             @if ($data->count() > 0)
                 <tr style="background-color: #f8f8f8;">
-                    <td colspan="6" class="text-right"><strong>TOTAL ITEM:</strong></td>
+                    <td colspan="6" class="text-right"><strong>TOTAL BARANG:</strong></td>
                     <td class="text-center"><strong>{{ $totalItems }}</strong></td>
                     <td colspan="2" class="text-right"><strong>TOTAL KESELURUHAN:</strong></td>
                     <td class="text-right"><strong>Rp {{ number_format($grandTotal, 0, ',', '.') }}</strong></td>
