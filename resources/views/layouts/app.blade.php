@@ -44,8 +44,11 @@
         <!-- Footer (Optional) -->
         <footer class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-auto">
             <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                <p class="text-center text-sm text-gray-500 dark:text-gray-400">
+                {{-- <p class="text-center text-sm text-gray-500 dark:text-gray-400">
                     © {{ date('Y') }} Sistem Manajemen IT. All rights reserved.
+                </p> --}}
+                <p class="text-center text-sm text-gray-500 dark:text-gray-400">
+                    website inventaris man 1 kota tangerang
                 </p>
             </div>
         </footer>

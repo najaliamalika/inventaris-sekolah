@@ -19,7 +19,7 @@
                 <button onclick="switchMainTab('range')"
                     class="main-tab border-b-2 border-transparent py-4 px-1 text-center font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300"
                     data-tab="range">
-                    Range Waktu (Per Jenis)
+                    Laporan (Per Jenis)
                 </button>
             </nav>
         </div>

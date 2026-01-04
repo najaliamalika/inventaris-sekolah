@@ -12,13 +12,13 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class LaporanTahunanBarangMasukSheet implements FromCollection, WithHeadings, WithMapping, WithTitle, WithStyles
 {
     protected $data;
-    protected $filters;
+    protected $year;
     protected $rowNumber = 0;
 
-    public function __construct($data, $filters)
+    public function __construct($data, $year)
     {
         $this->data = $data;
-        $this->filters = $filters;
+        $this->year = $year;
     }
 
     public function collection()
@@ -38,8 +38,6 @@ class LaporanTahunanBarangMasukSheet implements FromCollection, WithHeadings, Wi
             'Nama Barang',
             'Satuan',
             'Harga Satuan',
-            'Subtotal',
-            'Total Harga',
             'Keterangan'
         ];
     }
@@ -65,8 +63,6 @@ class LaporanTahunanBarangMasukSheet implements FromCollection, WithHeadings, Wi
                     '-',
                     $detail->jenisBarang->satuan ?? '-',
                     'Rp ' . number_format($detail->harga_satuan ?? 0, 0, ',', '.'),
-                    'Rp ' . number_format(($detail->harga_satuan * $detail->jumlah), 0, ',', '.'),
-                    'Rp ' . number_format($barangMasuk->total_harga, 0, ',', '.'),
                     $detail->keterangan ?? $barangMasuk->keterangan ?? '-'
                 ];
             } else {
@@ -83,8 +79,6 @@ class LaporanTahunanBarangMasukSheet implements FromCollection, WithHeadings, Wi
                         $barang->nama_barang ?? '-',
                         $detail->jenisBarang->satuan ?? '-',
                         'Rp ' . number_format($detail->harga_satuan ?? 0, 0, ',', '.'),
-                        'Rp ' . number_format(($detail->harga_satuan * $detail->jumlah), 0, ',', '.'),
-                        'Rp ' . number_format($barangMasuk->total_harga, 0, ',', '.'),
                         $detail->keterangan ?? $barangMasuk->keterangan ?? '-'
                     ];
                 }
@@ -96,7 +90,7 @@ class LaporanTahunanBarangMasukSheet implements FromCollection, WithHeadings, Wi
 
     public function title(): string
     {
-        return 'Laporan Barang Masuk';
+        return 'Laporan Barang Masuk ' . $this->year;
     }
 
     public function styles(Worksheet $sheet)

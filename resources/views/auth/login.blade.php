@@ -87,8 +87,11 @@
             </div>
 
             <!-- Bottom Text -->
-            <p class="text-center text-xs text-gray-500 mt-8">
+            {{-- <p class="text-center text-xs text-gray-500 mt-8">
                 © {{ date('Y') }} Sistem Manajemen IT. Semua hak cipta dilindungi.
+            </p> --}}
+            <p class="text-center text-xs text-gray-500 mt-8">
+                website inventaris man 1 kota tangerang
             </p>
         </div>
     </div>
