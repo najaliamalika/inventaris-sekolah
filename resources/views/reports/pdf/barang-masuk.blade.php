@@ -78,10 +78,11 @@
                 <th width="3%">No</th>
                 <th width="8%">Tanggal</th>
                 <th width="9%">Kategori</th>
-                <th width="12%">Supplier</th>
-                <th width="13%">Jenis Barang</th>
+                <th width="9%">Supplier</th>
+                <th width="9%">Jenis Barang</th>
+                <th width="9%">Jumlah</th>
                 <th width="9%">Kode Barang</th>
-                <th width="15%">Nama Barang</th>
+                <th width="13%">Nama Barang</th>
                 <th width="5%">Satuan</th>
                 <th width="11%">Harga Satuan</th>
                 <th width="15%">Keterangan</th>
@@ -110,8 +111,9 @@
                             <td>{{ ucfirst($barangMasuk->kategori) }}</td>
                             <td>{{ $barangMasuk->nama_supplier }}</td>
                             <td>{{ $detail->jenisBarang->jenis ?? '-' }}</td>
+                            <td class="text-center">0</td>
                             <td class="text-center">-</td>
-                            <td>-</td>
+                            <td class="text-center">-</td>
                             <td class="text-center">{{ $detail->jenisBarang->satuan ?? '-' }}</td>
                             <td class="text-right">Rp {{ number_format($detail->harga_satuan ?? 0, 0, ',', '.') }}</td>
                             <td>{{ $detail->keterangan ?? ($barangMasuk->keterangan ?? '-') }}</td>
@@ -126,6 +128,7 @@
                                 <td>{{ ucfirst($barangMasuk->kategori) }}</td>
                                 <td>{{ $barangMasuk->nama_supplier }}</td>
                                 <td>{{ $detail->jenisBarang->jenis ?? '-' }}</td>
+                                <td class="text-center">1</td>
                                 <td class="text-center">
                                     {{ $barang->kode_barang ? $barang->jenisBarang->kode_utama . $barang->kode_barang : '-' }}
                                 </td>
@@ -147,9 +150,9 @@
 
             @if ($data->count() > 0)
                 <tr style="background-color: #f8f8f8;">
-                    <td colspan="6" class="text-right"><strong>TOTAL BARANG:</strong></td>
+                    <td colspan="5" class="text-right"><strong>TOTAL BARANG:</strong></td>
                     <td class="text-center"><strong>{{ $totalItems }}</strong></td>
-                    <td colspan="2" class="text-right"><strong>TOTAL KESELURUHAN:</strong></td>
+                    <td colspan="4" class="text-right"><strong>TOTAL KESELURUHAN:</strong></td>
                     <td class="text-right"><strong>Rp {{ number_format($grandTotal, 0, ',', '.') }}</strong></td>
                 </tr>
             @endif
@@ -157,8 +160,11 @@
     </table>
 
     <div class="footer">
+        <p><strong>Total Data: {{ $totalItems }} Barang dari {{ $data->count() }} transaksi</strong></p>
+    </div>
+
+    <div class="footer">
         <p>Dicetak pada: {{ date('d/m/Y H:i:s') }}</p>
-        <p style="margin-top: 5px;">Total Data: {{ $totalItems }} item dari {{ $data->count() }} transaksi</p>
     </div>
 </body>
 

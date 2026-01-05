@@ -171,7 +171,8 @@
                         <th width="10%">Tanggal Pinjam</th>
                         <th width="14%">Nama Peminjam</th>
                         <th width="18%">Nama Barang</th>
-                        <th width="15%">Jenis Barang</th>
+                        <th width="9%">Jenis Barang</th>
+                        <th width="6%">Jumlah</th>
                         <th width="11%">Kode Barang</th>
                         <th width="9%">Status</th>
                         <th width="10%">Tgl Kembali</th>
@@ -179,7 +180,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @php $no = 1; @endphp
+                    @php
+                        $no = 1;
+                        $totalBarangPeminjaman = 0;
+                    @endphp
                     @forelse($peminjaman as $item)
                         @foreach ($item->peminjamanBarang as $barang)
                             <tr>
@@ -189,6 +193,9 @@
                                 <td>{{ $barang->barang->nama_barang ?? '-' }}</td>
                                 <td>{{ $barang->barang->jenisBarang->jenis ?? '-' }}</td>
                                 <td class="text-center">
+                                    1
+                                </td>
+                                <td class="text-center">
                                     {{ $barang->barang->kode_barang ? $barang->barang->jenisBarang->kode_utama . '' . $barang->barang->kode_barang : '-' }}
                                 </td>
                                 <td class="text-center">{{ ucfirst($barang->status) }}</td>
@@ -197,12 +204,17 @@
                                 </td>
                                 <td>{{ $barang->catatan ?? ($item->keterangan ?? '-') }}</td>
                             </tr>
+                            @php $totalBarangPeminjaman++ @endphp
                         @endforeach
                     @empty
                         <tr>
                             <td colspan="9" class="text-center">Tidak ada data</td>
                         </tr>
                     @endforelse
+                    <tr style="background-color: #f8f8f8;">
+                        <td colspan="9" class="text-right"><strong>TOTAL BARANG:</strong></td>
+                        <td class="text-center"><strong>{{ $totalBarangPeminjaman }}</strong></td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -226,10 +238,11 @@
                         <th width="3%">No</th>
                         <th width="8%">Tanggal</th>
                         <th width="9%">Kategori</th>
-                        <th width="12%">Supplier</th>
-                        <th width="13%">Jenis Barang</th>
+                        <th width="9%">Supplier</th>
+                        <th width="9%">Jenis Barang</th>
+                        <th width="9%">Jumlah</th>
                         <th width="9%">Kode Barang</th>
-                        <th width="15%">Nama Barang</th>
+                        <th width="13%">Nama Barang</th>
                         <th width="5%">Satuan</th>
                         <th width="11%">Harga Satuan</th>
                         <th width="15%">Keterangan</th>
@@ -257,8 +270,9 @@
                                     <td>{{ ucfirst($item->kategori) }}</td>
                                     <td>{{ $item->nama_supplier }}</td>
                                     <td>{{ $detail->jenisBarang->jenis ?? '-' }}</td>
+                                    <td class="text-center">0</td>
                                     <td class="text-center">-</td>
-                                    <td>-</td>
+                                    <td class="text-center">-</td>
                                     <td class="text-center">{{ $detail->jenisBarang->satuan ?? '-' }}</td>
                                     <td class="text-right">Rp {{ number_format($detail->harga_satuan ?? 0, 0, ',', '.') }}
                                     </td>
@@ -273,6 +287,7 @@
                                         <td>{{ ucfirst($item->kategori) }}</td>
                                         <td>{{ $item->nama_supplier }}</td>
                                         <td>{{ $detail->jenisBarang->jenis ?? '-' }}</td>
+                                        <td class="text-center">1</td>
                                         <td class="text-center">
                                             {{ $barang->kode_barang ? $detail->jenisBarang->kode_utama . $barang->kode_barang : '-' }}
                                         </td>
@@ -294,9 +309,9 @@
 
                     @if ($barangMasuk->count() > 0)
                         <tr style="background-color: #f8f8f8;">
-                            <td colspan="6" class="text-right"><strong>TOTAL BARANG:</strong></td>
+                            <td colspan="5" class="text-right"><strong>TOTAL BARANG:</strong></td>
                             <td class="text-center"><strong>{{ $totalItems }}</strong></td>
-                            <td colspan="2" class="text-right"><strong>TOTAL KESELURUHAN:</strong></td>
+                            <td colspan="4" class="text-right"><strong>TOTAL KESELURUHAN:</strong></td>
                             <td class="text-right"><strong>Rp
                                     {{ number_format($grandTotal, 0, ',', '.') }}</strong></td>
                         </tr>
@@ -331,7 +346,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @php $no = 1; @endphp
+                    @php
+                        $no = 1;
+                        $totalBarangKeluar = 0;
+                    @endphp
                     @forelse($barangKeluar as $item)
                         @if ($item->items->count() > 0)
                             @foreach ($item->items as $detail)
@@ -344,10 +362,13 @@
                                     <td class="text-center">
                                         {{ $detail?->barang?->kode_barang ? $detail->barang->jenisBarang->kode_utama . '' . $detail->barang->kode_barang : '-' }}
                                     </td>
-                                    <td class="text-center">{{ $item->jumlah }}</td>
+                                    <td class="text-center">1</td>
                                     <td>{{ $item->penerima ?? '-' }}</td>
                                     <td>{{ $item->keterangan ?? '-' }}</td>
                                 </tr>
+                                @php
+                                    $totalBarangKeluar++;
+                                @endphp
                             @endforeach
                         @else
                             <tr>
@@ -357,7 +378,7 @@
                                 <td>{{ ucfirst(str_replace('_', ' ', $item->kategori)) }}</td>
                                 <td>-</td>
                                 <td class="text-center">-</td>
-                                <td class="text-center">{{ $item->jumlah }}</td>
+                                <td class="text-center">0</td>
                                 <td>{{ $item->penerima ?? '-' }}</td>
                                 <td>{{ $item->keterangan ?? '-' }}</td>
                             </tr>
@@ -367,6 +388,10 @@
                             <td colspan="9" class="text-center">Tidak ada data</td>
                         </tr>
                     @endforelse
+                    <tr style="background-color: #f8f8f8;">
+                        <td colspan="8" class="text-right"><strong>TOTAL BARANG:</strong></td>
+                        <td class="text-center"><strong>{{ $totalBarangKeluar }}</strong></td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -391,7 +416,7 @@
                     <th width="8%">Tipe</th>
                     <th width="13%">Jenis/Nama Barang</th>
                     <th width="15%">Barang Perbaikan</th>
-                    <th width="6%">Jml</th>
+                    <th width="6%">Jumlah</th>
                     <th width="10%">Biaya</th>
                     <th width="8%">Status</th>
                     <th width="14%">Alasan</th>
@@ -402,6 +427,7 @@
                 @php
                     $no = 1;
                     $totalBiaya = 0;
+                    $totalBarangPengajuan = 0;
                 @endphp
                 @forelse($pengajuan as $item)
                     @php $totalBiaya += ($item->status === 'disetujui' ? $item->estimasi_biaya : 0); @endphp
@@ -432,6 +458,9 @@
                         <td class="text-center status-{{ $item->status }}">{{ ucfirst($item->status) }}</td>
                         <td>{{ Str::limit($item->alasan, 50) }}</td>
                         <td>{{ $item->catatan ?? '-' }}</td>
+                        @php
+                            $totalBarangPengajuan += $item->jumlah;
+                        @endphp
                     </tr>
                 @empty
                     <tr>
@@ -441,9 +470,10 @@
 
                 @if ($pengajuan->count() > 0)
                     <tr style="background-color: #f8f8f8;">
-                        <td colspan="6" class="text-right"><strong>TOTAL BIAYA:</strong></td>
+                        <td colspan="5" class="text-right"><strong>TOTAL BARANG:</strong></td>
+                        <td class="text-right"><strong>{{ $totalBarangPengajuan }}</strong></td>
+                        <td colspan="3" class="text-right"><strong>TOTAL BIAYA:</strong></td>
                         <td class="text-right"><strong>Rp {{ number_format($totalBiaya, 0, ',', '.') }}</strong></td>
-                        <td colspan="3"></td>
                     </tr>
                 @endif
             </tbody>

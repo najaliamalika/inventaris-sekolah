@@ -64,13 +64,17 @@
                 <th width="18%">Jenis Barang</th>
                 <th width="13%">Kategori</th>
                 <th width="18%">Nama Barang</th>
-                <th width="8%">Kode Barang</th>
+                <th width="10%">Kode Barang</th>
+                <th width="8%">Jumlah</th>
                 <th width="13%">Penerima</th>
                 <th width="13%">Keterangan</th>
             </tr>
         </thead>
         <tbody>
-            @php $no = 1; @endphp
+            @php
+                $no = 1;
+                $totalBarangKeluar = 0;
+            @endphp
             @forelse($data as $barangKeluar)
                 @if ($barangKeluar->items->count() > 0)
                     @foreach ($barangKeluar->items as $item)
@@ -83,9 +87,13 @@
                             <td>
                                 {{ $item?->barang?->kode_barang ? $item->barang->jenisBarang->kode_utama . '' . $item->barang->kode_barang : '-' }}
                             </td>
+                            <td class="text-center">1</td>
                             <td>{{ $barangKeluar->penerima ?? '-' }}</td>
                             <td>{{ $barangKeluar->keterangan ?? '-' }}</td>
                         </tr>
+                        @php
+                            $totalBarangKeluar++;
+                        @endphp
                     @endforeach
                 @else
                     <tr>
@@ -94,7 +102,8 @@
                         <td>{{ $barangKeluar->jenisBarang->jenis ?? '-' }}</td>
                         <td>{{ ucfirst(str_replace('_', ' ', $barangKeluar->kategori)) }}</td>
                         <td>-</td>
-                        <td class="text-center">{{ $barangKeluar->jumlah }}</td>
+                        <td class="text-center">-</td>
+                        <td class="text-center">0</td>
                         <td>{{ $barangKeluar->penerima ?? '-' }}</td>
                         <td>{{ $barangKeluar->keterangan ?? '-' }}</td>
                     </tr>
@@ -104,6 +113,10 @@
                     <td colspan="8" class="text-center">Tidak ada data</td>
                 </tr>
             @endforelse
+            <tr style="background-color: #f8f8f8;">
+                <td colspan="8" class="text-right"><strong>TOTAL BARANG:</strong></td>
+                <td class="text-center"><strong>{{ $totalBarangKeluar }}</strong></td>
+            </tr>
         </tbody>
     </table>
 

@@ -55,7 +55,7 @@ class BarangKeluarExport implements FromCollection, WithHeadings, WithMapping, W
                     ucfirst(str_replace('_', ' ', $barangKeluar->kategori)),
                     $item->barang->nama_barang ?? '-',
                     $item?->barang?->kode_barang ? $item->barang->jenisBarang->kode_utama . '' . $item->barang->kode_barang : '-',
-                    $barangKeluar->jumlah,
+                    '1',
                     $barangKeluar->penerima ?? '-',
                     $barangKeluar->keterangan ?? '-'
                 ];
@@ -68,7 +68,7 @@ class BarangKeluarExport implements FromCollection, WithHeadings, WithMapping, W
                 $barangKeluar->jenisBarang->jenis ?? '-',
                 ucfirst(str_replace('_', ' ', $barangKeluar->kategori)),
                 '-',
-                '-',
+                '0',
                 $barangKeluar->jumlah,
                 $barangKeluar->penerima ?? '-',
                 $barangKeluar->keterangan ?? '-'

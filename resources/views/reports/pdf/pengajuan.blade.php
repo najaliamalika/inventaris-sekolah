@@ -81,7 +81,7 @@
                 <th width="8%">Tipe</th>
                 <th width="13%">Jenis/Nama Barang</th>
                 <th width="15%">Barang Perbaikan</th>
-                <th width="6%">Jml</th>
+                <th width="6%">Jumlah</th>
                 <th width="10%">Biaya</th>
                 <th width="8%">Status</th>
                 <th width="14%">Alasan</th>
@@ -92,6 +92,7 @@
             @php
                 $no = 1;
                 $totalBiaya = 0;
+                $totalBarangPengajuan = 0;
             @endphp
             @forelse($data as $pengajuan)
                 @php $totalBiaya += ($pengajuan->status === 'disetujui' ? $pengajuan->estimasi_biaya : 0); @endphp
@@ -122,6 +123,9 @@
                     <td class="text-center status-{{ $pengajuan->status }}">{{ ucfirst($pengajuan->status) }}</td>
                     <td>{{ Str::limit($pengajuan->alasan, 50) }}</td>
                     <td>{{ $pengajuan->catatan ?? '-' }}</td>
+                    @php
+                        $totalBarangPengajuan += $pengajuan->jumlah;
+                    @endphp
                 </tr>
                 @empty
                     <tr>
@@ -130,9 +134,10 @@
                 @endforelse
                 @if ($data->count() > 0)
                     <tr>
-                        <td colspan="6" class="text-right"><strong>TOTAL BIAYA:</strong></td>
+                        <td colspan="5" class="text-right"><strong>TOTAL BARANG:</strong></td>
+                        <td class="text-right"><strong>{{ $totalBarangPengajuan }}</strong></td>
+                        <td colspan="3" class="text-right"><strong>TOTAL BIAYA:</strong></td>
                         <td class="text-right"><strong>Rp {{ number_format($totalBiaya, 0, ',', '.') }}</strong></td>
-                        <td colspan="3"></td>
                     </tr>
                 @endif
             </tbody>

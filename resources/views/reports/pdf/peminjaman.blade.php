@@ -64,39 +64,60 @@
     <table>
         <thead>
             <tr>
-                <th width="5%">No</th>
-                <th width="12%">Tanggal Pinjam</th>
-                <th width="15%">Nama Peminjam</th>
-                <th width="20%">Nama Barang</th>
-                <th width="15%">Jenis Barang</th>
-                <th width="10%">Status</th>
-                <th width="12%">Tgl Kembali</th>
-                <th width="11%">Keterangan</th>
+                <th width="4%">No</th>
+                <th width="10%">Tanggal Pinjam</th>
+                <th width="14%">Nama Peminjam</th>
+                <th width="18%">Nama Barang</th>
+                <th width="9%">Jenis Barang</th>
+                <th width="6%">Jumlah</th>
+                <th width="11%">Kode Barang</th>
+                <th width="9%">Status</th>
+                <th width="10%">Tgl Kembali</th>
+                <th width="9%">Keterangan</th>
             </tr>
         </thead>
         <tbody>
-            @php $no = 1; @endphp
-            @forelse($data as $peminjaman)
-                @foreach ($peminjaman->peminjamanBarang as $item)
+            @php
+                $no = 1;
+                $totalBarangPeminjaman = 0;
+            @endphp
+            @forelse($data as $item)
+                @foreach ($item->peminjamanBarang as $barang)
                     <tr>
                         <td class="text-center">{{ $no++ }}</td>
-                        <td>{{ $peminjaman->tanggal_peminjaman->format('d/m/Y ') }}</td>
-                        <td>{{ $peminjaman->nama_peminjam }}</td>
-                        <td>{{ $item->barang->nama_barang ?? '-' }}</td>
-                        <td>{{ $item->barang->jenisBarang->jenis ?? '-' }}</td>
-                        <td>{{ ucfirst($item->status) }}</td>
-                        <td>{{ $peminjaman->tanggal_pengembalian ? $peminjaman->tanggal_pengembalian->format('d/m/Y') : '-' }}
+                        <td>{{ $item->tanggal_peminjaman->format('d/m/Y') }}</td>
+                        <td>{{ $item->nama_peminjam }}</td>
+                        <td>{{ $barang->barang->nama_barang ?? '-' }}</td>
+                        <td>{{ $barang->barang->jenisBarang->jenis ?? '-' }}</td>
+                        <td class="text-center">
+                            1
                         </td>
-                        <td>{{ $item->catatan ?? ($peminjaman->keterangan ?? '-') }}</td>
+                        <td class="text-center">
+                            {{ $barang->barang->kode_barang ? $barang->barang->jenisBarang->kode_utama . '' . $barang->barang->kode_barang : '-' }}
+                        </td>
+                        <td class="text-center">{{ ucfirst($barang->status) }}</td>
+                        <td class="text-center">
+                            {{ $item->tanggal_pengembalian ? $item->tanggal_pengembalian->format('d/m/Y') : '-' }}
+                        </td>
+                        <td>{{ $barang->catatan ?? ($item->keterangan ?? '-') }}</td>
                     </tr>
+                    @php $totalBarangPeminjaman++ @endphp
                 @endforeach
             @empty
                 <tr>
-                    <td colspan="8" class="text-center">Tidak ada data</td>
+                    <td colspan="9" class="text-center">Tidak ada data</td>
                 </tr>
             @endforelse
+            <tr style="background-color: #f8f8f8;">
+                <td colspan="9" class="text-right"><strong>TOTAL BARANG:</strong></td>
+                <td class="text-center"><strong>{{ $totalBarangPeminjaman }}</strong></td>
+            </tr>
         </tbody>
     </table>
+
+    <div class="footer">
+        <p><strong>Total Peminjaman: {{ $data->count() }} transaksi</strong></p>
+    </div>
 
     <div class="footer">
         <p>Dicetak pada: {{ date('d/m/Y ') }}</p>

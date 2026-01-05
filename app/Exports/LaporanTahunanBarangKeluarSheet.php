@@ -55,7 +55,7 @@ class LaporanTahunanBarangKeluarSheet implements FromCollection, WithHeadings, W
                     ucfirst(str_replace('_', ' ', $barangKeluar->kategori)),
                     $item->barang->nama_barang ?? '-',
                     $item?->barang?->kode_barang ? $item->barang->jenisBarang->kode_utama . '' . $item->barang->kode_barang : '-',
-                    $barangKeluar->jumlah,
+                    '1',
                     $barangKeluar->penerima ?? '-',
                     $barangKeluar->keterangan ?? '-'
                 ];
@@ -69,7 +69,7 @@ class LaporanTahunanBarangKeluarSheet implements FromCollection, WithHeadings, W
                 ucfirst(str_replace('_', ' ', $barangKeluar->kategori)),
                 '-',
                 '-',
-                $barangKeluar->jumlah,
+                '0',
                 $barangKeluar->penerima ?? '-',
                 $barangKeluar->keterangan ?? '-'
             ];
