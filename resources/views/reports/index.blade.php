@@ -26,6 +26,7 @@
     </div>
 
     <div class="space-y-6">
+        {{-- LAPORAN TAHUNAN --}}
         <div class="main-content" data-content="tahunan">
             <div
                 class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden max-w-3xl mx-auto">
@@ -39,13 +40,11 @@
                     </div>
                     @hasrole('admin')
                         <p class="text-green-100 text-sm">Download semua laporan (Data Barang, Peminjaman, Barang Masuk,
-                            Barang Keluar,
-                            Pengajuan) dalam 1 file</p>
+                            Barang Keluar, Pengajuan) dalam 1 file</p>
                     @endhasrole
                     @hasrole('kepala_sekolah')
                         <p class="text-green-100 text-sm">Download semua laporan (Data Barang, Barang Masuk, Barang Keluar,
-                            Pengajuan)
-                            dalam 1 file</p>
+                            Pengajuan) dalam 1 file</p>
                     @endhasrole
                     @hasrole('bendahara')
                         <p class="text-green-100 text-sm">Download laporan Pengajuan Barang</p>
@@ -102,7 +101,7 @@
                                 </span>
                             </label>
                             <input type="number" name="year" value="{{ date('Y') }}" min="2020"
-                                max="{{ date('Y') }}" requigreen
+                                max="{{ date('Y') }}" required
                                 class="w-full px-4 py-3 text-lg border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Pilih tahun untuk mengunduh laporan
                             </p>
@@ -121,7 +120,7 @@
                             <div class="grid grid-cols-2 gap-3">
                                 <label
                                     class="relative flex items-center justify-center p-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:border-green-500 transition-all group">
-                                    <input type="radio" name="format" value="excel" requigreen
+                                    <input type="radio" name="format" value="excel" required
                                         class="absolute opacity-0 peer">
                                     <div
                                         class="text-center peer-checked:text-green-600 dark:peer-checked:text-green-400">
@@ -177,6 +176,7 @@
             </div>
         </div>
 
+        {{-- LAPORAN PER JENIS --}}
         <div class="main-content hidden" data-content="range">
             <div class="mb-6">
                 <div class="border-b border-gray-200 dark:border-gray-700">
@@ -206,10 +206,10 @@
                             Pengajuan
                         </button>
                     </nav>
-
                 </div>
             </div>
 
+            {{-- PEMINJAMAN --}}
             @hasrole('admin')
                 <div class="report-content" data-report="peminjaman">
                     <div
@@ -225,23 +225,23 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
                                         Mulai</label>
-                                    <input type="date" name="start_date" requigreen
+                                    <input type="date" name="start_date" required
                                         class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
                                         Akhir</label>
-                                    <input type="date" name="end_date" requigreen
+                                    <input type="date" name="end_date" required
                                         class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Format
                                         Download</label>
-                                    <select name="format" requigreen
-                                        class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                                        <option value="excel">Excel (.xlsx)</option>
-                                        <option value="pdf">PDF</option>
-                                    </select>
+                                    <x-dropdown name="format" id="format_peminjaman" placeholder="Pilih Format"
+                                        :options="[
+                                            ['value' => 'excel', 'label' => 'Excel (.xlsx)'],
+                                            ['value' => 'pdf', 'label' => 'PDF'],
+                                        ]" required />
                                 </div>
                                 <button type="submit"
                                     class="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
@@ -257,6 +257,7 @@
                 </div>
             @endhasrole
 
+            {{-- BARANG MASUK --}}
             @hasanyrole('admin|kepala_sekolah')
                 <div class="report-content @hasrole('admin')hidden @endhasrole" data-report="barang-masuk">
                     <div
@@ -272,23 +273,23 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
                                         Mulai</label>
-                                    <input type="date" name="start_date" requigreen
+                                    <input type="date" name="start_date" required
                                         class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
                                         Akhir</label>
-                                    <input type="date" name="end_date" requigreen
+                                    <input type="date" name="end_date" required
                                         class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Format
                                         Download</label>
-                                    <select name="format" requigreen
-                                        class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                                        <option value="excel">Excel (.xlsx)</option>
-                                        <option value="pdf">PDF</option>
-                                    </select>
+                                    <x-dropdown name="format" id="format_barang_masuk" placeholder="Pilih Format"
+                                        :options="[
+                                            ['value' => 'excel', 'label' => 'Excel (.xlsx)'],
+                                            ['value' => 'pdf', 'label' => 'PDF'],
+                                        ]" required />
                                 </div>
                                 <button type="submit"
                                     class="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
@@ -304,6 +305,7 @@
                 </div>
             @endhasanyrole
 
+            {{-- BARANG KELUAR --}}
             @hasanyrole('admin|kepala_sekolah')
                 <div class="report-content hidden" data-report="barang-keluar">
                     <div
@@ -311,8 +313,7 @@
                         <div class="bg-gradient-to-r from-green-600 to-green-500 p-6">
                             <h2 class="text-xl font-semibold text-white">Laporan Barang Keluar</h2>
                             <p class="text-green-100 text-sm mt-1">Download laporan barang keluar berdasarkan rentang
-                                tanggal
-                            </p>
+                                tanggal</p>
                         </div>
                         <div class="p-6">
                             <form action="{{ route('reports.barang-keluar') }}" method="POST" class="space-y-4">
@@ -320,23 +321,23 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
                                         Mulai</label>
-                                    <input type="date" name="start_date" requigreen
+                                    <input type="date" name="start_date" required
                                         class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
                                         Akhir</label>
-                                    <input type="date" name="end_date" requigreen
+                                    <input type="date" name="end_date" required
                                         class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Format
                                         Download</label>
-                                    <select name="format" requigreen
-                                        class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                                        <option value="excel">Excel (.xlsx)</option>
-                                        <option value="pdf">PDF</option>
-                                    </select>
+                                    <x-dropdown name="format" id="format_barang_keluar" placeholder="Pilih Format"
+                                        :options="[
+                                            ['value' => 'excel', 'label' => 'Excel (.xlsx)'],
+                                            ['value' => 'pdf', 'label' => 'PDF'],
+                                        ]" required />
                                 </div>
                                 <button type="submit"
                                     class="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
@@ -352,6 +353,7 @@
                 </div>
             @endhasanyrole
 
+            {{-- PENGAJUAN --}}
             <div class="report-content @hasanyrole('admin|kepala_sekolah')hidden @endhasanyrole"
                 data-report="pengajuan">
                 <div
@@ -367,23 +369,23 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
                                     Mulai</label>
-                                <input type="date" name="start_date" requigreen
+                                <input type="date" name="start_date" required
                                     class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Tanggal
                                     Akhir</label>
-                                <input type="date" name="end_date" requigreen
+                                <input type="date" name="end_date" required
                                     class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Format
                                     Download</label>
-                                <select name="format" requigreen
-                                    class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                                    <option value="excel">Excel (.xlsx)</option>
-                                    <option value="pdf">PDF</option>
-                                </select>
+                                <x-dropdown name="format" id="format_pengajuan" placeholder="Pilih Format"
+                                    :options="[
+                                        ['value' => 'excel', 'label' => 'Excel (.xlsx)'],
+                                        ['value' => 'pdf', 'label' => 'PDF'],
+                                    ]" required />
                             </div>
                             <button type="submit"
                                 class="w-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white py-3 rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
@@ -469,7 +471,6 @@
                     }
                 });
 
-                // Show/hide report content
                 document.querySelectorAll('.report-content').forEach(content => {
                     if (content.dataset.report === tabName) {
                         content.classList.remove('hidden');
@@ -478,6 +479,7 @@
                     }
                 });
             }
+
             document.addEventListener('DOMContentLoaded', function() {
                 switchMainTab('tahunan');
             });

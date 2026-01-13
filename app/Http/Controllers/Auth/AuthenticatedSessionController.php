@@ -29,8 +29,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        flash('Selamat Datang Kembali'. Auth::user()->username)->success( '');
-        return redirect()->intended(RouteServiceProvider::HOME);
+        flash('Selamat Datang Kembali' . Auth::user()->username)->success('');
+        return redirect()->intended(RouteServiceProvider::HOME)->with('success', 'Selamat Datang Kembali ' . Auth::user()->username);
     }
 
     /**

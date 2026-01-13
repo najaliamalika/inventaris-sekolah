@@ -23,7 +23,8 @@
         class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div class="p-8">
             <form id="update_pengajuan" method="POST"
-                action="{{ route('pengajuan.update', $pengajuan->pengajuan_id) }}" class="space-y-6">
+                action="{{ route('pengajuan.update', $pengajuan->pengajuan_id) }}" class="space-y-6"
+                x-data="pengajuanEditForm()">
                 @csrf
                 @method('PUT')
 
@@ -47,53 +48,59 @@
                                 class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
                                 <span class="text-red-500">*</span>
                             </x-input-label>
-                            <select id="tipe" name="tipe" required
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                                <option value="pembelian"
-                                    {{ old('tipe', $pengajuan->tipe) == 'pembelian' ? 'selected' : '' }}>
-                                    Pembelian Barang Baru
-                                </option>
-                                <option value="perbaikan"
-                                    {{ old('tipe', $pengajuan->tipe) == 'perbaikan' ? 'selected' : '' }}>
-                                    Perbaikan Barang
-                                </option>
-                            </select>
+
+                            <div @dropdown-changed="handleTipeChange($event.detail)">
+                                <x-dropdown name="tipe" id="tipe" placeholder="-- Pilih Tipe --"
+                                    :selected="old('tipe', $pengajuan->tipe)" x-model="tipe" :options="[
+                                        ['value' => 'pembelian', 'label' => 'Pembelian Barang Baru'],
+                                        ['value' => 'perbaikan', 'label' => 'Perbaikan Barang'],
+                                    ]" required />
+                            </div>
+
+                            <p class="mt-1 text-xs text-gray-500">
+                                <span x-show="tipe === 'pembelian'">Untuk mengajukan pembelian barang baru</span>
+                                <span x-show="tipe === 'perbaikan'">Untuk mengajukan perbaikan barang yang rusak</span>
+                            </p>
                             <x-input-error :messages="$errors->get('tipe')" class="mt-2" />
                         </div>
 
-                        <div class="group md:col-span-2" id="jenisBarangContainer"
-                            style="display: {{ old('tipe', $pengajuan->tipe) == 'perbaikan' ? 'block' : 'none' }}">
+                        <div class="group md:col-span-2" x-show="tipe === 'perbaikan'">
                             <x-input-label for="jenis_barang_id" :value="__('Jenis Barang')"
                                 class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
                                 <span class="text-red-500">*</span>
                             </x-input-label>
-                            <select id="jenis_barang_id" name="jenis_barang_id"
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                                <option value="">-- Pilih Jenis Barang --</option>
-                                @foreach ($jenisBarang as $jenis)
-                                    <option value="{{ $jenis->jenis_barang_id }}"
-                                        {{ old('jenis_barang_id', $pengajuan->jenis_barang_id) == $jenis->jenis_barang_id ? 'selected' : '' }}>
-                                        {{ $jenis->jenis }} (Tersedia:
-                                        {{ $jenis->barang()->tersedia()->get()->count() }})
-                                    </option>
-                                @endforeach
-                            </select>
+
+                            <div @dropdown-changed="handleJenisBarangChange($event.detail)">
+                                <x-dropdown name="jenis_barang_id" id="jenis_barang_id"
+                                    placeholder="-- Pilih Jenis Barang --" :selected="old('jenis_barang_id', $pengajuan->jenis_barang_id)" x-model="selectedJenis"
+                                    :options="$jenisBarang->map(
+                                        fn($jenis) => [
+                                            'value' => $jenis->jenis_barang_id,
+                                            'label' =>
+                                                $jenis->jenis .
+                                                ' (Tersedia: ' .
+                                                $jenis->barang()->tersedia()->count() .
+                                                ')',
+                                            'kode' => $jenis->kode_utama,
+                                        ],
+                                    )" searchable x-bind:required="tipe === 'perbaikan'" />
+                            </div>
+
                             <x-input-error :messages="$errors->get('jenis_barang_id')" class="mt-2" />
                         </div>
 
-                        @if ($pengajuan->tipe === 'pembelian')
-                            <div class="group md:col-span-2">
-                                <x-input-label for="nama_barang" :value="__('Nama Barang')"
-                                    class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
-                                    <span class="text-red-500">*</span>
-                                </x-input-label>
-                                <x-text-input id="nama_barang"
-                                    class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
-                                    type="text" name="nama_barang" :value="old('nama_barang', $pengajuan->nama_barang)"
-                                    placeholder="Contoh: Laptop HP ProBook 450 G8" required />
-                                <x-input-error :messages="$errors->get('nama_barang')" class="mt-2" />
-                            </div>
-                        @endif
+                        <div x-show="tipe === 'pembelian'" class="group md:col-span-2">
+                            <x-input-label for="nama_barang" :value="__('Nama Barang')"
+                                class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
+                                <span class="text-red-500">*</span>
+                            </x-input-label>
+                            <x-text-input id="nama_barang"
+                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
+                                type="text" name="nama_barang" x-model="nama_barang"
+                                x-bind:required="tipe === 'pembelian'" :value="old('nama_barang', $pengajuan->nama_barang)"
+                                placeholder="Contoh: Laptop HP ProBook 450 G8" />
+                            <x-input-error :messages="$errors->get('nama_barang')" class="mt-2" />
+                        </div>
 
                         <div class="group">
                             <x-input-label for="jumlah" :value="__('Jumlah')"
@@ -102,7 +109,11 @@
                             </x-input-label>
                             <x-text-input id="jumlah"
                                 class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white"
-                                type="number" name="jumlah" min="1" :value="old('jumlah', $pengajuan->jumlah)" required />
+                                type="number" name="jumlah" min="1" :value="old('jumlah', $pengajuan->jumlah)" x-model="jumlah"
+                                @input="checkSelectionLimit()" required />
+                            <p class="mt-1 text-xs text-gray-500" x-show="tipe === 'perbaikan'">
+                                Pilih barang sebanyak jumlah yang diinput
+                            </p>
                             <x-input-error :messages="$errors->get('jumlah')" class="mt-2" />
                         </div>
 
@@ -130,33 +141,145 @@
                     </div>
                 </div>
 
-                <div id="barangSelectionContainer"
-                    style="display: {{ old('tipe', $pengajuan->tipe) == 'perbaikan' ? 'block' : 'none' }}">
-                    <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                <div x-show="tipe === 'perbaikan'">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
                             Pilih Barang yang Akan Diperbaiki
                         </h3>
+                        <span class="px-3 py-1 rounded-full text-sm font-semibold"
+                            :class="selectedBarang.length == jumlah ?
+                                'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' :
+                                'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'"
+                            x-text="`${selectedBarang.length} / ${jumlah} dipilih`"></span>
+                    </div>
 
-                        <div
-                            class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-4">
-                            <div class="flex items-start gap-3">
-                                <svg class="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0"
-                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <div class="text-sm text-green-800 dark:text-green-300">
-                                    <p class="font-semibold mb-1">Pilih jenis barang terlebih dahulu</p>
-                                    <p>Barang yang ditampilkan adalah barang dengan kondisi <strong>baik</strong>.
-                                        Jumlah barang yang dipilih harus sesuai dengan jumlah yang diinput.</p>
-                                </div>
+                    <div x-show="!selectedJenis"
+                        class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4 mb-4">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div class="text-sm text-yellow-800 dark:text-yellow-300">
+                                <p class="font-semibold mb-1">Pilih jenis barang terlebih dahulu</p>
+                                <p>Barang yang ditampilkan adalah barang dengan kondisi <strong>baik</strong>.
+                                    Jumlah barang yang dipilih harus sesuai dengan jumlah yang diinput.</p>
                             </div>
                         </div>
+                    </div>
 
-                        <div id="availableBarangContainer" class="space-y-3">
-                            <p class="text-gray-500 dark:text-gray-400 text-center py-8">
-                                Pilih jenis barang untuk melihat daftar barang yang tersedia
-                            </p>
+                    <div x-show="loading" class="flex flex-col items-center justify-center py-12">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mb-4"></div>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm">Memuat data barang...</p>
+                    </div>
+
+                    <div x-show="!loading && availableBarang.length > 0"
+                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <template x-for="barang in availableBarang" :key="barang.barang_id">
+                            <div @click="toggleBarang(barang)"
+                                :class="{
+                                    'border-green-500 bg-green-50 dark:bg-green-900/20 shadow-md': isSelected(barang
+                                        .barang_id),
+                                    'border-gray-200 dark:border-gray-600 hover:border-green-300 dark:hover:border-green-700':
+                                        !isSelected(barang.barang_id)
+                                }"
+                                class="relative border-2 rounded-xl p-4 cursor-pointer transition-all duration-200 hover:shadow-md">
+
+                                <div x-show="isSelected(barang.barang_id)"
+                                    class="absolute -top-2 -right-2 bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+
+                                <input type="checkbox" name="barang_ids[]" :value="barang.barang_id"
+                                    :checked="isSelected(barang.barang_id)" class="hidden">
+
+                                <div class="pr-2">
+                                    <h4 class="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-2 line-clamp-2"
+                                        x-text="barang.nama_barang"></h4>
+
+                                    <div class="space-y-2">
+                                        <div x-show="barang.kode_barang"
+                                            class="flex items-center gap-2 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 px-2 py-1 rounded">
+                                            <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                                            </svg>
+                                            <span class="font-mono font-semibold"
+                                                x-text="getFullKodeBarang(barang)"></span>
+                                        </div>
+
+                                        <div class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                            </svg>
+                                            <span class="font-medium" x-text="barang.merk"></span>
+                                        </div>
+
+                                        <div x-show="barang.lokasi"
+                                            class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                                            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                            <span x-text="barang.lokasi"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div x-show="!loading && selectedJenis && availableBarang.length === 0"
+                        class="text-center py-12 bg-gray-50 dark:bg-gray-700/50 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600">
+                        <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                        </svg>
+                        <p class="text-gray-600 dark:text-gray-400 font-medium mb-1">Tidak ada barang tersedia</p>
+                        <p class="text-gray-500 dark:text-gray-500 text-sm">Semua barang untuk jenis ini sedang tidak
+                            tersedia atau dalam kondisi tidak baik</p>
+                    </div>
+
+                    <div x-show="selectedBarang.length > 0 && selectedBarang.length != jumlah"
+                        class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 mt-4">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div class="text-sm text-red-800 dark:text-red-200">
+                                <p class="font-semibold mb-1">Jumlah barang tidak sesuai</p>
+                                <p>Anda telah memilih <strong x-text="selectedBarang.length"></strong> barang, tetapi
+                                    jumlah yang diinput adalah <strong x-text="jumlah"></strong>. Silakan sesuaikan
+                                    pilihan Anda.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div x-show="selectedBarang.length > 0 && selectedBarang.length == jumlah"
+                        class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-4 mt-4">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <div class="text-sm text-green-800 dark:text-green-200">
+                                <p class="font-semibold">Pilihan lengkap!</p>
+                                <p>Anda telah memilih semua barang yang diperlukan.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -173,7 +296,8 @@
                     </a>
 
                     <button type="button" x-data @click="$dispatch('open-modal', 'update_confirmation')"
-                        class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2">
+                        :disabled="(tipe === 'perbaikan' && selectedBarang.length != jumlah)"
+                        class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-lg">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -190,185 +314,111 @@
 
     @push('scripts')
         <script>
-            const existingBarangIds = @json($pengajuan->perbaikanItems->pluck('barang_id')->toArray() ?? []);
-            let availableBarang = [];
+            function pengajuanEditForm() {
+                const jenisBarangList = @json($jenisBarang);
+                const existingBarangIds = @json($pengajuan->perbaikanItems->pluck('barang_id')->toArray() ?? []);
 
-            document.getElementById('tipe').addEventListener('change', function() {
-                const tipe = this.value;
-                const jenisContainer = document.getElementById('jenisBarangContainer');
-                const barangContainer = document.getElementById('barangSelectionContainer');
-                const jenisSelect = document.getElementById('jenis_barang_id');
+                return {
+                    tipe: '{{ old('tipe', $pengajuan->tipe) }}',
+                    selectedJenis: '{{ old('jenis_barang_id', $pengajuan->jenis_barang_id) }}',
+                    kodeUtama: '',
+                    availableBarang: [],
+                    selectedBarang: [],
+                    jumlah: {{ old('jumlah', $pengajuan->jumlah) }},
+                    loading: false,
+                    nama_barang: '{{ old('nama_barang', $pengajuan->nama_barang) }}',
 
-                if (tipe === 'perbaikan') {
-                    jenisContainer.style.display = 'block';
-                    barangContainer.style.display = 'block';
-                    jenisSelect.required = true;
-                } else {
-                    jenisContainer.style.display = 'none';
-                    barangContainer.style.display = 'none';
-                    jenisSelect.required = false;
-                    jenisSelect.value = '';
-                    document.getElementById('availableBarangContainer').innerHTML = `
-                        <p class="text-gray-500 dark:text-gray-400 text-center py-8">
-                            Pilih jenis barang untuk melihat daftar barang yang tersedia
-                        </p>
-                    `;
-                }
-            });
+                    init() {
+                        if (this.tipe === 'perbaikan' && this.selectedJenis) {
+                            const jenis = jenisBarangList.find(j => j.jenis_barang_id == this.selectedJenis);
+                            if (jenis) {
+                                this.kodeUtama = jenis.kode_utama;
+                            }
+                            this.loadAvailableBarang();
+                        }
+                    },
 
-            document.getElementById('jenis_barang_id').addEventListener('change', async function() {
-                const jenisBarangId = this.value;
+                    handleTipeChange(value) {
+                        this.tipe = value;
 
-                if (!jenisBarangId) {
-                    document.getElementById('availableBarangContainer').innerHTML = `
-                        <p class="text-gray-500 dark:text-gray-400 text-center py-8">
-                            Pilih jenis barang untuk melihat daftar barang yang tersedia
-                        </p>
-                    `;
-                    return;
-                }
+                        if (this.tipe !== 'perbaikan') {
+                            this.selectedJenis = '';
+                            this.kodeUtama = '';
+                            this.availableBarang = [];
+                            this.selectedBarang = [];
+                        }
+                    },
 
-                try {
-                    const response = await fetch(`/api/pengajuan/available-barang/${jenisBarangId}`);
-                    availableBarang = await response.json();
+                    handleJenisBarangChange(jenisBarangId) {
+                        this.selectedJenis = jenisBarangId;
 
-                    renderBarangList();
-                } catch (error) {
-                    console.error('Error loading barang:', error);
-                    document.getElementById('availableBarangContainer').innerHTML = `
-                        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 text-center">
-                            <p class="text-red-600 dark:text-red-400">Gagal memuat data barang</p>
-                        </div>
-                    `;
-                }
-            });
+                        const jenis = jenisBarangList.find(j => j.jenis_barang_id == jenisBarangId);
+                        if (jenis) {
+                            this.kodeUtama = jenis.kode_utama;
+                        }
 
-            function renderBarangList() {
-                const container = document.getElementById('availableBarangContainer');
+                        this.loadAvailableBarang();
+                    },
 
-                if (availableBarang.length === 0) {
-                    container.innerHTML = `
-                        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 text-center">
-                            <svg class="w-12 h-12 text-yellow-600 dark:text-yellow-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                            <p class="text-yellow-800 dark:text-yellow-300 font-semibold">Tidak ada barang tersedia</p>
-                            <p class="text-yellow-600 dark:text-yellow-400 text-sm mt-1">Semua barang untuk jenis ini sedang tidak aktif atau dalam kondisi tidak baik</p>
-                        </div>
-                    `;
-                    return;
-                }
+                    async loadAvailableBarang() {
+                        if (!this.selectedJenis) {
+                            this.availableBarang = [];
+                            return;
+                        }
 
-                let html = '<div class="grid grid-cols-1 md:grid-cols-2 gap-3">';
+                        this.loading = true;
 
-                availableBarang.forEach(barang => {
-                    const isChecked = existingBarangIds.includes(barang.barang_id) ? 'checked' : '';
-                    html += `
-                        <label class="barang-checkbox-item relative flex items-start p-4 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all duration-200 ${isChecked ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : ''}">
-                            <input type="checkbox" name="barang_ids[]" value="${barang.barang_id}" 
-                                class="barang-checkbox w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500 focus:ring-2 mt-0.5" 
-                                onchange="updateSelectedCount()" ${isChecked}>
-                            <div class="ml-3 flex-1">
-                                <div class="font-semibold text-gray-900 dark:text-gray-100">
-                                    ${barang.nama_barang}
-                                </div>
-                                <div class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                    ${barang.kode_barang ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200">${barang.jenis_barang.kode_utama}${barang.kode_barang}</span>` : ''}
-                                    <span class="ml-2">Merk: ${barang.merk}</span>
-                                </div>
-                                ${barang.lokasi ? `<div class="text-xs text-gray-500 dark:text-gray-400 mt-1">📍 ${barang.lokasi}</div>` : ''}
-                            </div>
-                        </label>
-                    `;
-                });
+                        try {
+                            const response = await fetch(`/api/pengajuan/available-barang/${this.selectedJenis}`);
+                            const data = await response.json();
+                            this.availableBarang = data;
 
-                html += '</div>';
-                html += `
-                    <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-gray-700 dark:text-gray-300">
-                                <strong>Dipilih:</strong> 
-                                <span id="selectedCount" class="text-green-600 dark:text-green-400 font-semibold">0</span> dari 
-                                <strong>Jumlah diinput:</strong> 
-                                <span id="requiredCount" class="text-gray-900 dark:text-gray-100 font-semibold">${document.getElementById('jumlah').value || 0}</span>
-                            </span>
-                            <button type="button" onclick="clearSelection()" class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium">
-                                Bersihkan Pilihan
-                            </button>
-                        </div>
-                    </div>
-                `;
+                            // Pre-select existing barang
+                            this.selectedBarang = this.availableBarang.filter(barang =>
+                                existingBarangIds.includes(barang.barang_id)
+                            );
+                        } catch (error) {
+                            console.error('Error loading barang:', error);
+                            this.availableBarang = [];
+                            alert('Gagal memuat data barang. Silakan coba lagi.');
+                        } finally {
+                            this.loading = false;
+                        }
+                    },
 
-                container.innerHTML = html;
-                updateSelectedCount();
-            }
+                    getFullKodeBarang(barang) {
+                        if (!barang.kode_barang) return '-';
+                        if (this.kodeUtama) {
+                            return `${this.kodeUtama}${barang.kode_barang}`;
+                        }
+                        return barang.kode_barang;
+                    },
 
-            function updateSelectedCount() {
-                const selected = document.querySelectorAll('.barang-checkbox:checked').length;
-                const required = parseInt(document.getElementById('jumlah').value) || 0;
+                    toggleBarang(barang) {
+                        const index = this.selectedBarang.findIndex(b => b.barang_id === barang.barang_id);
 
-                const selectedCountEl = document.getElementById('selectedCount');
-                const requiredCountEl = document.getElementById('requiredCount');
+                        if (index > -1) {
+                            this.selectedBarang.splice(index, 1);
+                        } else {
+                            if (this.selectedBarang.length < this.jumlah) {
+                                this.selectedBarang.push(barang);
+                            } else {
+                                alert(`Anda hanya bisa memilih ${this.jumlah} barang sesuai dengan jumlah yang diinput.`);
+                            }
+                        }
+                    },
 
-                if (selectedCountEl) {
-                    selectedCountEl.textContent = selected;
-                    selectedCountEl.className = selected === required ?
-                        'text-green-600 dark:text-green-400 font-semibold' :
-                        'text-green-600 dark:text-green-400 font-semibold';
-                }
+                    checkSelectionLimit() {
+                        if (this.selectedBarang.length > this.jumlah) {
+                            this.selectedBarang = this.selectedBarang.slice(0, this.jumlah);
+                        }
+                    },
 
-                if (requiredCountEl) {
-                    requiredCountEl.textContent = required;
-                }
-
-                document.querySelectorAll('.barang-checkbox-item').forEach(item => {
-                    const checkbox = item.querySelector('.barang-checkbox');
-                    if (checkbox.checked) {
-                        item.classList.add('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
-                        item.classList.remove('border-gray-200', 'dark:border-gray-600');
-                    } else {
-                        item.classList.remove('border-green-500', 'bg-green-50', 'dark:bg-green-900/20');
-                        item.classList.add('border-gray-200', 'dark:border-gray-600');
-                    }
-                });
-            }
-
-            function clearSelection() {
-                document.querySelectorAll('.barang-checkbox:checked').forEach(checkbox => {
-                    checkbox.checked = false;
-                });
-                updateSelectedCount();
-            }
-
-            document.getElementById('jumlah').addEventListener('input', function() {
-                const requiredCountEl = document.getElementById('requiredCount');
-                if (requiredCountEl) {
-                    requiredCountEl.textContent = this.value || 0;
-                    updateSelectedCount();
-                }
-            });
-
-            if (document.getElementById('tipe').value === 'perbaikan' && document.getElementById('jenis_barang_id')
-                .value) {
-                document.getElementById('jenis_barang_id').dispatchEvent(new Event('change'));
-            }
-
-            document.getElementById('update_pengajuan').addEventListener('submit', function(e) {
-                const tipe = document.getElementById('tipe').value;
-
-                if (tipe === 'perbaikan') {
-                    const selectedCount = document.querySelectorAll('.barang-checkbox:checked').length;
-                    const requiredCount = parseInt(document.getElementById('jumlah').value) || 0;
-
-                    if (selectedCount !== requiredCount) {
-                        e.preventDefault();
-                        alert(
-                            `Jumlah barang yang dipilih (${selectedCount}) harus sesuai dengan jumlah yang diinput (${requiredCount})`
-                        );
-                        return false;
+                    isSelected(barangId) {
+                        return this.selectedBarang.some(b => b.barang_id === barangId);
                     }
                 }
-            });
+            }
         </script>
     @endpush
 </x-app-layout>

@@ -82,8 +82,8 @@
                 <th width="13%">Jenis/Nama Barang</th>
                 <th width="15%">Barang Perbaikan</th>
                 <th width="6%">Jumlah</th>
-                <th width="10%">Biaya</th>
                 <th width="8%">Status</th>
+                <th width="10%">Biaya</th>
                 <th width="14%">Alasan</th>
                 <th width="13%">Catatan</th>
             </tr>
@@ -119,12 +119,14 @@
                         @endif
                     </td>
                     <td class="text-center">{{ $pengajuan->jumlah }}</td>
-                    <td class="text-right">{{ number_format($pengajuan->estimasi_biaya, 0, ',', '.') }}</td>
                     <td class="text-center status-{{ $pengajuan->status }}">{{ ucfirst($pengajuan->status) }}</td>
+                    <td class="text-right">{{ number_format($pengajuan->estimasi_biaya, 0, ',', '.') }}</td>
                     <td>{{ Str::limit($pengajuan->alasan, 50) }}</td>
                     <td>{{ $pengajuan->catatan ?? '-' }}</td>
                     @php
-                        $totalBarangPengajuan += $pengajuan->jumlah;
+                        if ($pengajuan->status === 'disetujui') {
+                            $totalBarangPengajuan += $pengajuan->jumlah;
+                        }
                     @endphp
                 </tr>
                 @empty
@@ -134,16 +136,20 @@
                 @endforelse
                 @if ($data->count() > 0)
                     <tr>
-                        <td colspan="5" class="text-right"><strong>TOTAL BARANG:</strong></td>
-                        <td class="text-right"><strong>{{ $totalBarangPengajuan }}</strong></td>
-                        <td colspan="3" class="text-right"><strong>TOTAL BIAYA:</strong></td>
-                        <td class="text-right"><strong>Rp {{ number_format($totalBiaya, 0, ',', '.') }}</strong></td>
+                        <td colspan="4"></td>
+                        <td colspan="1" class="text-center"><strong>TOTAL BARANG:</strong></td>
+                        <td colspan="1" class="text-center"><strong>{{ $totalBarangPengajuan }}</strong></td>
+                        <td colspan="1" class="text-center"><strong>TOTAL BIAYA:</strong></td>
+                        <td colspan="1" class="text-right"><strong>Rp
+                                {{ number_format($totalBiaya, 0, ',', '.') }}</strong></td>
+                        <td colspan="2"></td>
                     </tr>
                 @endif
             </tbody>
         </table>
 
         <div class="footer">
+            <p><strong>Total Pengajuan: {{ $data->count() }} pengajuan</strong></p>
             <p>Dicetak pada: {{ date('d/m/Y H:i:s') }}</p>
         </div>
     </body>

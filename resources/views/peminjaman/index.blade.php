@@ -92,16 +92,12 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Status
                         </label>
-                        <select name="status" id="statusSelect"
-                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                            <option value="">Semua Status</option>
-                            <option value="dikembalikan" {{ request('status') == 'dikembalikan' ? 'selected' : '' }}>
-                                Sudah Dikembalikan
-                            </option>
-                            <option value="dipinjam" {{ request('status') == 'dipinjam' ? 'selected' : '' }}>
-                                Sedang Dipinjam
-                            </option>
-                        </select>
+                        <x-dropdown name="status" id="statusSelect" placeholder="Semua Status" :selected="request('status')"
+                            :options="[
+                                ['value' => '', 'label' => 'Semua Status'],
+                                ['value' => 'dikembalikan', 'label' => 'Sudah Dikembalikan'],
+                                ['value' => 'dipinjam', 'label' => 'Sedang Dipinjam'],
+                            ]" autoSubmit />
                     </div>
 
                     <div>

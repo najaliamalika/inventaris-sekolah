@@ -120,24 +120,12 @@
                             <span class="text-red-500">*</span>
                         </x-input-label>
                         <div class="relative">
-                            <select id="kondisi" name="kondisi" required
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                                <option value="baik"
-                                    {{ old('kondisi', $barang->kondisi) == 'baik' ? 'selected' : '' }}>Baik</option>
-                                <option value="diperbaiki"
-                                    {{ old('kondisi', $barang->kondisi) == 'diperbaiki' ? 'selected' : '' }}>
-                                    Diperbaiki</option>
-                                <option value="dipinjam"
-                                    {{ old('kondisi', $barang->kondisi) == 'dipinjam' ? 'selected' : '' }}>Dipinjam
-                                </option>
-                            </select>
-                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </div>
+                            <x-dropdown name="kondisi" id="kondisi" placeholder="-- Pilih Kondisi --"
+                                :selected="old('kondisi', $barang->kondisi)" :options="[
+                                    ['value' => 'baik', 'label' => 'Baik'],
+                                    ['value' => 'diperbaiki', 'label' => 'Diperbaiki'],
+                                    ['value' => 'dipinjam', 'label' => 'Dipinjam'],
+                                ]" required />
                         </div>
                         <x-input-error :messages="$errors->get('kondisi')" class="mt-2" />
                     </div>

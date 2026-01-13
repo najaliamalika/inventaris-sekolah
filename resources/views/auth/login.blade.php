@@ -13,7 +13,6 @@
                 <p class="text-gray-600">Masuk ke akun Anda untuk melanjutkan</p>
             </div>
 
-            <!-- Session Status -->
             @if (session('status'))
                 <div class="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 animate-fade-in">
                     <div class="flex items-center gap-3">
@@ -26,13 +25,11 @@
                 </div>
             @endif
 
-            <!-- Main Card -->
             <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
                 <div class="p-8">
                     <form method="POST" action="{{ route('login') }}" class="space-y-6">
                         @csrf
 
-                        <!-- Username -->
                         <div>
                             <x-input-label for="username" :value="__('Username')"
                                 class="text-gray-700 font-semibold mb-2 flex items-center gap-2" />
@@ -46,13 +43,12 @@
                                 </div>
                                 <x-text-input id="username"
                                     class="block w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-gray-50 focus:bg-white"
-                                    type="text" name="username" :value="old('username')" required autofocus
-                                    autocomplete="username" placeholder="Masukkan username Anda" />
+                                    type="text" name="username" :value="old('username')" autofocus autocomplete="username"
+                                    placeholder="Masukkan username Anda" />
                             </div>
                             <x-input-error :messages="$errors->get('username')" class="mt-2" />
                         </div>
 
-                        <!-- Password -->
                         <div>
                             <x-input-label for="password" :value="__('Password')"
                                 class="text-gray-700 font-semibold mb-2 flex items-center gap-2" />
@@ -66,13 +62,12 @@
                                 </div>
                                 <x-text-input id="password"
                                     class="block w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-gray-50 focus:bg-white"
-                                    type="password" name="password" required autocomplete="current-password"
+                                    type="password" name="password" autocomplete="current-password"
                                     placeholder="Masukkan kata sandi Anda" />
                             </div>
                             <x-input-error :messages="$errors->get('password')" class="mt-2" />
                         </div>
 
-                        <!-- Login Button -->
                         <button type="submit"
                             class="w-full px-6 py-3.5 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 group">
                             <span>{{ __('Masuk') }}</span>

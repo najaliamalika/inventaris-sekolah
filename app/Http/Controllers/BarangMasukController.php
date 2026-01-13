@@ -90,7 +90,6 @@ class BarangMasukController extends Controller
             'harga_satuan.*' => 'nullable|integer|min:0',
             'keterangan_detail' => 'nullable|array',
 
-            // Data barang individual
             'list_barang' => 'required|array|min:1',
             'list_barang.*.*.nama_barang' => 'required|string|max:255',
             'list_barang.*.*.kode_barang' => 'nullable|string|max:255',
@@ -148,7 +147,6 @@ class BarangMasukController extends Controller
                 }
             }
 
-            // Update total
             $barangMasuk->hitungTotal();
 
             DB::commit();
@@ -207,7 +205,6 @@ class BarangMasukController extends Controller
             'detail_ids' => 'nullable|array',
             'detail_ids.*' => 'nullable|string',
 
-            // Barang items
             'barang_ids' => 'nullable|array',
             'barang_ids.*' => 'nullable|array',
             'list_barang' => 'nullable|array',
@@ -223,7 +220,6 @@ class BarangMasukController extends Controller
         DB::beginTransaction();
 
         try {
-            // Update Barang Masuk Header
             $barangMasuk->update([
                 'tanggal' => $validated['tanggal'],
                 'kategori' => $validated['kategori'],
@@ -231,26 +227,22 @@ class BarangMasukController extends Controller
                 'keterangan' => $validated['keterangan'] ?? null,
             ]);
 
-            // Get existing detail IDs
             $existingDetailIds = $validated['detail_ids'] ?? [];
             $currentDetailIds = $barangMasuk->details->pluck('detail_id')->toArray();
 
-            // Delete removed details (cascade will handle barang items)
             $removedDetailIds = array_diff($currentDetailIds, $existingDetailIds);
             if (!empty($removedDetailIds)) {
                 BarangMasukDetail::whereIn('detail_id', $removedDetailIds)->delete();
             }
 
-            // Process each detail
             foreach ($validated['jenis_barang_ids'] as $index => $jenisBarangId) {
                 $detailId = $existingDetailIds[$index] ?? null;
                 $jumlah = $validated['jumlah'][$index];
                 $hargaSatuan = $validated['harga_satuan'][$index] ?? 0;
                 $subtotal = $jumlah * $hargaSatuan;
 
-                // Check if this is an update or create
                 if ($detailId && in_array($detailId, $currentDetailIds)) {
-                    // UPDATE existing detail
+
                     $detail = BarangMasukDetail::find($detailId);
 
                     if ($detail) {
@@ -262,11 +254,9 @@ class BarangMasukController extends Controller
                             'keterangan' => $validated['keterangan_detail'][$index] ?? null,
                         ]);
 
-                        // Handle barang items for this detail
                         $this->updateBarangItems($detail, $index, $validated, $jenisBarangId);
                     }
                 } else {
-                    // CREATE new detail
                     $detail = BarangMasukDetail::create([
                         'detail_id' => (string) Str::uuid(),
                         'masuk_id' => $barangMasuk->masuk_id,
@@ -277,12 +267,10 @@ class BarangMasukController extends Controller
                         'keterangan' => $validated['keterangan_detail'][$index] ?? null,
                     ]);
 
-                    // Create barang items for new detail
                     $this->createBarangItems($detail, $index, $validated, $jenisBarangId);
                 }
             }
 
-            // Recalculate totals
             $barangMasuk->hitungTotal();
 
             DB::commit();
@@ -310,7 +298,6 @@ class BarangMasukController extends Controller
         DB::beginTransaction();
 
         try {
-            // Cascade will handle deleting details and barang items
             $barangMasuk->delete();
 
             DB::commit();
@@ -336,10 +323,8 @@ class BarangMasukController extends Controller
         try {
             $masukId = $detail->masuk_id;
 
-            // Cascade will handle deleting barang items
             $detail->delete();
 
-            // Update total
             $barangMasuk = BarangMasuk::find($masukId);
             if ($barangMasuk) {
                 $barangMasuk->hitungTotal();

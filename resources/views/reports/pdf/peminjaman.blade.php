@@ -105,21 +105,20 @@
                 @endforeach
             @empty
                 <tr>
-                    <td colspan="9" class="text-center">Tidak ada data</td>
+                    <td colspan="10" class="text-center">Tidak ada data</td>
                 </tr>
             @endforelse
             <tr style="background-color: #f8f8f8;">
-                <td colspan="9" class="text-right"><strong>TOTAL BARANG:</strong></td>
-                <td class="text-center"><strong>{{ $totalBarangPeminjaman }}</strong></td>
+                <td colspan="4"></td>
+                <td colspan="1" class="text-right"><strong>TOTAL BARANG:</strong></td>
+                <td colspan="1" class="text-center"><strong>{{ $totalBarangPeminjaman }}</strong></td>
+                <td colspan="4"></td>
             </tr>
         </tbody>
     </table>
 
     <div class="footer">
-        <p><strong>Total Peminjaman: {{ $data->count() }} transaksi</strong></p>
-    </div>
-
-    <div class="footer">
+        <p><strong>Total Peminjaman: {{ $data->count() }} peminjaman</strong></p>
         <p>Dicetak pada: {{ date('d/m/Y ') }}</p>
     </div>
 </body>

@@ -92,14 +92,12 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Tipe
                         </label>
-                        <select name="tipe" id="tipeSelect"
-                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                            <option value="">Semua</option>
-                            <option value="pembelian" {{ request('tipe') == 'pembelian' ? 'selected' : '' }}>
-                                Pembelian</option>
-                            <option value="perbaikan" {{ request('tipe') == 'perbaikan' ? 'selected' : '' }}>
-                                Perbaikan</option>
-                        </select>
+                        <x-dropdown name="tipe" id="tipeSelect" placeholder="Semua" :selected="request('tipe')"
+                            :options="[
+                                ['value' => '', 'label' => 'Semua'],
+                                ['value' => 'pembelian', 'label' => 'Pembelian'],
+                                ['value' => 'perbaikan', 'label' => 'Perbaikan'],
+                            ]" autoSubmit />
                     </div>
 
                     <!-- Status -->
@@ -107,32 +105,28 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Status
                         </label>
-                        <select name="status" id="statusSelect"
-                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                            <option value="">Semua</option>
-                            <option value="menunggu" {{ request('status') == 'menunggu' ? 'selected' : '' }}>Menunggu
-                            </option>
-                            <option value="disetujui" {{ request('status') == 'disetujui' ? 'selected' : '' }}>
-                                Disetujui</option>
-                            <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak
-                            </option>
-                        </select>
+                        <x-dropdown name="status" id="statusSelect" placeholder="Semua" :selected="request('status')"
+                            :options="[
+                                ['value' => '', 'label' => 'Semua'],
+                                ['value' => 'menunggu', 'label' => 'Menunggu'],
+                                ['value' => 'disetujui', 'label' => 'Disetujui'],
+                                ['value' => 'ditolak', 'label' => 'Ditolak'],
+                            ]" autoSubmit />
                     </div>
 
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Jenis Barang
                         </label>
-                        <select name="jenis_barang_id" id="jenisBarangSelect"
-                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                            <option value="">Semua</option>
-                            @foreach ($jenisBarangList as $jenis)
-                                <option value="{{ $jenis->jenis_barang_id }}"
-                                    {{ request('jenis_barang_id') == $jenis->jenis_barang_id ? 'selected' : '' }}>
-                                    {{ $jenis->kategori }} - {{ $jenis->kode_utama }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <x-dropdown name="jenis_barang_id" id="jenisBarangSelect" placeholder="Semua Jenis Barang"
+                            :selected="request('jenis_barang_id', '')" :options="$jenisBarangList
+                                ->map(
+                                    fn($jenis) => [
+                                        'value' => $jenis->jenis_barang_id,
+                                        'label' => $jenis->jenis . ' - ' . $jenis->kode_utama,
+                                    ],
+                                )
+                                ->prepend(['value' => '', 'label' => 'Semua Jenis Barang'])" searchable autoSubmit />
                     </div>
                 </div>
 

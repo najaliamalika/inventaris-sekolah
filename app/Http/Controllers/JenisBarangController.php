@@ -23,7 +23,7 @@ class JenisBarangController extends Controller
                     $q->where('kondisi', 'baik')->where('status', 'aktif');
                 }
             ])
-            ->orderByDesc('updated_at');
+            ->orderBy('jenis');
 
         if ($request->filled('search')) {
             $search = $request->search;
@@ -49,7 +49,7 @@ class JenisBarangController extends Controller
         $validated = $request->validate(
             [
                 'kategori' => 'required|string|max:255',
-                'jenis' => 'required|string|max:255|unique:jenis_barang,jenis',
+                'jenis' => 'required|string|max:255|unique:jenis_barang,jenis,NULL,jenis_barang_id',
                 'kode_utama' => 'nullable|string|max:255',
                 'satuan' => 'required|string|max:255',
             ],

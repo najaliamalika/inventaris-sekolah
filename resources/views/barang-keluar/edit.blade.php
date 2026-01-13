@@ -28,12 +28,10 @@
                 @csrf
                 @method('PUT')
 
-                <!-- Informasi Umum -->
                 <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informasi Umum</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Tanggal -->
                         <div class="group">
                             <x-input-label for="tanggal" :value="__('Tanggal')"
                                 class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
@@ -45,55 +43,45 @@
                             <x-input-error :messages="$errors->get('tanggal')" class="mt-2" />
                         </div>
 
-                        <!-- Jenis Barang -->
                         <div class="group">
                             <x-input-label for="jenis_barang_id" :value="__('Jenis Barang')"
                                 class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
                                 <span class="text-red-500">*</span>
                             </x-input-label>
-                            <select id="jenis_barang_id" name="jenis_barang_id" required x-model="selectedJenis"
-                                @change="loadAvailableBarang()"
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                                <option value="">-- Pilih Jenis Barang --</option>
-                                @foreach ($jenisBarang as $jenis)
-                                    <option value="{{ $jenis->jenis_barang_id }}" data-kode="{{ $jenis->kode_utama }}"
-                                        {{ old('jenis_barang_id', $barangKeluar->jenis_barang_id) == $jenis->jenis_barang_id ? 'selected' : '' }}>
-                                        {{ $jenis->jenis }} (Stok: {{ $jenis->stok_tersedia }})
-                                    </option>
-                                @endforeach
-                            </select>
+
+                            <div @dropdown-changed="handleJenisBarangChange($event.detail)">
+                                <x-dropdown name="jenis_barang_id" id="jenis_barang_id"
+                                    placeholder="-- Pilih Jenis Barang --" :selected="old('jenis_barang_id', $barangKeluar->jenis_barang_id)" :options="$jenisBarang->map(
+                                        fn($jenis) => [
+                                            'value' => $jenis->jenis_barang_id,
+                                            'label' => $jenis->jenis . ' (Stok: ' . $jenis->stok_tersedia . ')',
+                                            'kode' => $jenis->kode_utama,
+                                        ],
+                                    )"
+                                    searchable required />
+                            </div>
+
                             <x-input-error :messages="$errors->get('jenis_barang_id')" class="mt-2" />
                         </div>
 
-                        <!-- Kategori -->
                         <div class="group">
                             <x-input-label for="kategori" :value="__('Kategori')"
                                 class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
                                 <span class="text-red-500">*</span>
                             </x-input-label>
-                            <select id="kategori" name="kategori" required
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                                <option value="">-- Pilih Kategori --</option>
-                                <option value="habis_pakai"
-                                    {{ old('kategori', $barangKeluar->kategori) == 'habis_pakai' ? 'selected' : '' }}>
-                                    Habis Pakai</option>
-                                <option value="rusak"
-                                    {{ old('kategori', $barangKeluar->kategori) == 'rusak' ? 'selected' : '' }}>
-                                    Rusak</option>
-                                <option value="tidak_layak"
-                                    {{ old('kategori', $barangKeluar->kategori) == 'tidak_layak' ? 'selected' : '' }}>
-                                    Tidak Layak</option>
-                                <option value="sedang_diperbaiki"
-                                    {{ old('kategori', $barangKeluar->kategori) == 'sedang_diperbaiki' ? 'selected' : '' }}>
-                                    Sedang Diperbaiki</option>
-                                <option value="dihibahkan"
-                                    {{ old('kategori', $barangKeluar->kategori) == 'dihibahkan' ? 'selected' : '' }}>
-                                    Dihibahkan</option>
-                            </select>
+
+                            <x-dropdown name="kategori" id="kategori" placeholder="-- Pilih Kategori --"
+                                :selected="old('kategori', $barangKeluar->kategori)" :options="[
+                                    ['value' => 'habis_pakai', 'label' => 'Habis Pakai'],
+                                    ['value' => 'rusak', 'label' => 'Rusak'],
+                                    ['value' => 'tidak_layak', 'label' => 'Tidak Layak'],
+                                    ['value' => 'sedang_diperbaiki', 'label' => 'Sedang Diperbaiki'],
+                                    ['value' => 'dihibahkan', 'label' => 'Dihibahkan'],
+                                ]" required />
+
                             <x-input-error :messages="$errors->get('kategori')" class="mt-2" />
                         </div>
 
-                        <!-- Penerima -->
                         <div class="group">
                             <x-input-label for="penerima" :value="__('Penerima')"
                                 class="text-gray-700 dark:text-gray-300 font-semibold mb-2" />
@@ -104,7 +92,6 @@
                             <x-input-error :messages="$errors->get('penerima')" class="mt-2" />
                         </div>
 
-                        <!-- Jumlah -->
                         <div class="group md:col-span-2">
                             <x-input-label for="jumlah" :value="__('Jumlah Barang')"
                                 class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
@@ -117,8 +104,6 @@
                             <p class="mt-1 text-xs text-gray-500">Pilih barang sebanyak jumlah yang diinput</p>
                             <x-input-error :messages="$errors->get('jumlah')" class="mt-2" />
                         </div>
-
-                        <!-- Keterangan -->
                         <div class="group md:col-span-2">
                             <x-input-label for="keterangan" :value="__('Keterangan')"
                                 class="text-gray-700 dark:text-gray-300 font-semibold mb-2" />
@@ -168,7 +153,7 @@
                     <div x-show="!selectedJenis"
                         class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4 mb-4">
                         <p class="text-sm text-yellow-800 dark:text-yellow-200">
-                            Silakan pilih jenis barang terlebih dahulu
+                            ⚠️ Silakan pilih jenis barang terlebih dahulu
                         </p>
                     </div>
 
@@ -231,7 +216,7 @@
                 <div x-show="selectedBarang.length > 0 && selectedBarang.length != jumlah"
                     class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
                     <p class="text-sm text-red-800 dark:text-red-200">
-                        Jumlah barang yang dipilih (<span x-text="selectedBarang.length"></span>) tidak sesuai dengan
+                        ❌ Jumlah barang yang dipilih (<span x-text="selectedBarang.length"></span>) tidak sesuai dengan
                         jumlah yang diinput (<span x-text="jumlah"></span>)
                     </p>
                 </div>
@@ -247,7 +232,7 @@
                         {{ __('Batal') }}
                     </a>
 
-                    <button type="submit" x-data @click="$dispatch('open-modal', 'update_confirmation')"
+                    <button type="button" x-data @click="$dispatch('open-modal', 'update_confirmation')"
                         :disabled="selectedBarang.length != jumlah || selectedBarang.length === 0"
                         class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -268,6 +253,8 @@
     @push('scripts')
         <script>
             function barangKeluarEditForm() {
+                const jenisBarangList = @json($jenisBarang);
+
                 return {
                     selectedJenis: '{{ old('jenis_barang_id', $barangKeluar->jenis_barang_id) }}',
                     kodeUtama: '',
@@ -278,11 +265,23 @@
 
                     init() {
                         if (this.selectedJenis) {
-                            const selectElement = document.getElementById('jenis_barang_id');
-                            const selectedOption = selectElement.options[selectElement.selectedIndex];
-                            this.kodeUtama = selectedOption.getAttribute('data-kode') || '';
+                            const jenis = jenisBarangList.find(j => j.jenis_barang_id == this.selectedJenis);
+                            if (jenis) {
+                                this.kodeUtama = jenis.kode_utama;
+                            }
                             this.loadAvailableBarang();
                         }
+                    },
+
+                    handleJenisBarangChange(jenisBarangId) {
+                        this.selectedJenis = jenisBarangId;
+
+                        const jenis = jenisBarangList.find(j => j.jenis_barang_id == jenisBarangId);
+                        if (jenis) {
+                            this.kodeUtama = jenis.kode_utama;
+                        }
+
+                        this.loadAvailableBarang();
                     },
 
                     async loadAvailableBarang() {
@@ -292,17 +291,16 @@
                             return;
                         }
 
-                        const selectElement = document.getElementById('jenis_barang_id');
-                        const selectedOption = selectElement.options[selectElement.selectedIndex];
-                        this.kodeUtama = selectedOption.getAttribute('data-kode') || '';
-
                         this.loading = true;
                         this.selectedBarang = [];
 
                         try {
-                            const response = await fetch(`/barang-keluar/get-available-barang/${this.selectedJenis}`);
+                            const response = await fetch(
+                                `/barang-keluar/get-available-barang/${this.selectedJenis}?keluar_id={{ $barangKeluar->keluar_id }}`
+                            );
                             const data = await response.json();
                             this.availableBarang = data;
+
                             this.selectedBarang = data.filter(b => (b.kondisi === 'diperbaiki') || (b.status ===
                                 'nonaktif'));
 
@@ -318,7 +316,6 @@
                         if (barang.kode_barang) {
                             return this.kodeUtama + '' + barang.kode_barang;
                         }
-
                         return '-';
                     },
 

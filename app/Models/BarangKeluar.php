@@ -83,19 +83,6 @@ class BarangKeluar extends Model
         return $colors[$this->kategori] ?? 'gray';
     }
 
-    public function getKategoriIconAttribute()
-    {
-        $icons = [
-            'habis_pakai' => '📦',
-            'rusak' => '💔',
-            'tidak_layak' => '❌',
-            'sedang_diperbaiki' => '🔧',
-            'dihibahkan' => '🎁',
-        ];
-
-        return $icons[$this->kategori] ?? '📤';
-    }
-
     public function scopeByKategori($query, $kategori)
     {
         return $query->where('kategori', $kategori);

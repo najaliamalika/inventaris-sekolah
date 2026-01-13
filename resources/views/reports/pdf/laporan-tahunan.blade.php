@@ -208,18 +208,20 @@
                         @endforeach
                     @empty
                         <tr>
-                            <td colspan="9" class="text-center">Tidak ada data</td>
+                            <td colspan="10" class="text-center">Tidak ada data</td>
                         </tr>
                     @endforelse
                     <tr style="background-color: #f8f8f8;">
-                        <td colspan="9" class="text-right"><strong>TOTAL BARANG:</strong></td>
-                        <td class="text-center"><strong>{{ $totalBarangPeminjaman }}</strong></td>
+                        <td colspan="4"></td>
+                        <td colspan="1" class="text-center"><strong>TOTAL BARANG:</strong></td>
+                        <td colspan="1" class="text-center"><strong>{{ $totalBarangPeminjaman }}</strong></td>
+                        <td colspan="4"></td>
                     </tr>
                 </tbody>
             </table>
 
             <div class="footer">
-                <p><strong>Total Peminjaman: {{ $peminjaman->count() }} transaksi</strong></p>
+                <p><strong>Total Peminjaman: {{ $peminjaman->count() }} peminjaman</strong></p>
             </div>
         </div>
     @endhasrole
@@ -303,24 +305,26 @@
                         @endforeach
                     @empty
                         <tr>
-                            <td colspan="12" class="text-center">Tidak ada data</td>
+                            <td colspan="11" class="text-center">Tidak ada data</td>
                         </tr>
                     @endforelse
 
                     @if ($barangMasuk->count() > 0)
                         <tr style="background-color: #f8f8f8;">
-                            <td colspan="5" class="text-right"><strong>TOTAL BARANG:</strong></td>
-                            <td class="text-center"><strong>{{ $totalItems }}</strong></td>
-                            <td colspan="4" class="text-right"><strong>TOTAL KESELURUHAN:</strong></td>
-                            <td class="text-right"><strong>Rp
+                            <td colspan="4"></td>
+                            <td colspan="1" class="text-center"><strong>TOTAL BARANG:</strong></td>
+                            <td colspan="1" class="text-center"><strong>{{ $totalItems }}</strong></td>
+                            <td colspan="3" class="text-center"><strong>TOTAL KESELURUHAN:</strong></td>
+                            <td colspan="1" class="text-right"><strong>Rp
                                     {{ number_format($grandTotal, 0, ',', '.') }}</strong></td>
+                            <td colspan="1"></td>
                         </tr>
                     @endif
                 </tbody>
             </table>
 
             <div class="footer">
-                <p><strong>Total Data: {{ $totalItems }} Barang dari {{ $barangMasuk->count() }} transaksi</strong></p>
+                <p><strong>Total Barang: {{ $totalItems }} Barang</strong></p>
             </div>
         </div>
 
@@ -389,14 +393,16 @@
                         </tr>
                     @endforelse
                     <tr style="background-color: #f8f8f8;">
-                        <td colspan="8" class="text-right"><strong>TOTAL BARANG:</strong></td>
-                        <td class="text-center"><strong>{{ $totalBarangKeluar }}</strong></td>
+                        <td colspan="5"></td>
+                        <td colspan="1" class="text-center"><strong>TOTAL BARANG:</strong></td>
+                        <td colspan="1" class="text-center"><strong>{{ $totalBarangKeluar }}</strong></td>
+                        <td colspan="2"></td>
                     </tr>
                 </tbody>
             </table>
 
             <div class="footer">
-                <p><strong>Total Barang Keluar: {{ $barangKeluar->count() }} transaksi</strong></p>
+                <p><strong>Total Barang: {{ $totalBarangKeluar }} Barang</strong></p>
             </div>
         </div>
     @endhasanyrole
@@ -417,8 +423,8 @@
                     <th width="13%">Jenis/Nama Barang</th>
                     <th width="15%">Barang Perbaikan</th>
                     <th width="6%">Jumlah</th>
-                    <th width="10%">Biaya</th>
                     <th width="8%">Status</th>
+                    <th width="10%">Biaya</th>
                     <th width="14%">Alasan</th>
                     <th width="13%">Catatan</th>
                 </tr>
@@ -454,12 +460,14 @@
                             @endif
                         </td>
                         <td class="text-center">{{ $item->jumlah }}</td>
-                        <td class="text-right">{{ number_format($item->estimasi_biaya, 0, ',', '.') }}</td>
                         <td class="text-center status-{{ $item->status }}">{{ ucfirst($item->status) }}</td>
+                        <td class="text-right">{{ number_format($item->estimasi_biaya, 0, ',', '.') }}</td>
                         <td>{{ Str::limit($item->alasan, 50) }}</td>
                         <td>{{ $item->catatan ?? '-' }}</td>
                         @php
-                            $totalBarangPengajuan += $item->jumlah;
+                            if ($item->status === 'disetujui') {
+                                $totalBarangPengajuan += $item->jumlah;
+                            }
                         @endphp
                     </tr>
                 @empty
@@ -470,10 +478,13 @@
 
                 @if ($pengajuan->count() > 0)
                     <tr style="background-color: #f8f8f8;">
-                        <td colspan="5" class="text-right"><strong>TOTAL BARANG:</strong></td>
-                        <td class="text-right"><strong>{{ $totalBarangPengajuan }}</strong></td>
-                        <td colspan="3" class="text-right"><strong>TOTAL BIAYA:</strong></td>
-                        <td class="text-right"><strong>Rp {{ number_format($totalBiaya, 0, ',', '.') }}</strong></td>
+                        <td colspan="4"></td>
+                        <td colspan="1" class="text-center"><strong>TOTAL BARANG:</strong></td>
+                        <td colspan="1" class="text-center"><strong>{{ $totalBarangPengajuan }}</strong></td>
+                        <td colspan="1" class="text-center"><strong>TOTAL BIAYA:</strong></td>
+                        <td colspan="1" class="text-right"><strong>Rp
+                                {{ number_format($totalBiaya, 0, ',', '.') }}</strong></td>
+                        <td colspan="2"></td>
                     </tr>
                 @endif
             </tbody>

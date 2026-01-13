@@ -104,7 +104,6 @@
                     @endphp
 
                     @if ($barangItems->isEmpty())
-                        {{-- Jika tidak ada barang items, tampilkan data detail saja --}}
                         <tr>
                             <td class="text-center">{{ $no++ }}</td>
                             <td>{{ $barangMasuk->tanggal->format('d/m/Y') }}</td>
@@ -120,7 +119,6 @@
                         </tr>
                         @php $totalItems++; @endphp
                     @else
-                        {{-- Jika ada barang items, tampilkan setiap barang dengan semua kolom terisi --}}
                         @foreach ($barangItems as $barang)
                             <tr>
                                 <td class="text-center">{{ $no++ }}</td>
@@ -144,26 +142,26 @@
                 @endforeach
             @empty
                 <tr>
-                    <td colspan="10" class="text-center">Tidak ada data</td>
+                    <td colspan="11" class="text-center">Tidak ada data</td>
                 </tr>
             @endforelse
 
             @if ($data->count() > 0)
                 <tr style="background-color: #f8f8f8;">
-                    <td colspan="5" class="text-right"><strong>TOTAL BARANG:</strong></td>
-                    <td class="text-center"><strong>{{ $totalItems }}</strong></td>
-                    <td colspan="4" class="text-right"><strong>TOTAL KESELURUHAN:</strong></td>
-                    <td class="text-right"><strong>Rp {{ number_format($grandTotal, 0, ',', '.') }}</strong></td>
+                    <td colspan="4"></td>
+                    <td colspan="1" class="text-right"><strong>TOTAL BARANG:</strong></td>
+                    <td colspan="1" class="text-center"><strong>{{ $totalItems }}</strong></td>
+                    <td colspan="3" class="text-right"><strong>TOTAL KESELURUHAN:</strong></td>
+                    <td colspan="1" class="text-right"><strong>Rp
+                            {{ number_format($grandTotal, 0, ',', '.') }}</strong></td>
+                    <td colspan="1"></td>
                 </tr>
             @endif
         </tbody>
     </table>
 
     <div class="footer">
-        <p><strong>Total Data: {{ $totalItems }} Barang dari {{ $data->count() }} transaksi</strong></p>
-    </div>
-
-    <div class="footer">
+        <p><strong>Total Barang: {{ $totalItems }} Barang</strong></p>
         <p>Dicetak pada: {{ date('d/m/Y H:i:s') }}</p>
     </div>
 </body>

@@ -47,16 +47,18 @@
                                 class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
                                 <span class="text-red-500">*</span>
                             </x-input-label>
-                            <select id="jenis_barang_id" name="jenis_barang_id" required x-model="selectedJenis"
-                                @change="loadAvailableBarang()"
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                                <option value="">-- Pilih Jenis Barang --</option>
-                                @foreach ($jenisBarang as $jenis)
-                                    <option value="{{ $jenis->jenis_barang_id }}" data-kode="{{ $jenis->kode_utama }}">
-                                        {{ $jenis->jenis }} (Stok: {{ $jenis->stok_tersedia }})
-                                    </option>
-                                @endforeach
-                            </select>
+
+                            <div @dropdown-changed="handleJenisBarangChange($event.detail)">
+                                <x-dropdown name="jenis_barang_id" id="jenis_barang_id"
+                                    placeholder="-- Pilih Jenis Barang --" :options="$jenisBarang->map(
+                                        fn($jenis) => [
+                                            'value' => $jenis->jenis_barang_id,
+                                            'label' => $jenis->jenis . ' (Stok: ' . $jenis->stok_tersedia . ')',
+                                            'kode' => $jenis->kode_utama,
+                                        ],
+                                    )" searchable required />
+                            </div>
+
                             <x-input-error :messages="$errors->get('jenis_barang_id')" class="mt-2" />
                         </div>
 
@@ -65,15 +67,14 @@
                                 class="text-gray-700 dark:text-gray-300 font-semibold mb-2 flex items-center gap-2">
                                 <span class="text-red-500">*</span>
                             </x-input-label>
-                            <select id="kategori" name="kategori" required
-                                class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 hover:border-gray-300 bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                                <option value="">-- Pilih Kategori --</option>
-                                <option value="habis_pakai">Habis Pakai</option>
-                                <option value="rusak">Rusak</option>
-                                <option value="tidak_layak">Tidak Layak</option>
-                                <option value="sedang_diperbaiki">Sedang Diperbaiki</option>
-                                <option value="dihibahkan">Dihibahkan</option>
-                            </select>
+                            <x-dropdown name="kategori" id="kategori" placeholder="-- Pilih Kategori --"
+                                :options="[
+                                    ['value' => 'habis_pakai', 'label' => 'Habis Pakai'],
+                                    ['value' => 'rusak', 'label' => 'Rusak'],
+                                    ['value' => 'tidak_layak', 'label' => 'Tidak Layak'],
+                                    ['value' => 'sedang_diperbaiki', 'label' => 'Sedang Diperbaiki'],
+                                    ['value' => 'dihibahkan', 'label' => 'Dihibahkan'],
+                                ]" required />
                             <x-input-error :messages="$errors->get('kategori')" class="mt-2" />
                         </div>
 
@@ -224,6 +225,8 @@
     @push('scripts')
         <script>
             function barangKeluarForm() {
+                const jenisBarangList = @json($jenisBarang);
+
                 return {
                     selectedJenis: '',
                     kodeUtama: '',
@@ -232,16 +235,23 @@
                     jumlah: 1,
                     loading: false,
 
+                    handleJenisBarangChange(jenisBarangId) {
+                        this.selectedJenis = jenisBarangId;
+
+                        const jenis = jenisBarangList.find(j => j.jenis_barang_id === jenisBarangId);
+                        if (jenis) {
+                            this.kodeUtama = jenis.kode_utama;
+                        }
+
+                        this.loadAvailableBarang();
+                    },
+
                     async loadAvailableBarang() {
                         if (!this.selectedJenis) {
                             this.availableBarang = [];
                             this.kodeUtama = '';
                             return;
                         }
-
-                        const selectElement = document.getElementById('jenis_barang_id');
-                        const selectedOption = selectElement.options[selectElement.selectedIndex];
-                        this.kodeUtama = selectedOption.getAttribute('data-kode') || '';
 
                         this.loading = true;
                         this.selectedBarang = [];
@@ -262,10 +272,7 @@
                         if (barang.kode_barang) {
                             return this.kodeUtama + '' + barang.kode_barang;
                         }
-
-                        if (!barang.kode_barang) {
-                            return '-';
-                        }
+                        return '-';
                     },
 
                     toggleBarang(barang) {

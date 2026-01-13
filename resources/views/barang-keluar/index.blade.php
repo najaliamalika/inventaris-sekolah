@@ -1,15 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <div>
-            <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-100 leading-tight">
-                {{ __('Barang Keluar') }}
-            </h2>
-            <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">Kelola data barang keluar (habis pakai, rusak,
-                diperbaiki, dll)</p>
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-100 leading-tight">
+                    {{ __('Barang Keluar') }}
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">Kelola data barang keluar (habis pakai, rusak,
+                    diperbaiki, dll)</p>
+            </div>
         </div>
     </x-slot>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div
             class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-5 border border-blue-200 dark:border-blue-800">
             <div class="flex items-center justify-between mb-2">
@@ -61,73 +63,76 @@
         </div>
     </div>
 
+    <!-- Filter Section -->
     <div class="mb-6">
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-            <form action="{{ route('barang-keluar.index') }}" method="GET" id="filterForm" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Cari
-                        </label>
-                        <div class="relative">
-                            <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
-                                placeholder="Penerima atau keterangan..."
-                                class="w-full px-4 py-2.5 pl-10 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
-                            <svg class="absolute left-3 top-3 w-5 h-5 text-gray-400" fill="none"
-                                stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <form action="{{ route('barang-keluar.index') }}" method="GET" id="filterForm">
+
+                <!-- Baris 1: Search -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        Pencarian
+                    </label>
+                    <div class="relative">
+                        <input type="text" name="search" id="searchInput" value="{{ request('search') }}"
+                            placeholder="Cari berdasarkan penerima atau keterangan..."
+                            class="w-full px-4 py-2.5 pl-10 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
+                        <svg class="absolute left-3 top-3 w-5 h-5 text-gray-400" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <div id="searchLoading" class="hidden absolute right-3 top-3">
+                            <svg class="animate-spin h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
                             </svg>
-                            <div id="searchLoading" class="hidden absolute right-3 top-3">
-                                <svg class="animate-spin h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg"
-                                    fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10"
-                                        stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                    </path>
-                                </svg>
-                            </div>
                         </div>
                     </div>
+                </div>
 
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Kategori
                         </label>
-                        <select name="kategori" id="kategoriSelect"
-                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                            <option value="">Semua</option>
-                            <option value="habis_pakai" {{ request('kategori') == 'habis_pakai' ? 'selected' : '' }}>
-                                Habis Pakai</option>
-                            <option value="rusak" {{ request('kategori') == 'rusak' ? 'selected' : '' }}>Rusak
-                            </option>
-                            <option value="tidak_layak" {{ request('kategori') == 'tidak_layak' ? 'selected' : '' }}>
-                                Tidak Layak</option>
-                            <option value="sedang_diperbaiki"
-                                {{ request('kategori') == 'sedang_diperbaiki' ? 'selected' : '' }}>Sedang Diperbaiki
-                            </option>
-                            <option value="dihibahkan" {{ request('kategori') == 'dihibahkan' ? 'selected' : '' }}>
-                                Dihibahkan</option>
-                        </select>
+                        <x-dropdown name="kategori" id="kategoriSelect" placeholder="Semua Kategori" :selected="request('kategori')"
+                            :options="[
+                                ['value' => '', 'label' => 'Semua Kategori'],
+                                ['value' => 'habis_pakai', 'label' => 'Habis Pakai'],
+                                ['value' => 'rusak', 'label' => 'Rusak'],
+                                ['value' => 'tidak_layak', 'label' => 'Tidak Layak'],
+                                ['value' => 'sedang_diperbaiki', 'label' => 'Sedang Diperbaiki'],
+                                ['value' => 'dihibahkan', 'label' => 'Dihibahkan'],
+                            ]" autoSubmit />
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Jenis Barang
                         </label>
-                        <select name="jenis_barang_id" id="jenisBarangSelect"
-                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                            <option value="">Semua</option>
-                            @foreach ($jenisBarangList as $jenis)
-                                <option value="{{ $jenis->jenis_barang_id }}"
-                                    {{ request('jenis_barang_id') == $jenis->jenis_barang_id ? 'selected' : '' }}>
-                                    {{ $jenis->jenis }} - {{ $jenis->kode_utama }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <x-dropdown name="jenis_barang_id" id="jenisBarangSelect" placeholder="Semua Jenis Barang"
+                            :selected="request('jenis_barang_id', '')" :options="$jenisBarangList
+                                ->map(
+                                    fn($jenis) => [
+                                        'value' => $jenis->jenis_barang_id,
+                                        'label' => $jenis->jenis . ' - ' . $jenis->kode_utama,
+                                    ],
+                                )
+                                ->prepend(['value' => '', 'label' => 'Semua Jenis Barang'])" searchable autoSubmit />
                     </div>
+                </div>
 
+                <!-- Baris 3: Filter Tanggal -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Dari Tanggal
@@ -146,34 +151,42 @@
                             class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white">
                     </div>
                 </div>
-
-                <div class="flex items-center gap-3 pt-2">
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                     @if (request()->hasAny(['search', 'kategori', 'jenis_barang_id', 'tanggal_mulai', 'tanggal_akhir']))
-                        <a href="{{ route('barang-keluar.index') }}"
-                            class="px-5 py-2.5 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                            Reset Filter
-                        </a>
+                        <div>
+                            <a href="{{ route('barang-keluar.index') }}"
+                                class="px-5 py-2.5 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                Reset Filter
+                            </a>
+                        </div>
+                    @else
+                        <div></div>
                     @endif
-
                     @hasrole('admin')
-                        <a href="{{ route('barang-keluar.create') }}"
-                            class="ml-auto px-5 py-2.5 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                            Tambah Barang Keluar
-                        </a>
+                        <div>
+                            <a href="{{ route('barang-keluar.create') }}"
+                                class="px-5 py-2.5 h-full bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                Tambah Barang Keluar
+                            </a>
+                        </div>
                     @endhasrole
                 </div>
-            </form>
+
+
         </div>
+        </form>
+    </div>
     </div>
 
+    <!-- Table Section -->
     <div
         class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         @if ($barangKeluar->count() > 0)
@@ -181,13 +194,13 @@
                 <table class="w-full">
                     <thead class="bg-gradient-to-r from-green-600 to-green-500 text-white">
                         <tr>
-                            <th class="px-2 py-4 text-left text-xs font-semibold uppercase">No</th>
-                            <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Tanggal</th>
-                            <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Nama Barang</th>
-                            <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Jenis Barang</th>
-                            <th class="px-2 py-4 text-left text-xs font-semibold uppercase">Kategori</th>
-                            <th class="px-2 py-4 text-center text-xs font-semibold uppercase">Jumlah</th>
-                            <th class="px-2 py-4 text-center text-xs font-semibold uppercase">Aksi</th>
+                            <th class="px-4 py-4 text-left text-xs font-semibold uppercase">No</th>
+                            <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Tanggal</th>
+                            <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Nama Barang</th>
+                            <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Jenis Barang</th>
+                            <th class="px-4 py-4 text-left text-xs font-semibold uppercase">Kategori</th>
+                            <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Jumlah</th>
+                            <th class="px-4 py-4 text-center text-xs font-semibold uppercase">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -235,8 +248,7 @@
                                             {{ number_format($item->jumlah) }}
                                         </span>
                                         <span class="text-xs text-gray-500 dark:text-gray-400">
-                                            ({{ number_format($item->items->count()) }}
-                                            barang)
+                                            ({{ number_format($item->items->count()) }} barang)
                                         </span>
                                     </div>
                                 </td>
@@ -287,7 +299,6 @@
                 </table>
             </div>
 
-            <!-- Pagination -->
             @if ($barangKeluar->hasPages())
                 <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                     {{ $barangKeluar->withQueryString()->links() }}
@@ -320,14 +331,16 @@
                         Reset Filter
                     </a>
                 @else
-                    <a href="{{ route('barang-keluar.create') }}"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                        Tambah Barang Keluar Pertama
-                    </a>
+                    @hasrole('admin')
+                        <a href="{{ route('barang-keluar.create') }}"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                            Tambah Barang Keluar Pertama
+                        </a>
+                    @endhasrole
                 @endif
             </div>
         @endif
@@ -360,25 +373,11 @@
 
             document.addEventListener('DOMContentLoaded', function() {
                 const searchInput = document.getElementById('searchInput');
-                const kategoriSelect = document.getElementById('kategoriSelect');
-                const jenisBarangSelect = document.getElementById('jenisBarangSelect');
                 const tanggalMulaiInput = document.getElementById('tanggalMulaiInput');
                 const tanggalAkhirInput = document.getElementById('tanggalAkhirInput');
 
                 if (searchInput) {
                     searchInput.addEventListener('input', autoSubmitForm);
-                }
-
-                if (kategoriSelect) {
-                    kategoriSelect.addEventListener('change', function() {
-                        document.getElementById('filterForm').submit();
-                    });
-                }
-
-                if (jenisBarangSelect) {
-                    jenisBarangSelect.addEventListener('change', function() {
-                        document.getElementById('filterForm').submit();
-                    });
                 }
 
                 if (tanggalMulaiInput) {

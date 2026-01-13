@@ -45,13 +45,11 @@ class BarangKeluarController extends Controller
 
         $barangKeluar = $query->orderBy('tanggal', 'desc')->paginate(10);
 
-        // Stats
         $totalBarangKeluar = BarangKeluar::count();
         $totalItemKeluar = BarangKeluar::sum('jumlah');
         $totalHabisPakai = BarangKeluar::where('kategori', 'habis_pakai')->sum('jumlah');
         $totalDiperbaiki = BarangKeluar::where('kategori', 'sedang_diperbaiki')->sum('jumlah');
 
-        // Get jenis barang for filter
         $jenisBarangList = JenisBarang::orderBy('jenis')->get();
 
         return view('barang-keluar.index', compact(
@@ -79,12 +77,30 @@ class BarangKeluarController extends Controller
 
     public function getAvailableBarang($jenisBarangId)
     {
-        $barang = Barang::where('jenis_barang_id', $jenisBarangId)
-            ->where('kondisi', ['baik', 'diperbaiki'])
-            ->with('jenisBarang')
-            ->get();
+        $keluar_id = request()->input('keluar_id');
 
-        return response()->json($barang);
+        $query = Barang::where('jenis_barang_id', $jenisBarangId)
+            ->with('jenisBarang');
+
+        if ($keluar_id) {
+            $existingBarangIds = DB::table('barang_keluar_items')
+                ->where('keluar_id', $keluar_id)
+                ->pluck('barang_id')
+                ->toArray();
+
+            $query->where(function ($q) use ($existingBarangIds) {
+                $q->where(function ($subQ) {
+                    $subQ->where('kondisi', 'baik')
+                        ->where('status', 'aktif');
+                })
+                    ->orWhereIn('barang_id', $existingBarangIds);
+            });
+        } else {
+            $query->where('kondisi', 'baik')
+                ->where('status', 'aktif');
+        }
+
+        return response()->json($query->get());
     }
 
     public function store(Request $request)
@@ -174,7 +190,6 @@ class BarangKeluarController extends Controller
         $barangKeluar = BarangKeluar::with(['jenisBarang', 'items.barang'])
             ->findOrFail($keluar_id);
 
-        // Get available barang for the same jenis
         $jenisBarang = JenisBarang::whereHas('barang', function ($q) {
             $q->where('status', 'aktif')->where('kondisi', 'baik');
         })->withCount([
@@ -207,7 +222,6 @@ class BarangKeluarController extends Controller
             'jumlah.required' => 'Jumlah wajib diisi',
         ]);
 
-        // Validate jumlah matches selected barang count
         if (count($validated['barang_ids']) !== (int) $validated['jumlah']) {
             return back()
                 ->withInput()
@@ -219,21 +233,19 @@ class BarangKeluarController extends Controller
         try {
             $oldKategori = $barangKeluar->kategori;
 
-            // Restore old barang status/kondisi
             foreach ($barangKeluar->items as $item) {
                 $barang = $item->barang;
                 if ($barang) {
                     if ($oldKategori === 'sedang_diperbaiki' && $barang->kondisi === 'diperbaiki') {
-                        // Restore kondisi to baik
+
                         $barang->update(['kondisi' => 'baik']);
                     } elseif ($oldKategori !== 'sedang_diperbaiki' && $barang->status === 'nonaktif') {
-                        // Restore status to aktif
+
                         $barang->update(['status' => 'aktif']);
                     }
                 }
             }
 
-            // Update Barang Keluar
             $barangKeluar->update([
                 'jenis_barang_id' => $validated['jenis_barang_id'],
                 'tanggal' => $validated['tanggal'],
@@ -286,21 +298,19 @@ class BarangKeluarController extends Controller
         DB::beginTransaction();
 
         try {
-            // Restore barang status/kondisi
             foreach ($barangKeluar->items as $item) {
                 $barang = $item->barang;
                 if ($barang) {
                     if ($barangKeluar->kategori === 'sedang_diperbaiki' && $barang->kondisi === 'diperbaiki') {
-                        // Restore kondisi to baik
+
                         $barang->update(['kondisi' => 'baik']);
                     } elseif ($barangKeluar->kategori !== 'sedang_diperbaiki' && $barang->status === 'nonaktif') {
-                        // Restore status to aktif
+
                         $barang->update(['status' => 'aktif']);
                     }
                 }
             }
 
-            // Delete (cascade will handle items)
             $barangKeluar->delete();
 
             DB::commit();

@@ -33,7 +33,6 @@ class ReportController extends Controller
         );
     }
 
-    // LAPORAN TAHUNAN (SEMUA DATA DALAM 1 FILE)
     public function laporanTahunan(Request $request)
     {
         $request->validate([
@@ -43,7 +42,6 @@ class ReportController extends Controller
 
         $year = $request->year;
 
-        // Ambil semua data berdasarkan tahun
         $jenisBarang = JenisBarang::with(['barang'])
             ->orderBy('jenis', 'asc')
             ->get();
@@ -75,7 +73,6 @@ class ReportController extends Controller
             );
         }
 
-        // PDF
         $pdf = PDF::loadView('reports.pdf.laporan-tahunan', [
             'jenisBarang' => $jenisBarang,
             'peminjaman' => $peminjaman,
@@ -88,7 +85,6 @@ class ReportController extends Controller
         return $pdf->download('laporan-tahunan-' . $year . '.pdf');
     }
 
-    // PEMINJAMAN REPORTS (RANGE)
     public function peminjamanReport(Request $request)
     {
         $request->validate([
@@ -118,7 +114,6 @@ class ReportController extends Controller
         return $pdf->download('laporan-peminjaman-' . now()->format('Y-m-d') . '.pdf');
     }
 
-    // BARANG MASUK REPORTS (RANGE)
     public function barangMasukReport(Request $request)
     {
         $request->validate([
@@ -148,7 +143,6 @@ class ReportController extends Controller
         return $pdf->download('laporan-barang-masuk-' . now()->format('Y-m-d') . '.pdf');
     }
 
-    // BARANG KELUAR REPORTS (RANGE)
     public function barangKeluarReport(Request $request)
     {
         $request->validate([
@@ -178,7 +172,6 @@ class ReportController extends Controller
         return $pdf->download('laporan-barang-keluar-' . now()->format('Y-m-d') . '.pdf');
     }
 
-    // PENGAJUAN REPORTS (RANGE)
     public function pengajuanReport(Request $request)
     {
         $request->validate([

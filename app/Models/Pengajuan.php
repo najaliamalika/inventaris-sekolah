@@ -86,27 +86,11 @@ class Pengajuan extends Model
         return $colors[$this->status] ?? 'gray';
     }
 
-    public function getTipeIcon()
-    {
-        return $this->tipe === 'pembelian' ? '🛒' : '🔧';
-    }
-
-    public function getStatusIcon()
-    {
-        $icons = [
-            'menunggu' => '⏳',
-            'disetujui' => '✅',
-            'ditolak' => '❌',
-        ];
-        return $icons[$this->status] ?? '❓';
-    }
-
     public function getEstimasiBiayaFormatAttribute()
     {
         return 'Rp ' . number_format($this->estimasi_biaya, 0, ',', '.');
     }
 
-    // Scopes
     public function scopeByTipe($query, $tipe)
     {
         return $query->where('tipe', $tipe);

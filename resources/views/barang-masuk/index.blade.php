@@ -94,14 +94,12 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Kategori
                         </label>
-                        <select name="kategori" id="kategoriSelect"
-                            class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                            <option value="">Semua</option>
-                            <option value="pembelian" {{ request('kategori') == 'pembelian' ? 'selected' : '' }}>
-                                Pembelian</option>
-                            <option value="bantuan" {{ request('kategori') == 'bantuan' ? 'selected' : '' }}>Bantuan
-                            </option>
-                        </select>
+                        <x-dropdown name="kategori" id="kategoriSelect" placeholder="Semua" :selected="request('kategori')"
+                            :options="[
+                                ['value' => '', 'label' => 'Semua'],
+                                ['value' => 'pembelian', 'label' => 'Pembelian'],
+                                ['value' => 'bantuan', 'label' => 'Bantuan'],
+                            ]" autoSubmit />
                     </div>
 
                     <div>

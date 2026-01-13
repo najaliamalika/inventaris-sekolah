@@ -188,33 +188,119 @@
                                         Pilih Barang
                                     </label>
                                     <div class="relative">
-                                        <select :name="`barang_ids[${index}]`" x-model="item.barang_id" required
-                                            class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                                            <option value="">Pilih Barang</option>
-                                            @foreach ($barang as $item)
-                                                <option value="{{ $item->barang_id }}">
-                                                    {{ $item->nama_barang }} (
-                                                    {{ $item->jenisBarang->kode_utama . $item->kode_barang }} ) -
-                                                    {{ $item->jenisBarang->jenis ?? '' }}
-                                                </option>
-                                            @endforeach
-                                            @foreach ($peminjaman->peminjamanBarang as $pb)
-                                                <option value="{{ $pb->barang_id }}">
-                                                    {{ $pb->barang->nama_barang }}
-                                                    ({{ $pb->barang->jenisBarang->kode_utama . $pb->barang->kode_barang }})
-                                                    -
-                                                    {{ $pb->barang->jenisBarang->jenis ?? '' }} (Sedang Dipinjam)
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <div
-                                            class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 9l-7 7-7-7" />
-                                            </svg>
+                                        @php
+                                            $barangOptions = collect($barang)
+                                                ->map(
+                                                    fn($item) => [
+                                                        'value' => $item->barang_id,
+                                                        'label' =>
+                                                            $item->nama_barang .
+                                                            ' (' .
+                                                            $item->jenisBarang->kode_utama .
+                                                            $item->kode_barang .
+                                                            ') - ' .
+                                                            ($item->jenisBarang->jenis ?? ''),
+                                                    ],
+                                                )
+                                                ->concat(
+                                                    $peminjaman->peminjamanBarang->map(
+                                                        fn($pb) => [
+                                                            'value' => $pb->barang_id,
+                                                            'label' =>
+                                                                $pb->barang->nama_barang .
+                                                                ' (' .
+                                                                $pb->barang->jenisBarang->kode_utama .
+                                                                $pb->barang->kode_barang .
+                                                                ') - ' .
+                                                                ($pb->barang->jenisBarang->jenis ?? '') .
+                                                                ' (Sedang Dipinjam)',
+                                                        ],
+                                                    ),
+                                                )
+                                                ->unique('value')
+                                                ->values();
+                                        @endphp
+
+                                        <div x-data="{
+                                            open: false,
+                                            search: '',
+                                            options: {{ json_encode($barangOptions) }},
+                                            filteredOptions: {{ json_encode($barangOptions) }},
+                                        
+                                            getLabel() {
+                                                const selected = this.options.find(opt => opt.value == item.barang_id);
+                                                return selected ? selected.label : 'Pilih Barang';
+                                            },
+                                        
+                                            selectOption(option) {
+                                                item.barang_id = option.value;
+                                                this.open = false;
+                                                this.search = '';
+                                                this.filteredOptions = this.options;
+                                            },
+                                        
+                                            filterOptions() {
+                                                if (!this.search) {
+                                                    this.filteredOptions = this.options;
+                                                    return;
+                                                }
+                                                this.filteredOptions = this.options.filter(option =>
+                                                    option.label.toLowerCase().includes(this.search.toLowerCase())
+                                                );
+                                            }
+                                        }" @click.away="open = false"
+                                            class="relative w-full">
+
+                                            <button type="button" @click="open = !open"
+                                                class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white text-left flex items-center justify-between"
+                                                :class="{ 'border-green-500 ring-2 ring-green-500/20': open }">
+                                                <span x-text="getLabel()" class="truncate"
+                                                    :class="{ 'text-gray-400 dark:text-gray-500': !item.barang_id }"></span>
+                                                <svg class="w-5 h-5 transition-transform"
+                                                    :class="{ 'rotate-180': open }" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                                </svg>
+                                            </button>
+
+                                            <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                                                x-transition:enter-start="opacity-0 scale-95"
+                                                x-transition:enter-end="opacity-100 scale-100"
+                                                x-transition:leave="transition ease-in duration-75"
+                                                x-transition:leave-start="opacity-100 scale-100"
+                                                x-transition:leave-end="opacity-0 scale-95"
+                                                class="absolute z-50 w-full mt-2 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-hidden"
+                                                style="display: none;">
+
+                                                <div class="p-2 border-b border-gray-200 dark:border-gray-600">
+                                                    <input type="text" x-model="search" @input="filterOptions"
+                                                        @click.stop placeholder="Cari..."
+                                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-white dark:bg-gray-800 dark:text-white text-sm">
+                                                </div>
+
+                                                <div class="overflow-y-auto max-h-48">
+                                                    <template x-for="option in filteredOptions" :key="option.value">
+                                                        <button type="button" @click="selectOption(option)"
+                                                            class="w-full px-4 py-2.5 text-left hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                                                            :class="{
+                                                                'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400': item
+                                                                    .barang_id == option.value
+                                                            }">
+                                                            <span x-text="option.label"></span>
+                                                        </button>
+                                                    </template>
+
+                                                    <div x-show="filteredOptions.length === 0"
+                                                        class="px-4 py-3 text-center text-gray-500 dark:text-gray-400 text-sm">
+                                                        Tidak ada hasil ditemukan
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+
+                                        <input type="hidden" :name="`barang_ids[${index}]`" x-model="item.barang_id"
+                                            required>
                                     </div>
                                 </div>
                             </div>

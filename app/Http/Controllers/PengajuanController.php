@@ -291,7 +291,6 @@ class PengajuanController extends Controller
                 'catatan' => $validated['catatan'] ?? null,
             ]);
 
-            // If perbaikan + disetujui, create barang keluar automatically
             if ($pengajuan->tipe === 'perbaikan' && $validated['status'] === 'disetujui') {
                 $this->createBarangKeluarFromPengajuan($pengajuan);
             }
@@ -327,7 +326,6 @@ class PengajuanController extends Controller
         ]);
 
         foreach ($pengajuan->perbaikanItems as $item) {
-            // Create pivot
             BarangKeluarItem::create([
                 'keluar_item_id' => (string) Str::uuid(),
                 'keluar_id' => $barangKeluar->keluar_id,

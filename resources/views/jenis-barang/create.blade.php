@@ -107,14 +107,14 @@
                                 {{ __('Batal') }}
                             </a>
 
-                            <x-primary-button x-data @click="$dispatch('open-modal', 'save_confirmation')"
-                                class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-400 hover:from-green-700 hover:to-green-500 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2">
+                            <button type="button" x-data @click="$dispatch('open-modal', 'save_confirmation')"
+                                class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-400 hover:from-green-700 hover:to-green-500 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7" />
                                 </svg>
-                                {{ __('Simpan Kategori') }}
-                            </x-primary-button>
+                                {{ __('Simpan Jenis Barang') }}
+                            </button>
                         </div>
 
                         <x-confirm-modal id="save_confirmation"

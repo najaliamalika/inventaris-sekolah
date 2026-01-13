@@ -160,26 +160,24 @@
                                         <span class="text-red-500">*</span>
                                         Pilih Barang
                                     </label>
-                                    <div class="relative">
-                                        <select :name="`barang_ids[${index}]`" x-model="item.barang_id" required
-                                            class="block w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-200 bg-white dark:bg-gray-700 dark:text-white appearance-none">
-                                            <option value="">Pilih Barang</option>
-                                            @foreach ($barang as $item)
-                                                <option value="{{ $item->barang_id }}">
-                                                    {{ $item->nama_barang }} (
-                                                    {{ $item->jenisBarang->kode_utama . $item->kode_barang }} ) -
-                                                    {{ $item->jenisBarang->jenis ?? '' }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <div
-                                            class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </div>
+                                    <div class="relative" @dropdown-changed="item.barang_id = $event.detail">
+                                        <x-dropdown placeholder="Pilih Barang" :options="$barang
+                                            ->map(
+                                                fn($item) => [
+                                                    'value' => $item->barang_id,
+                                                    'label' =>
+                                                        $item->nama_barang .
+                                                        ' (' .
+                                                        $item->jenisBarang->kode_utama .
+                                                        $item->kode_barang .
+                                                        ') - ' .
+                                                        ($item->jenisBarang->jenis ?? ''),
+                                                ],
+                                            )
+                                            ->prepend(['value' => '', 'label' => 'Pilih Barang'])" searchable />
+
+                                        <input type="hidden" :name="'barang_ids[' + index + ']'"
+                                            x-model="item.barang_id" required>
                                     </div>
                                 </div>
                             </div>

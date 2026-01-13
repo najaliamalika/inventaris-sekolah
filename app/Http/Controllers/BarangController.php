@@ -102,7 +102,6 @@ class BarangController extends Controller
             'lokasi' => $validated['lokasi'] ?? null,
         ];
 
-        // Handle upload gambar
         if ($request->hasFile('gambar')) {
             $newStore['gambar'] = $this->fileService->upload($request->file('gambar'), 'barang');
         }
@@ -172,9 +171,7 @@ class BarangController extends Controller
             'lokasi' => $validated['lokasi'] ?? null,
         ];
 
-        // Handle upload gambar baru
         if ($request->hasFile('gambar')) {
-            // Hapus gambar lama jika ada
             if ($barang->gambar) {
                 $this->fileService->delete($barang->gambar);
             }
