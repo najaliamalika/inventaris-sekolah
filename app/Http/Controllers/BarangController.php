@@ -10,6 +10,7 @@ use App\Services\FileStorageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class BarangController extends Controller
 {
@@ -74,7 +75,7 @@ class BarangController extends Controller
                 'jenis_barang_id' => 'nullable|exists:jenis_barang,jenis_barang_id',
                 'nama_barang' => 'required|string|max:255|unique:barang,nama_barang',
                 'gambar' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
-                'kode_barang' => 'nullable|string|max:255',
+                'kode_barang' => ['nullable', 'string', 'max:255', Rule::unique('barang', 'kode_barang')],
                 'merk' => 'required|string|max:255',
                 'kondisi' => 'required|in:baik,diperbaiki,dipinjam',
                 'lokasi' => 'nullable|string|max:255',
@@ -88,7 +89,7 @@ class BarangController extends Controller
                 'merk.required' => 'Merk barang wajib diisi',
                 'kondisi.required' => 'Kondisi barang wajib diisi',
                 'kondisi.in' => 'Kondisi barang harus baik, diperbaiki, atau dipinjam',
-                'jenis_barang_id.exists' => 'Template Barang tidak dBarangukan',
+                'kode_barang.unique' => 'Kode barang sudah terdaftar',
             ]
         );
 

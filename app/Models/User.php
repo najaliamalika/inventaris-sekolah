@@ -14,11 +14,11 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $primaryKey = 'user_id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    protected $table = 'users';
     protected $fillable = [
         'user_id',
         'username',
@@ -33,7 +33,6 @@ class User extends Authenticatable
     protected $hidden = [
         'id',
         'password',
-        'remember_token',
     ];
 
     /**
@@ -44,7 +43,7 @@ class User extends Authenticatable
     protected $casts = [
         'password' => 'hashed',
     ];
-    
+
     protected static function boot()
     {
         parent::boot();

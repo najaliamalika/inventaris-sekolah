@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->uuid('pengajuan_id')->primary();
             $table->uuid('jenis_barang_id')->nullable(true);
             $table->dateTime('tanggal');
-            $table->string('nama_barang')->nullable(true);
+            $table->string('nama_barang', 96)->nullable(true);
             $table->enum('tipe', ['pembelian', 'perbaikan'])->default('pembelian');
             $table->integer('jumlah');
             $table->integer('estimasi_biaya')->default(0);

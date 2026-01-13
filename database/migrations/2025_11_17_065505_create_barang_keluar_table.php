@@ -21,7 +21,7 @@ return new class extends Migration {
                 'sedang_diperbaiki',
                 'dihibahkan'
             ])->default('habis_pakai');
-            $table->string('penerima')->nullable();
+            $table->string('penerima', 96)->nullable();
             $table->integer('jumlah');
             $table->text('keterangan')->nullable();
 

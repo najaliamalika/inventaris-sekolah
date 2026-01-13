@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->uuid('masuk_id')->primary();
             $table->dateTime('tanggal');
             $table->enum('kategori', ['pembelian', 'bantuan'])->default('pembelian');
-            $table->string('nama_supplier');
+            $table->string('nama_supplier', 96);
             $table->integer('total_jumlah')->default(0);
             $table->bigInteger('total_harga')->default(0);
             $table->text('keterangan')->nullable();

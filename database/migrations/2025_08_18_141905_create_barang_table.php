@@ -13,13 +13,14 @@ return new class extends Migration {
         Schema::create('barang', function (Blueprint $table) {
             $table->uuid('barang_id')->primary();
             $table->uuid('jenis_barang_id')->nullable(true);
-            $table->string('nama_barang');
+            $table->string('nama_barang', 96);
             $table->foreign('jenis_barang_id')->references('jenis_barang_id')->on('jenis_barang')->cascadeOnDelete();
             $table->string('gambar')->nullable(true);
-            $table->string('kode_barang')->nullable(true);
-            $table->string('merk');
+            $table->string('kode_barang', 60)->nullable(true)->unique();
+            ;
+            $table->string('merk', 60);
             $table->enum('kondisi', ['baik', 'diperbaiki', 'dipinjam'])->default('baik');
-            $table->string('lokasi')->nullable(true);
+            $table->string('lokasi', 96)->nullable(true);
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
         });

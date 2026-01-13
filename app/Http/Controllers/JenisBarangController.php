@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\JenisBarang;
 use App\Services\FileStorageService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class JenisBarangController extends Controller
 {
@@ -50,13 +51,19 @@ class JenisBarangController extends Controller
             [
                 'kategori' => 'required|string|max:255',
                 'jenis' => 'required|string|max:255|unique:jenis_barang,jenis,NULL,jenis_barang_id',
-                'kode_utama' => 'nullable|string|max:255',
+                'kode_utama' => [
+                    'nullable',
+                    'string',
+                    'max:255',
+                    Rule::unique('jenis_barang', 'kode_utama'),
+                ],
                 'satuan' => 'required|string|max:255',
             ],
             [
                 'kategori.required' => 'Kategori wajib diisi',
                 'jenis.unique' => 'Jenis barang sudah terdaftar',
                 'jenis.required' => 'Jenis wajib diisi',
+                'kode_utama.unique' => 'Kode utama sudah terdaftar',
                 'satuan.required' => 'Satuan wajib diisi',
             ]
         );
@@ -66,8 +73,7 @@ class JenisBarangController extends Controller
         JenisBarang::create($validated);
 
         flash('Jenis Barang berhasil ditambahkan')->success();
-        return redirect()->route('jenis-barang.index')
-            ->with('success', 'Jenis Barang Berhasil Ditambahkan!');
+        return redirect()->route('jenis-barang.index');
     }
 
     public function show(string $jenis_barang_id)

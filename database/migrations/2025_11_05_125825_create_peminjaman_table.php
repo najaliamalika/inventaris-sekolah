@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->uuid('peminjaman_id')->primary();
             $table->dateTime('tanggal_peminjaman');
             $table->dateTime('tanggal_pengembalian')->nullable();
-            $table->string('nama_peminjam');
+            $table->string('nama_peminjam', 96);
             $table->string('foto_peminjaman')->nullable();
             $table->string('foto_pengembalian')->nullable();
             $table->text('keterangan')->nullable();
