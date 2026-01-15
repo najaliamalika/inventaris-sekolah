@@ -14,16 +14,18 @@ class JenisBarangController extends Controller
     public function __construct(FileStorageService $fileService)
     {
         $this->fileService = $fileService;
+        $this->middleware('role:admin|bendahara|kepala_sekolah')->only(['index', 'show']);
+        $this->middleware('role:admin')->only(['create', 'store', 'edit', 'update', 'destroy']);
     }
 
     public function index(Request $request)
     {
         $query = JenisBarang::query()
             ->withCount([
-                'barang as stok' => function ($q) {
-                    $q->where('kondisi', 'baik')->where('status', 'aktif');
-                }
-            ])
+                    'barang as stok' => function ($q) {
+                        $q->where('kondisi', 'baik')->where('status', 'aktif');
+                    }
+                ])
             ->orderBy('jenis');
 
         if ($request->filled('search')) {

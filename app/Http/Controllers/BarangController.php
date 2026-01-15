@@ -19,6 +19,8 @@ class BarangController extends Controller
     public function __construct(FileStorageService $fileService)
     {
         $this->fileService = $fileService;
+        $this->middleware('role:admin|bendahara|kepala_sekolah')->only(['index', 'show']);
+        $this->middleware('role:admin')->only(['create', 'store', 'edit', 'update', 'destroy']);
     }
 
     /**

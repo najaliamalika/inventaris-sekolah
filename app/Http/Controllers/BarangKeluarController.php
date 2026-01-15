@@ -12,6 +12,11 @@ use Illuminate\Support\Str;
 
 class BarangKeluarController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('role:admin')->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy']);
+    }
     public function index(Request $request)
     {
         $query = BarangKeluar::with(['jenisBarang', 'items.barang']);

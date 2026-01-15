@@ -17,6 +17,7 @@ class PeminjamanController extends Controller
     public function __construct(FileStorageService $fileService)
     {
         $this->fileService = $fileService;
+        $this->middleware('role:admin')->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy']);
     }
 
     public function index(Request $request)

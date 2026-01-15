@@ -14,6 +14,11 @@ use Illuminate\Support\Str;
 
 class PengajuanController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('role:admin|bendahara')->only(['index', 'show']);
+        $this->middleware('role:admin')->only(['create', 'store', 'edit', 'update', 'destroy']);
+    }
     public function index(Request $request)
     {
         $query = Pengajuan::with(['jenisBarang', 'perbaikanItems.barang']);
