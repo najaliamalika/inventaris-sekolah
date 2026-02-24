@@ -1,18 +1,9 @@
 @php
-    // Statistik Utama
+    // Statistik
     $totalBarang = \App\Models\Barang::count();
     $totalKategori = \App\Models\JenisBarang::distinct('kategori')->count('kategori');
     $barangDiperbaiki = \App\Models\Barang::where('kondisi', 'diperbaiki')->count();
     $totalNilai = \App\Models\BarangMasuk::sum('total_harga');
-
-    // Perbandingan bulan lalu
-    $totalBarangBulanLalu = \App\Models\Barang::whereMonth('created_at', now()->subMonth()->month)->count();
-    $pertumbuhanBarang =
-        $totalBarangBulanLalu > 0 ? round((($totalBarang - $totalBarangBulanLalu) / $totalBarangBulanLalu) * 100) : 0;
-
-    $totalNilaiBulanLalu = \App\Models\BarangMasuk::whereMonth('tanggal', now()->subMonth()->month)->sum('total_harga');
-    $pertumbuhanNilai =
-        $totalNilaiBulanLalu > 0 ? round((($totalNilai - $totalNilaiBulanLalu) / $totalNilaiBulanLalu) * 100) : 0;
 
     // Aktivitas Terbaru (gabungan barang masuk, keluar, dan pengajuan)
     $barangMasukTerbaru = \App\Models\BarangMasuk::with('details.jenisBarang')
@@ -67,13 +58,6 @@
                             <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Barang</p>
                             <h3 class="text-3xl font-bold text-gray-900 dark:text-white">
                                 {{ number_format($totalBarang) }}</h3>
-                            @if ($pertumbuhanBarang != 0)
-                                <p
-                                    class="text-xs {{ $pertumbuhanBarang > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }} mt-2 flex items-center">
-                                    <span class="mr-1">{{ $pertumbuhanBarang > 0 ? '↑' : '↓' }}</span>
-                                    {{ abs($pertumbuhanBarang) }}% dari bulan lalu
-                                </p>
-                            @endif
                         </div>
                         <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-full">
                             <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor"
