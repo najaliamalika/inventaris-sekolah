@@ -41,6 +41,13 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::put('/jenis-barang/{jenis_barang_id}', [JenisBarangController::class, 'update'])->name('jenis-barang.update');
     Route::delete('/jenis-barang/{jenis_barang_id}', [JenisBarangController::class, 'destroy'])->name('jenis-barang.destroy');
 
+    Route::get('/peminjaman/approve/{peminjaman_id}', [PeminjamanController::class, 'approve'])->name('peminjaman.approve');
+    Route::get('/peminjaman/reject/{peminjaman_id}', [PeminjamanController::class, 'reject'])->name('peminjaman.reject');
+    Route::get('/peminjaman/get-available-barang/{jenisBarangId}', [PeminjamanController::class, 'getAvailableBarang'])
+        ->name('peminjaman.getAvailableBarang');
+    Route::get('/peminjaman/get-available-barang-edit/{jenisBarangId}/{peminjaman_id}', [PeminjamanController::class, 'getAvailableBarangEdit'])
+        ->name('peminjaman.getAvailableBarangEdit');
+
     Route::resource('peminjaman', PeminjamanController::class);
     Route::post('/peminjaman/barang/{peminjaman_barang_id}/kembalikan', [PeminjamanController::class, 'kembalikanBarang'])->name('peminjaman.kembalikan-barang');
 

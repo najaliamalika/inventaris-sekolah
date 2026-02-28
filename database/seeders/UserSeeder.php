@@ -38,6 +38,15 @@ class UserSeeder extends Seeder
         );
         $bendahara->assignRole('bendahara');
 
+        $peminjam = User::firstOrCreate(
+            ['username' => 'peminjam'],
+            [
+                'user_id' => Str::uuid(),
+                'password' => Hash::make('peminjam123'),
+            ]
+        );
+        $peminjam->assignRole('peminjam');
+
         $this->command->info('✅ Users berhasil dibuat dan role telah diberikan!');
     }
 }

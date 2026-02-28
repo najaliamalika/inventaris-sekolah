@@ -25,7 +25,7 @@ return new class extends Migration {
             $table->uuid('peminjaman_barang_id')->primary();
             $table->uuid('peminjaman_id');
             $table->uuid('barang_id');
-            $table->enum('status', ['dipinjam', 'dikembalikan'])->default('dipinjam');
+            $table->enum('status', ['menunggu', 'dipinjam', 'dikembalikan', 'ditolak'])->default('menunggu');
             $table->timestamps();
 
             $table->foreign('peminjaman_id')

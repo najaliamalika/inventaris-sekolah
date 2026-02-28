@@ -95,6 +95,7 @@
                         <x-dropdown name="status" id="statusSelect" placeholder="Semua Status" :selected="request('status')"
                             :options="[
                                 ['value' => '', 'label' => 'Semua Status'],
+                                ['value' => 'menunggu konfirmasi', 'label' => 'menunggu'],
                                 ['value' => 'dikembalikan', 'label' => 'Sudah Dikembalikan'],
                                 ['value' => 'dipinjam', 'label' => 'Sedang Dipinjam'],
                             ]" autoSubmit />
@@ -122,7 +123,7 @@
                         </a>
                     @endif
 
-                    @hasrole('admin')
+                    @hasrole('peminjam')
                         <a href="{{ route('peminjaman.create') }}"
                             class="ml-auto px-5 py-2.5 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,6 +158,8 @@
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach ($peminjaman as $index => $p)
                             @php
+                                $isWaiting = $p->peminjamanBarang[0]->status == 'menunggu';
+                                $isReject = $p->peminjamanBarang[0]->status == 'ditolak';
                                 $isDikembalikan = !is_null($p->tanggal_pengembalian);
                             @endphp
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-150">
@@ -197,6 +200,16 @@
                                             class="px-3 py-1 rounded-lg text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
                                             Sudah Kembali
                                         </span>
+                                    @elseif ($isWaiting)
+                                        <span
+                                            class="px-3 py-1 rounded-lg text-xs font-medium bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
+                                            Menunggu
+                                        </span>
+                                    @elseif ($isReject)
+                                        <span
+                                            class="px-3 py-1 rounded-lg text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                                            Ditolak
+                                        </span>
                                     @else
                                         <span
                                             class="px-3 py-1 rounded-lg text-xs font-medium bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
@@ -228,7 +241,37 @@
                                         </a>
 
                                         @hasrole('admin')
-                                            @if (!$isDikembalikan)
+                                            @if ($isWaiting)
+                                                <a href="{{ route('peminjaman.approve', $p->peminjaman_id) }}"
+                                                    class="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-all"
+                                                    title="Approve">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </a>
+
+                                                <button type="button" x-data
+                                                    @click="$dispatch('open-modal', 'reject_peminjaman_{{ $p->peminjaman_id }}')"
+                                                    class="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-all"
+                                                    title="Reject">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
+                                                </button>
+
+                                                <x-confirm-modal id="reject_peminjaman_{{ $p->peminjaman_id }}"
+                                                    message="Apakah Anda yakin ingin menolak peminjaman ini?"
+                                                    okLabel="Tolak" cancelLabel="Batal" :url="route('peminjaman.reject', $p->peminjaman_id)"
+                                                    method="GET" />
+                                            @endif
+                                        @endhasrole
+
+                                        @hasrole('peminjam')
+                                            @if (!$isDikembalikan && $isWaiting && !$isReject)
                                                 <a href="{{ route('peminjaman.edit', $p->peminjaman_id) }}"
                                                     class="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-lg transition-all"
                                                     title="Edit">
@@ -239,7 +282,9 @@
                                                     </svg>
                                                 </a>
                                             @endif
+                                        @endrole
 
+                                        @if (!$isDikembalikan)
                                             <button type="button" x-data
                                                 @click="$dispatch('open-modal', 'delete_peminjaman_{{ $p->peminjaman_id }}')"
                                                 class="p-2 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-all"
@@ -249,7 +294,11 @@
                                                         d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
                                                 </svg>
                                             </button>
-                                        @endhasrole
+                                            <x-confirm-modal id="delete_peminjaman_{{ $p->peminjaman_id }}"
+                                                message="Apakah Anda yakin ingin menghapus peminjaman ini?"
+                                                okLabel="Ya" cancelLabel="Tidak" :url="route('peminjaman.destroy', $p->peminjaman_id)"
+                                                method="DELETE" />
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

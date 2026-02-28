@@ -25,20 +25,28 @@
                 class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
 
                 @php
+                    $isWaiting = $peminjaman->peminjamanBarang[0]->status == 'menunggu';
+                    $isReject = $peminjaman->peminjamanBarang[0]->status == 'ditolak';
                     $isDikembalikan = !is_null($peminjaman->tanggal_pengembalian);
                 @endphp
 
                 <div
-                    class="bg-gradient-to-r {{ $isDikembalikan ? 'from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-100 dark:border-green-800' : 'from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 border-yellow-100 dark:border-yellow-800' }} px-8 py-6 border-b">
+                    class="bg-gradient-to-r {{ ($isDikembalikan ? 'from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-100 dark:border-green-800' : $isReject) ? 'from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 border-red-100 dark:border-red-800' : 'from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 border-yellow-100 dark:border-yellow-800' }} px-8 py-6 border-b">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-4">
                             <div
-                                class="w-16 h-16 {{ $isDikembalikan ? 'bg-green-500' : 'bg-yellow-500' }} rounded-xl flex items-center justify-center shadow-lg">
+                                class="w-16 h-16 {{ ($isDikembalikan ? 'bg-green-500' : $isReject) ? 'bg-red-500' : 'bg-yellow-500' }} rounded-xl flex items-center justify-center shadow-lg">
                                 @if ($isDikembalikan)
                                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                @elseif($isReject)
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 @else
                                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor"
@@ -51,13 +59,20 @@
                             <div>
                                 <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Status Peminjaman</p>
                                 <p class="text-2xl font-bold text-gray-800 dark:text-gray-100">
-                                    {{ $isDikembalikan ? 'Sudah Dikembalikan' : 'Sedang Dipinjam' }}
+                                    {{ $isDikembalikan
+                                        ? 'Sudah Dikembalikan'
+                                        : ($isWaiting
+                                            ? 'Menunggu Konfirmasi'
+                                            : ($isReject
+                                                ? 'Ditolak'
+                                                : 'Sedang Dipinjam')) }}
+
                                 </p>
                             </div>
                         </div>
 
-                        @hasrole('admin')
-                            @if (!$isDikembalikan)
+                        @hasrole('peminjam')
+                            @if (!$isDikembalikan && $isWaiting)
                                 <a href="{{ route('peminjaman.edit', $peminjaman->peminjaman_id) }}"
                                     class="px-6 py-3 bg-white/20 hover:bg-white/30 text-gray-800 dark:text-gray-100 font-semibold rounded-xl transition-all duration-200 flex items-center gap-2 backdrop-blur-sm">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -308,7 +323,7 @@
                     </div>
 
                     @hasrole('admin')
-                        @if (!$isDikembalikan)
+                        @if (!$isDikembalikan && !$isWaiting && !$isReject)
                             <div
                                 class="mt-8 bg-green-50 dark:bg-green-900/20 rounded-xl p-6 border border-green-200 dark:border-green-800">
                                 <div class="flex items-start gap-4">
@@ -427,7 +442,7 @@
                             Kembali
                         </a>
 
-                        @hasrole('admin')
+                        @hasrole('peminjam')
                             @if (!$isDikembalikan)
                                 <a href="{{ route('peminjaman.edit', $peminjaman->peminjaman_id) }}"
                                     class="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition-colors duration-200 gap-2">

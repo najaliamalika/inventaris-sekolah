@@ -45,7 +45,7 @@
 
         <div class="border-t border-gray-200 dark:border-gray-700 my-4"></div>
 
-        @hasrole('admin')
+        @hasanyrole('admin|peminjam')
             <!-- Peminjaman -->
             <a href="{{ route('peminjaman.index') }}"
                 class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group
@@ -57,6 +57,9 @@
                 </svg>
                 <span>Peminjaman</span>
             </a>
+        @endhasanyrole
+
+        @hasrole('admin')
             <!-- Barang Masuk -->
             <a href="{{ route('barang-masuk.index') }}"
                 class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group
@@ -95,17 +98,19 @@
             </a>
         @endhasanyrole
 
-        <a href="{{ route('reports.index') }}"
-            class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group
+        @hasanyrole('admin|bendahara|kepala_sekolah')
+            <a href="{{ route('reports.index') }}"
+                class="flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 group
                   {{ request()->routeIs('reports.*') ? 'bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg shadow-green-500/30' : 'text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20' }}">
-            <svg class="w-5 h-5 mr-3 {{ request()->routeIs('reports.*') ? 'text-white' : 'text-gray-400 group-hover:text-green-600' }}"
-                fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l6-6 4 4 7-7M3 21h18" />
-            </svg>
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('reports.*') ? 'text-white' : 'text-gray-400 group-hover:text-green-600' }}"
+                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17l6-6 4 4 7-7M3 21h18" />
+                </svg>
 
 
-            <span>Laporan</span>
-        </a>
+                <span>Laporan</span>
+            </a>
+        @endhasanyrole
 
         <div class="border-t border-gray-200 dark:border-gray-700 my-4"></div>
 

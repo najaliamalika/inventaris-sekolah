@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Peminjaman;
 use App\Models\PeminjamanBarang;
 use App\Models\Barang;
+use App\Models\JenisBarang;
 use App\Services\FileStorageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class PeminjamanController extends Controller
 {
@@ -17,7 +17,9 @@ class PeminjamanController extends Controller
     public function __construct(FileStorageService $fileService)
     {
         $this->fileService = $fileService;
-        $this->middleware('role:admin')->only(['index', 'show', 'create', 'store', 'edit', 'update', 'destroy']);
+        $this->middleware('role:admin|peminjam')->only(['index', 'show', 'destroy']);
+        $this->middleware('role:admin')->only(['approve', 'reject']);
+        $this->middleware('role:peminjam')->only(['create', 'store', 'edit', 'update']);
     }
 
     public function index(Request $request)
@@ -94,13 +96,26 @@ class PeminjamanController extends Controller
 
     public function create()
     {
-        $barang = Barang::with('jenisBarang')
-            ->where('kondisi', 'baik')
+        $jenisBarang = JenisBarang::whereHas('barang', function ($q) {
+            $q->where('status', 'aktif')->where('kondisi', 'baik');
+        })->withCount([
+                    'barang as stok_tersedia' => function ($q) {
+                        $q->where('status', 'aktif')->where('kondisi', 'baik');
+                    }
+                ])->orderBy('jenis')->get();
+
+        return view('peminjaman.create', compact('jenisBarang'));
+    }
+
+    public function getAvailableBarang($jenisBarangId)
+    {
+        $barang = Barang::where('jenis_barang_id', $jenisBarangId)
             ->where('status', 'aktif')
-            ->orderBy('nama_barang')
+            ->where('kondisi', 'baik')
+            ->with('jenisBarang')
             ->get();
 
-        return view('peminjaman.create', compact('barang'));
+        return response()->json($barang);
     }
 
     public function store(Request $request)
@@ -141,12 +156,7 @@ class PeminjamanController extends Controller
             foreach ($validated['barang_ids'] as $barangId) {
                 $peminjaman->barang()->attach($barangId, [
                     'peminjaman_barang_id' => uuid_create(),
-                    'status' => 'dipinjam',
-                ]);
-
-                $barang = Barang::find($barangId);
-                $barang->update([
-                    'kondisi' => 'dipinjam',
+                    'status' => 'menunggu',
                 ]);
             }
 
@@ -163,6 +173,57 @@ class PeminjamanController extends Controller
                 $this->fileService->delete($fotoPeminjamanPath);
             }
 
+            flash('Terjadi kesalahan: ' . $e->getMessage())->error();
+            return back()->withInput();
+        }
+    }
+
+    public function approve(string $peminjaman_id)
+    {
+        DB::beginTransaction();
+        try {
+            $peminjaman = Peminjaman::with('peminjamanBarang.barang')->findOrFail($peminjaman_id);
+            foreach ($peminjaman->peminjamanBarang as $pb) {
+                $pb->update(['status' => 'dipinjam']);
+
+                if ($pb->barang) {
+                    $pb->barang->update(['kondisi' => 'dipinjam']);
+                }
+            }
+            DB::commit();
+
+            flash('Peminjaman berhasil disetujui')->success();
+            return redirect()
+                ->route('peminjaman.index')
+                ->with('success', 'Data Peminjaman Berhasil Disetujui!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            flash('Terjadi kesalahan: ' . $e->getMessage())->error();
+            return back()->withInput();
+        }
+    }
+
+    public function reject(string $peminjaman_id)
+    {
+        DB::beginTransaction();
+        try {
+            $peminjaman = Peminjaman::with('peminjamanBarang.barang')->findOrFail($peminjaman_id);
+
+            foreach ($peminjaman->peminjamanBarang as $pb) {
+                $pb->update(['status' => 'ditolak']);
+
+                if ($pb->barang) {
+                    $pb->barang->update(['kondisi' => 'baik']);
+                }
+            }
+            DB::commit();
+
+            flash('Peminjaman berhasil ditolak')->success();
+            return redirect()
+                ->route('peminjaman.index')
+                ->with('success', 'Data Peminjaman Berhasil Ditolak!');
+        } catch (\Exception $e) {
+            DB::rollBack();
             flash('Terjadi kesalahan: ' . $e->getMessage())->error();
             return back()->withInput();
         }
@@ -210,19 +271,35 @@ class PeminjamanController extends Controller
             }
         }
 
-        $barang = Barang::with('jenisBarang')
-            ->where('kondisi', 'baik')
-            ->where('status', 'aktif')
-            ->orderBy('nama_barang')
+        $jenisBarang = JenisBarang::withCount([
+            'barang as stok_tersedia' => function ($q) {
+                $q->where('status', 'aktif')->where('kondisi', 'baik');
+            }
+        ])->orderBy('jenis')->get();
+
+        $barangSaatIni = $peminjaman->peminjamanBarang->map(function ($pb) {
+            return $pb->barang;
+        })->filter()->values();
+
+        return view('peminjaman.edit', compact('peminjaman', 'jenisBarang', 'barangSaatIni'));
+    }
+
+    public function getAvailableBarangEdit($jenisBarangId, $peminjaman_id)
+    {
+        $existingBarangIds = PeminjamanBarang::where('peminjaman_id', $peminjaman_id)
+            ->pluck('barang_id')
+            ->toArray();
+
+        $barang = Barang::where('jenis_barang_id', $jenisBarangId)
+            ->where(function ($q) use ($existingBarangIds) {
+                $q->where(function ($sub) {
+                    $sub->where('status', 'aktif')->where('kondisi', 'baik');
+                })->orWhereIn('barang_id', $existingBarangIds);
+            })
+            ->with('jenisBarang')
             ->get();
 
-        foreach ($barang as $item) {
-            if ($item->gambar) {
-                $item->gambar_url = $this->fileService->url($item->gambar);
-            }
-        }
-
-        return view('peminjaman.edit', compact('peminjaman', 'barang'));
+        return response()->json($barang);
     }
 
     public function update(Request $request, string $peminjaman_id)

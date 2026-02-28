@@ -1,11 +1,9 @@
 @php
-    // Statistik
     $totalBarang = \App\Models\Barang::count();
     $totalKategori = \App\Models\JenisBarang::distinct('kategori')->count('kategori');
     $barangDiperbaiki = \App\Models\Barang::where('kondisi', 'diperbaiki')->count();
     $totalNilai = \App\Models\BarangMasuk::sum('total_harga');
 
-    // Aktivitas Terbaru (gabungan barang masuk, keluar, dan pengajuan)
     $barangMasukTerbaru = \App\Models\BarangMasuk::with('details.jenisBarang')
         ->orderBy('tanggal', 'desc')
         ->take(2)
@@ -15,19 +13,16 @@
 
     $pengajuanTerbaru = \App\Models\Pengajuan::with('jenisBarang')->orderBy('tanggal', 'desc')->take(2)->get();
 
-    // Statistik Kondisi Barang
     $barangBaik = \App\Models\Barang::where('kondisi', 'baik')->count();
     $barangDipinjam = \App\Models\Barang::where('kondisi', 'dipinjam')->count();
 
-    // Kategori Populer
     $kategoriPopuler = \App\Models\JenisBarang::withCount('barang')->orderBy('barang_count', 'desc')->take(8)->get();
 
-    // Pengajuan berdasarkan status
     $pengajuanMenunggu = \App\Models\Pengajuan::where('status', 'menunggu')->count();
     $pengajuanDisetujui = \App\Models\Pengajuan::where('status', 'disetujui')->count();
 
-    // Peminjaman aktif
     $peminjamanAktif = \App\Models\PeminjamanBarang::where('status', 'dipinjam')->count();
+    $peminjamanMenunggu = \App\Models\PeminjamanBarang::where('status', 'menunggu')->count();
 @endphp
 
 <x-app-layout>
@@ -48,9 +43,7 @@
                 </div>
             </div>
 
-            <!-- Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                <!-- Total Items -->
                 <div
                     class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
                     <div class="flex items-center justify-between">
@@ -69,53 +62,73 @@
                     </div>
                 </div>
 
-                <!-- Categories -->
-                <div
-                    class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
-                    <div class="flex items-center justify-between">
+                <a href="{{ route('peminjaman.index') }}"
+                    class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300 block">
+                    <div class="flex items-center justify-between mb-3">
                         <div>
-                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Jenis Barang</p>
-                            <h3 class="text-3xl font-bold text-gray-900 dark:text-white">
-                                {{ \App\Models\JenisBarang::count() }}</h3>
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Peminjaman</p>
+                            <h3 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $peminjamanAktif }}</h3>
                         </div>
-                        <div class="bg-purple-100 dark:bg-purple-900 p-4 rounded-full">
-                            <svg class="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none"
+                        <div class="relative bg-orange-100 dark:bg-orange-900 p-4 rounded-full">
+                            <svg class="w-8 h-8 text-orange-600 dark:text-orange-400" fill="none"
                                 stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                    d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                             </svg>
+                            @if ($peminjamanMenunggu > 0)
+                                <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                                    <span
+                                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-4 w-4 bg-orange-500"></span>
+                                </span>
+                            @endif
                         </div>
                     </div>
-                </div>
+                    @if ($peminjamanMenunggu > 0)
+                        <div class="flex items-center gap-3">
+                            <span
+                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300">
+                                {{ $peminjamanMenunggu }} peminjaman menunggu
+                            </span>
+                        </div>
+                    @endif
+                </a>
 
                 <div
                     class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-300">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Diperbaikan</p>
-                            <h3 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $barangDiperbaiki }}</h3>
+                            <h3 class="text-3xl font-bold text-gray-900 dark:text-white mb-3">{{ $barangDiperbaiki }}
+                            </h3>
                             @if ($pengajuanMenunggu > 0)
-                                <p class="text-xs text-yellow-600 dark:text-yellow-400 mt-2 flex items-center">
-                                    <span class="mr-1">⏳</span> {{ $pengajuanMenunggu }} pengajuan menunggu
-                                </p>
+                                <span
+                                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300">{{ $pengajuanMenunggu }}
+                                    pengajuan menunggu
+                                </span>
                             @endif
                         </div>
-                        <div class="bg-red-100 dark:bg-red-900 p-4 rounded-full">
+                        <div class="relative bg-red-100 dark:bg-red-900 p-4 rounded-full">
                             <svg class="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
+                            @if ($pengajuanMenunggu > 0)
+                                <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                                    <span
+                                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-4 w-4 bg-orange-500"></span>
+                                </span>
+                            @endif
                         </div>
                     </div>
                 </div>
 
             </div>
 
-            <!-- Main Content Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 
-                <!-- Category Overview -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-lg font-bold text-gray-900 dark:text-white">Jenis dengan Barang Terbanyak</h3>
@@ -196,7 +209,6 @@
                         </div>
                     @endhasrole
 
-                    <!-- Status Info -->
                     <div class="mt-6 pt-6 border-t ">
                         <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">Status Barang</h4>
                         <div class="space-y-2">

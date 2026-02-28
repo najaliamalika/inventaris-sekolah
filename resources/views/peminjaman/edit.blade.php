@@ -26,7 +26,7 @@
             <div class="p-8">
                 <form id="update_peminjaman" method="POST"
                     action="{{ route('peminjaman.update', $peminjaman->peminjaman_id) }}" enctype="multipart/form-data"
-                    class="space-y-6" x-data="peminjamanForm()">
+                    class="space-y-6" x-data="peminjamanEditForm()">
                     @csrf
                     @method('PUT')
 
@@ -144,178 +144,178 @@
                     </div>
 
                     <div class="border-t-2 border-gray-200 dark:border-gray-700 pt-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-                                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                                </svg>
-                                Daftar Barang yang Dipinjam
-                            </h3>
-                            <span
-                                class="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-sm font-semibold"
-                                x-text="`${items.length} Barang`"></span>
+                        <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2 mb-6">
+                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                            </svg>
+                            Pilih Barang yang Dipinjam
+                        </h3>
+
+                        <div class="group mb-6">
+                            <x-input-label for="jenis_barang_id" :value="__('Filter Jenis Barang')"
+                                class="text-gray-700 dark:text-gray-300 font-semibold mb-2" />
+
+                            <div @dropdown-changed="handleJenisBarangChange($event.detail)">
+                                <x-dropdown name="jenis_barang_filter" id="jenis_barang_id"
+                                    placeholder="-- Pilih Jenis Barang --" :options="$jenisBarang->map(
+                                        fn($jenis) => [
+                                            'value' => $jenis->jenis_barang_id,
+                                            'label' =>
+                                                $jenis->jenis . ' (Stok Tersedia: ' . $jenis->stok_tersedia . ')',
+                                            'kode' => $jenis->kode_utama,
+                                        ],
+                                    )" searchable />
+                            </div>
+
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Pilih jenis barang untuk melihat
+                                daftar barang yang tersedia</p>
                         </div>
-                    </div>
 
-                    <div class="space-y-4">
-                        <template x-for="(item, index) in items" :key="index">
-                            <div
-                                class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-5 border-2 border-gray-200 dark:border-gray-600 hover:border-green-300 dark:hover:border-green-700 transition-all duration-200">
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="flex items-center gap-2">
-                                        <span
-                                            class="flex items-center justify-center w-8 h-8 bg-green-600 text-white rounded-full text-sm font-bold"
-                                            x-text="index + 1"></span>
-                                        <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Barang
-                                            <span x-text="index + 1"></span></span>
-                                    </div>
-                                    <button type="button" @click="removeItem(index)" x-show="items.length > 1"
-                                        class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
-                                </div>
+                        <div x-show="!selectedJenis"
+                            class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-4">
+                            <p class="text-sm text-blue-800 dark:text-blue-200">
+                                💡 Pilih jenis barang di atas untuk menambah atau mengganti barang. Barang yang sudah
+                                dipinjam tetap tersimpan di bawah.
+                            </p>
+                        </div>
 
-                                <div class="group">
-                                    <label
-                                        class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
-                                        <span class="text-red-500">*</span>
-                                        Pilih Barang
-                                    </label>
-                                    <div class="relative">
-                                        @php
-                                            $barangOptions = collect($barang)
-                                                ->map(
-                                                    fn($item) => [
-                                                        'value' => $item->barang_id,
-                                                        'label' =>
-                                                            $item->nama_barang .
-                                                            ' (' .
-                                                            $item->jenisBarang->kode_utama .
-                                                            $item->kode_barang .
-                                                            ') - ' .
-                                                            ($item->jenisBarang->jenis ?? ''),
-                                                    ],
-                                                )
-                                                ->concat(
-                                                    $peminjaman->peminjamanBarang->map(
-                                                        fn($pb) => [
-                                                            'value' => $pb->barang_id,
-                                                            'label' =>
-                                                                $pb->barang->nama_barang .
-                                                                ' (' .
-                                                                $pb->barang->jenisBarang->kode_utama .
-                                                                $pb->barang->kode_barang .
-                                                                ') - ' .
-                                                                ($pb->barang->jenisBarang->jenis ?? '') .
-                                                                ' (Sedang Dipinjam)',
-                                                        ],
-                                                    ),
-                                                )
-                                                ->unique('value')
-                                                ->values();
-                                        @endphp
+                        <div x-show="loading" class="flex justify-center py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+                        </div>
 
-                                        <div x-data="{
-                                            open: false,
-                                            search: '',
-                                            options: {{ json_encode($barangOptions) }},
-                                            filteredOptions: {{ json_encode($barangOptions) }},
-                                        
-                                            getLabel() {
-                                                const selected = this.options.find(opt => opt.value == item.barang_id);
-                                                return selected ? selected.label : 'Pilih Barang';
-                                            },
-                                        
-                                            selectOption(option) {
-                                                item.barang_id = option.value;
-                                                this.open = false;
-                                                this.search = '';
-                                                this.filteredOptions = this.options;
-                                            },
-                                        
-                                            filterOptions() {
-                                                if (!this.search) {
-                                                    this.filteredOptions = this.options;
-                                                    return;
-                                                }
-                                                this.filteredOptions = this.options.filter(option =>
-                                                    option.label.toLowerCase().includes(this.search.toLowerCase())
-                                                );
-                                            }
-                                        }" @click.away="open = false"
-                                            class="relative w-full">
+                        <div x-show="!loading && availableBarang.length > 0">
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    Klik barang untuk menambahkan atau menghapus dari daftar
+                                </p>
+                                <span
+                                    class="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-sm font-semibold"
+                                    x-text="`${selectedBarang.length} dipilih`"></span>
+                            </div>
 
-                                            <button type="button" @click="open = !open"
-                                                class="w-full px-4 py-2.5 border-2 border-gray-200 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all bg-white dark:bg-gray-700 dark:text-white text-left flex items-center justify-between"
-                                                :class="{ 'border-green-500 ring-2 ring-green-500/20': open }">
-                                                <span x-text="getLabel()" class="truncate"
-                                                    :class="{ 'text-gray-400 dark:text-gray-500': !item.barang_id }"></span>
-                                                <svg class="w-5 h-5 transition-transform"
-                                                    :class="{ 'rotate-180': open }" fill="none"
-                                                    stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                                <template x-for="barang in availableBarang" :key="barang.barang_id">
+                                    <div @click="toggleBarang(barang)"
+                                        :class="{
+                                            'border-green-500 bg-green-50 dark:bg-green-900/20': isSelected(barang
+                                                .barang_id),
+                                            'border-gray-200 dark:border-gray-600 hover:border-gray-300': !isSelected(
+                                                barang.barang_id)
+                                        }"
+                                        class="relative border-2 rounded-xl p-4 cursor-pointer transition-all duration-200 hover:shadow-md">
+
+                                        <div class="absolute top-3 right-3">
+                                            <div :class="isSelected(barang.barang_id) ? 'bg-green-500 border-green-500' :
+                                                'border-gray-300 dark:border-gray-500'"
+                                                class="w-5 h-5 rounded border-2 flex items-center justify-center transition-all">
+                                                <svg x-show="isSelected(barang.barang_id)" class="w-3 h-3 text-white"
+                                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
-                                                        stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                                        stroke-width="3" d="M5 13l4 4L19 7" />
                                                 </svg>
-                                            </button>
-
-                                            <div x-show="open" x-transition:enter="transition ease-out duration-100"
-                                                x-transition:enter-start="opacity-0 scale-95"
-                                                x-transition:enter-end="opacity-100 scale-100"
-                                                x-transition:leave="transition ease-in duration-75"
-                                                x-transition:leave-start="opacity-100 scale-100"
-                                                x-transition:leave-end="opacity-0 scale-95"
-                                                class="absolute z-50 w-full mt-2 bg-white dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-hidden"
-                                                style="display: none;">
-
-                                                <div class="p-2 border-b border-gray-200 dark:border-gray-600">
-                                                    <input type="text" x-model="search" @input="filterOptions"
-                                                        @click.stop placeholder="Cari..."
-                                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-500/20 bg-white dark:bg-gray-800 dark:text-white text-sm">
-                                                </div>
-
-                                                <div class="overflow-y-auto max-h-48">
-                                                    <template x-for="option in filteredOptions" :key="option.value">
-                                                        <button type="button" @click="selectOption(option)"
-                                                            class="w-full px-4 py-2.5 text-left hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                                                            :class="{
-                                                                'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400': item
-                                                                    .barang_id == option.value
-                                                            }">
-                                                            <span x-text="option.label"></span>
-                                                        </button>
-                                                    </template>
-
-                                                    <div x-show="filteredOptions.length === 0"
-                                                        class="px-4 py-3 text-center text-gray-500 dark:text-gray-400 text-sm">
-                                                        Tidak ada hasil ditemukan
-                                                    </div>
-                                                </div>
                                             </div>
                                         </div>
 
-                                        <input type="hidden" :name="`barang_ids[${index}]`" x-model="item.barang_id"
-                                            required>
+                                        <div class="pr-8">
+                                            <h4 class="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-2"
+                                                x-text="barang.nama_barang"></h4>
+                                            <div class="space-y-1">
+                                                <p class="text-xs text-gray-600 dark:text-gray-400"
+                                                    x-show="barang.kode_barang">
+                                                    <span
+                                                        class="font-semibold text-green-600 dark:text-green-400">Kode:</span>
+                                                    <span class="font-mono font-medium"
+                                                        x-text="getFullKodeBarang(barang)"></span>
+                                                </p>
+                                                <p class="text-xs text-gray-600 dark:text-gray-400"
+                                                    x-show="barang.merk">
+                                                    <span class="font-medium">Merk:</span> <span
+                                                        x-text="barang.merk"></span>
+                                                </p>
+                                                <p class="text-xs text-gray-600 dark:text-gray-400"
+                                                    x-show="barang.lokasi">
+                                                    <span class="font-medium">Lokasi:</span> <span
+                                                        x-text="barang.lokasi"></span>
+                                                </p>
+                                                <div class="flex items-center gap-1 flex-wrap">
+                                                    <span
+                                                        class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                                                        x-text="barang.kondisi"></span>
+                                                    <span x-show="isCurrentlyBorrowed(barang.barang_id)"
+                                                        class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                                                        Sedang dipinjam di sini
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                </template>
                             </div>
-                        </template>
-                    </div>
+                        </div>
 
-                    <div class="flex justify-center pt-2">
-                        <button type="button" @click="addItem"
-                            class="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-gray-700 border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-green-500 dark:hover:border-green-500 rounded-xl text-gray-700 dark:text-gray-300 font-semibold hover:bg-green-50 dark:hover:bg-green-900/20 transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div x-show="!loading && selectedJenis && availableBarang.length === 0"
+                            class="text-center py-12 bg-gray-50 dark:bg-gray-700/50 rounded-xl mb-4">
+                            <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                             </svg>
-                            Tambah Barang
-                        </button>
+                            <p class="text-gray-600 dark:text-gray-400">Tidak ada barang tersedia untuk jenis ini</p>
+                        </div>
+
+                        <div x-show="selectedBarang.length > 0">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-md font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Barang yang Akan Dipinjam
+                                </h4>
+                                <span
+                                    class="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-sm font-semibold"
+                                    x-text="`${selectedBarang.length} Barang`"></span>
+                            </div>
+
+                            <div
+                                class="bg-gray-50 dark:bg-gray-700/50 rounded-xl border-2 border-gray-200 dark:border-gray-600 overflow-hidden">
+                                <template x-for="(barang, index) in selectedBarang" :key="barang.barang_id">
+                                    <div
+                                        class="flex items-center justify-between px-5 py-3 border-b border-gray-200 dark:border-gray-600 last:border-b-0">
+                                        <div class="flex items-center gap-3">
+                                            <span
+                                                class="flex items-center justify-center w-7 h-7 bg-green-600 text-white rounded-full text-xs font-bold"
+                                                x-text="index + 1"></span>
+                                            <div>
+                                                <p class="text-sm font-semibold text-gray-800 dark:text-gray-200"
+                                                    x-text="barang.nama_barang"></p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400 font-mono"
+                                                    x-text="getFullKodeBarang(barang)"></p>
+                                            </div>
+                                        </div>
+                                        <button type="button" @click="removeSelected(barang.barang_id)"
+                                            class="text-red-500 hover:text-red-700 transition-colors ml-4 flex-shrink-0">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                        <input type="hidden" :name="`barang_ids[${index}]`" :value="barang.barang_id">
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <div x-show="selectedBarang.length === 0"
+                            class="mt-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+                            <p class="text-sm text-red-800 dark:text-red-200">
+                                ❌ Minimal harus ada 1 barang yang dipinjam.
+                            </p>
+                        </div>
                     </div>
 
                     <div
@@ -330,7 +330,8 @@
                         </a>
 
                         <button type="button" x-data @click="$dispatch('open-modal', 'update_confirmation')"
-                            class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2">
+                            :disabled="selectedBarang.length === 0"
+                            class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -338,6 +339,7 @@
                             {{ __('Perbarui Peminjaman') }}
                         </button>
                     </div>
+
                     <x-confirm-modal id="update_confirmation"
                         message="Apakah Anda yakin ingin memperbarui data peminjaman ini?" okLabel="Perbarui"
                         cancelLabel="Batal" :url="route('peminjaman.update', $peminjaman->peminjaman_id)" formId="update_peminjaman" />
@@ -348,24 +350,73 @@
 
     @push('scripts')
         <script>
-            function peminjamanForm() {
+            function peminjamanEditForm() {
+                const jenisBarangList = @json($jenisBarang);
+                const peminjamanId = @json($peminjaman->peminjaman_id);
+
+                const barangSaatIni = @json($barangSaatIni);
+                const barangSaatIniIds = barangSaatIni.map(b => b.barang_id);
+
                 return {
-                    items: {!! json_encode(
-                        $peminjaman->peminjamanBarang->map(function ($pb) {
-                                return [
-                                    'barang_id' => $pb->barang_id,
-                                ];
-                            })->values()->toArray(),
-                    ) !!},
-                    addItem() {
-                        this.items.push({
-                            barang_id: ''
-                        });
+                    selectedJenis: '',
+                    availableBarang: [],
+                    selectedBarang: [...barangSaatIni],
+                    loading: false,
+
+                    handleJenisBarangChange(jenisBarangId) {
+                        this.selectedJenis = jenisBarangId;
+                        this.loadAvailableBarang();
                     },
-                    removeItem(index) {
-                        if (this.items.length > 1) {
-                            this.items.splice(index, 1);
+
+                    async loadAvailableBarang() {
+                        if (!this.selectedJenis) {
+                            this.availableBarang = [];
+                            return;
                         }
+
+                        this.loading = true;
+
+                        try {
+                            const response = await fetch(
+                                `/peminjaman/get-available-barang-edit/${this.selectedJenis}/${peminjamanId}`
+                            );
+                            const data = await response.json();
+                            this.availableBarang = data;
+                        } catch (error) {
+                            console.error('Error loading barang:', error);
+                            this.availableBarang = [];
+                        } finally {
+                            this.loading = false;
+                        }
+                    },
+
+                    getFullKodeBarang(barang) {
+                        const kodeUtama = barang.jenis_barang?.kode_utama ?? '';
+                        if (barang.kode_barang) {
+                            return kodeUtama + '' + barang.kode_barang;
+                        }
+                        return '-';
+                    },
+
+                    toggleBarang(barang) {
+                        const index = this.selectedBarang.findIndex(b => b.barang_id === barang.barang_id);
+                        if (index > -1) {
+                            this.selectedBarang.splice(index, 1);
+                        } else {
+                            this.selectedBarang.push(barang);
+                        }
+                    },
+
+                    isSelected(barangId) {
+                        return this.selectedBarang.some(b => b.barang_id === barangId);
+                    },
+
+                    isCurrentlyBorrowed(barangId) {
+                        return barangSaatIniIds.includes(barangId);
+                    },
+
+                    removeSelected(barangId) {
+                        this.selectedBarang = this.selectedBarang.filter(b => b.barang_id !== barangId);
                     }
                 }
             }
@@ -399,7 +450,6 @@
                                 previewWrapper.classList.remove('hidden');
                                 previewWrapper.classList.add('animate-fade-in');
 
-                                // Hide existing image when new image is selected
                                 if (existingImageContainer) {
                                     existingImageContainer.style.opacity = '0.5';
                                 }
@@ -409,38 +459,23 @@
                     }
                 });
 
-                removeImageBtn.addEventListener('click', function() {
-                    fileInput.value = '';
-                    const hasExistingImage = {{ $peminjaman->foto_peminjaman ? 'true' : 'false' }};
-                    fileNameDisplay.textContent = hasExistingImage ?
-                        '📷 Pilih foto baru untuk mengganti (jpg, jpeg, png - Max 5MB)' :
-                        '📷 Pilih file gambar (jpg, jpeg, png - Max 5MB)';
-                    fileNameDisplay.classList.remove('text-green-600', 'dark:text-green-400', 'font-semibold');
-                    fileNameDisplay.classList.add('text-gray-500', 'dark:text-gray-400');
-                    previewWrapper.classList.add('hidden');
+                if (removeImageBtn) {
+                    removeImageBtn.addEventListener('click', function() {
+                        fileInput.value = '';
+                        const hasExistingImage = {{ $peminjaman->foto_peminjaman ? 'true' : 'false' }};
+                        fileNameDisplay.textContent = hasExistingImage ?
+                            '📷 Pilih foto baru untuk mengganti (jpg, jpeg, png - Max 5MB)' :
+                            '📷 Pilih file gambar (jpg, jpeg, png - Max 5MB)';
+                        fileNameDisplay.classList.remove('text-green-600', 'dark:text-green-400', 'font-semibold');
+                        fileNameDisplay.classList.add('text-gray-500', 'dark:text-gray-400');
+                        previewWrapper.classList.add('hidden');
 
-                    if (existingImageContainer) {
-                        existingImageContainer.style.opacity = '1';
-                    }
-                });
+                        if (existingImageContainer) {
+                            existingImageContainer.style.opacity = '1';
+                        }
+                    });
+                }
             }
-
-            document.addEventListener('DOMContentLoaded', function() {
-                const formGroups = document.querySelectorAll('.group');
-                formGroups.forEach(group => {
-                    const input = group.querySelector('input, select, textarea');
-                    if (input) {
-                        input.addEventListener('focus', () => {
-                            group.classList.add('ring-2', 'ring-green-100', 'dark:ring-green-900/30',
-                                'ring-opacity-50', 'rounded-xl');
-                        });
-                        input.addEventListener('blur', () => {
-                            group.classList.remove('ring-2', 'ring-green-100', 'dark:ring-green-900/30',
-                                'ring-opacity-50', 'rounded-xl');
-                        });
-                    }
-                });
-            });
         </script>
 
         <style>
